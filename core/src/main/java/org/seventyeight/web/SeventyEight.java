@@ -1,14 +1,19 @@
 package org.seventyeight.web;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.seventyeight.web.exceptions.CouldNotLoadObjectException;
+import org.seventyeight.web.model.AbstractItem;
 import org.seventyeight.web.model.Descriptor;
+import org.seventyeight.web.model.Item;
 import org.seventyeight.web.model.Locale;
 import org.seventyeight.web.model.ResourceDescriptor;
 
@@ -27,6 +32,8 @@ import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 public class SeventyEight {
 	private static Logger logger = Logger.getLogger( SeventyEight.class );
 	private static SeventyEight instance;
+	
+	private org.seventyeight.loader.ClassLoader classLoader = null;
 
 	private ODocument systemNode = null;
 
@@ -101,6 +108,9 @@ public class SeventyEight {
 		pluginsPath.mkdir();
 		uploadPath = new File( path, "upload" );
 		uploadPath.mkdir();
+
+		/* Class loader */
+		classLoader = new org.seventyeight.loader.ClassLoader( Thread.currentThread().getContextClassLoader() );
 
 		/* Initialize database */
 		try {
@@ -234,6 +244,41 @@ public class SeventyEight {
 		return node;
 	}
 	
+	public Item getItemByNode( ODocument node ) throws CouldNotLoadObjectException {		
+		String clazz = null;
+		try {
+			clazz = (String) node.field( "class" );
+			logger.debug( "Resource class: " + clazz );
+		} catch( Exception e ) {
+			logger.warn( "Null occured: " + e.getMessage() );
+			throw new CouldNotLoadObjectException( "Unable to get the class " + clazz );
+		}
+		
+		try {
+			Class<Item> eclass = (Class<Item>) Class.forName(clazz, true, classLoader);
+			Constructor<?> c = eclass.getConstructor( ODocument.class );
+			Item instance = (Item) c.newInstance( node );
+			return instance;
+		} catch( Exception e ) {
+			logger.error( "Unable to get the class " + clazz );
+			throw new CouldNotLoadObjectException( "Unable to get the class " + clazz );
+		}
+	}
+	
+	public List<ODocument> getEdges( Item item, String label ) {
+		Set<OIdentifiable> edges = graphdb.getOutEdges( item.getNode() );
+		List<ODocument> result = new LinkedList<ODocument>();
+		
+		for( OIdentifiable e : edges ) {
+			ODocument edge = (ODocument) e;
+			if( edge.field( OGraphDatabase.LABEL ) != null && edge.field( OGraphDatabase.LABEL ).equals( label ) ) {
+				result.add( edge );
+			}
+		}
+		
+		return result;
+	}
+	
 	public T addLabel() {
 		
 	}
@@ -245,9 +290,9 @@ public class SeventyEight {
 	 * @param type
 	 * @return
 	 */
-	public ODocument createEdge( ODocument from, ODocument to, EdgeType type ) {
-		logger.debug( "Creating edge(" + type + ") from " + from.getClassName() + " to " + to.getClassName() );
-		return graphdb.createEdge( from, to, type.name() );
+	public ODocument createEdge( Item from, Item to, EdgeType type ) {
+		logger.debug( "Creating edge(" + type + ") from " + from.getNode().getClassName() + " to " + to.getNode().getClassName() );
+		return graphdb.createEdge( from.getNode(), to.getNode(), type.name() );
 	}
 	
 	
@@ -286,18 +331,27 @@ public class SeventyEight {
 	}
 	
 	/**
-	 * Given a {@link Node}, retrieve the {@link Node}s that relates to it with {@link RelationshipType} and have a special property with a given value.
+	 * Given an {@link Item}, retrieve the {@link Item}s that relates to it with a label and have a special property with a given value.
 	 * @param node
 	 * @param rel
 	 * @param key
 	 * @param value
 	 * @return
 	 */
-	public List<Node> getNodeRelation( Node node, RelationshipType rel, String key, Object value ) {
-		logger.debug( "Getting relations for " + node + "(" + key + "/" + value + ")" );
-		Iterator<Relationship> it = node.getRelationships( rel, Direction.OUTGOING ).iterator();
+	public List<Item> getNodeRelation( Item item, String label, String key, Object value ) {
+		logger.debug( "Getting relations for " + item + "(" + key + "/" + value + ")" );
+		//Iterator<Relationship> it = node.getRelationships( rel, Direction.OUTGOING ).iterator();
+		List<ODocument> edges = getEdges( item, label );
+		List<Item> items = new LinkedList<Item>();
 		
-		List<Node> list = new ArrayList<Node>();
+		if( key != null ) {
+			for( ODocument i : edges ) {
+				if( i.field( key ) != null && i.field( key ).equals( value ) ) {
+					items.add( new AbstractItem )
+					//items.add( e )
+				}
+			}
+		}
 		
 		while( it.hasNext() ) {
 			Relationship r = it.next();

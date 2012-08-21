@@ -12,13 +12,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
-import org.seventyeight.GraphDragon;
-import org.seventyeight.model.AbstractObject.ExtensionRelations;
-import org.seventyeight.model.extensionpoints.CreateListener;
-import org.seventyeight.model.extensionpoints.SaveListener;
-import org.seventyeight.model.extensionpoints.ViewListener;
-import org.seventyeight.util.Date;
-import org.seventyeight.util.ExceptionUtils;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.ErrorWhileSavingException;
 import org.seventyeight.web.exceptions.InconsistentParameterException;
@@ -136,34 +129,24 @@ public abstract class AbstractItem implements Item {
 	}
 	
 	public Object getProperty( String name ) {
-		return node.getProperty( name );
+		return node.field( name );
 	}
 	
 	public void setProperty( String name, Object property ) {
 		logger.debug( "Setting " + name + " to " + property );
-		node.setProperty( name, property );
+		node.field( name, property );
 	}
-	
-	public void setProperties( Map<String, Object> properties ) {
-		Set<String> names = properties.keySet();
-		
-		for( String name : names ) {
-			node.setProperty( name, properties.get( name ) );
-		}
-	}
-		
+			
 	public Long getIdentifier() {
-		return (Long) node.getProperty( "identifier" );
+		return (Long) node.field( "identifier" );
 	}
 
 	public void setIdentifier( Long identifier ) {
 		logger.debug( "Setting id to " + identifier );
-		node.setProperty( "identifier", identifier );
+		node.field( "identifier", identifier );
 	}
-	
-	public abstract String getDisplayName();
 		
-	public Node getNode() {
+	public ODocument getNode() {
 		return node;
 	}
 	

@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.seventy-eight</groupId>
-	<artifactId>seventy-eight</artifactId>
+	<artifactId>seventy-eight-web</artifactId>
 	<version>0.1.0</version>
 	<packaging>pom</packaging>
 
-	<name>Seventy Eight</name>
+	<name>Seventy Eight Web</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
