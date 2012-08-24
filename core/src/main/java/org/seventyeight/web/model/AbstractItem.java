@@ -101,7 +101,7 @@ public abstract class AbstractItem implements Item {
 						logger.debug( "Class is " + clazz );
 						Descriptor<?> d = SeventyEight.getInstance().getDescriptor( clazz );
 						logger.debug( "Descroiptor is " + d );
-						List<ODocument> nodes = SeventyEight.getInstance().getNodeRelation( getNode(), ExtensionRelations.EXTENSION, "class", cls );
+						List<Item> nodes = SeventyEight.getInstance().getNodeRelation( AbstractItem.this, "extension", "class", cls );
 						
 						logger.debug( "Extension nodes: " + nodes.size() );
 						if( nodes.size() > 0 ) {
