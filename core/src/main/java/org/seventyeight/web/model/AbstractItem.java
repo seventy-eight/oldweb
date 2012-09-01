@@ -2,6 +2,7 @@ package org.seventyeight.web.model;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,8 +12,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.seventyeight.web.SeventyEight;
+import org.seventyeight.web.SeventyEight.EdgeType;
 import org.seventyeight.web.exceptions.ErrorWhileSavingException;
 import org.seventyeight.web.exceptions.InconsistentParameterException;
 import org.seventyeight.web.exceptions.IncorrectTypeException;
@@ -158,30 +161,26 @@ public abstract class AbstractItem implements Item {
 		return locale;
 	}
 	
-	public void updateIndexes( Index<Node> idx ) {
-		logger.debug( "Removing index(" + idx.getName() + ") for " + this );
-		idx.remove( getNode() );
-		
-		//idx.add( getNode(), "identifier", new ValueContext( identifier ).indexNumeric() );
-		idx.add( getNode(), "identifier", getIdentifier() );
-		//idx.add( getNode(), "type", getType() );
+	public void updateIndexes() {
+		/**/
 	}
 
 	
-	public Map<String, List<Node>> getExtensionNodes() {
-		Iterator<Relationship> it = node.getRelationships( Direction.OUTGOING, ExtensionRelations.EXTENSION ).iterator();
+	public Map<String, List<ODocument>> getExtensionNodes() {
+		List<ODocument> ns = SeventyEight.getInstance().getNodes( this, EdgeType.extension.toString() );
 		
-		Map<String, List<Node>> nodes = new HashMap<String, List<Node>>();
+		Map<String, List<ODocument>> nodes = new HashMap<String, List<ODocument>>();
 		
-		while( it.hasNext() ) {
-			Node node = it.next().getEndNode();
-			String clazz = (String) node.getProperty( "class", "" );
+		for( ODocument node : ns ) {
+			String clazz = node.field( "class" );
 			
-			if( !nodes.containsKey( clazz ) ) {
-				nodes.put( clazz, new ArrayList<Node>() );
+			if( clazz != null ) {
+				if( !nodes.containsKey( clazz ) ) {
+					nodes.put( clazz, new ArrayList<ODocument>() );
+				}
+				
+				nodes.get( clazz ).add( node );
 			}
-			
-			nodes.get( clazz ).add( node );
 		}
 		
 		return nodes;
@@ -194,7 +193,7 @@ public abstract class AbstractItem implements Item {
 	/**
 	 * This used for preprocessing items before viewing.
 	 */
-	public void prepareView( RequestContext request ) {
+	public void prepareView( Request request ) {
 		/* Default implementation is no op */
 	}
 	
@@ -207,14 +206,14 @@ public abstract class AbstractItem implements Item {
 	@SuppressWarnings( "unchecked" )
 	public static String getConfigurableExtensions( Class<?> clazz, AbstractItem item ) {
 		logger.debug( "I AM HERE " + clazz );
-		List<Class<Extension>> list = (List<Class<Extension>>) GraphDragon.getInstance().getExtensions( clazz );
+		List<Class<Extension>> list = (List<Class<Extension>>) SeventyEight.getInstance().getExtensions( clazz );
 		logger.debug( "THE LIST IS " + list );
 		
-		Map<String, List<Node>> nodes = null;
+		Map<String, List<ODocument>> nodes = null;
 		if( item != null ) {
 			nodes = item.getExtensionNodes();
 		} else {
-			nodes = new HashMap<String, List<Node>>();
+			nodes = new HashMap<String, List<ODocument>>();
 		}
 		
 		StringBuilder sb = new StringBuilder();
@@ -225,11 +224,11 @@ public abstract class AbstractItem implements Item {
 			if( nodes.containsKey( ext.getCanonicalName() ) ) {
 				logger.debug( "Has nodes" );
 				
-				List<Node> ns = nodes.get( ext.getCanonicalName() );
+				List<ODocument> ns = nodes.get( ext.getCanonicalName() );
 				
 				Constructor<?> c;
 				try {
-					c = ext.getConstructor( Node.class );
+					c = ext.getConstructor( ODocument.class );
 				} catch( Exception e ) {
 					logger.warn( "Unable to get constructor for " + ext );
 					continue;
@@ -238,7 +237,7 @@ public abstract class AbstractItem implements Item {
 				for( Node n : ns ) {
 					
 					try {
-						sb.append( GraphDragon.getInstance().renderObject( new StringWriter(), ext, c.newInstance( n ), "configure.vm", GraphDragon.getInstance().getDefaultTheme(), new VelocityContext() ).toString() );
+						sb.append( SeventyEight.getInstance().renderObject( new StringWriter(), ext, c.newInstance( n ), "configure.vm", GraphDragon.getInstance().getDefaultTheme(), new VelocityContext() ).toString() );
 					} catch( Exception e1 ) {
 						logger.warn( "Unable to append " + ext + "-node(" + n + "): " + e1.getMessage() );
 						logger.warn( e1 );
@@ -272,5 +271,6 @@ public abstract class AbstractItem implements Item {
 		}
 	}
 	*/
+	
 	
 }

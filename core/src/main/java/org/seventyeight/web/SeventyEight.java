@@ -1,6 +1,7 @@
 package org.seventyeight.web;
 
 import java.io.File;
+import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,8 +11,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
 import org.seventyeight.web.exceptions.CouldNotLoadObjectException;
+import org.seventyeight.web.exceptions.TemplateDoesNotExistException;
+import org.seventyeight.web.handler.Renderer;
 import org.seventyeight.web.model.AbstractItem;
+import org.seventyeight.web.model.AbstractTheme;
 import org.seventyeight.web.model.Descriptor;
 import org.seventyeight.web.model.Item;
 import org.seventyeight.web.model.Locale;
@@ -68,6 +74,8 @@ public class SeventyEight {
 	
 	/* Locale */
 	private Locale defaultLocale;
+	
+	private Renderer renderer = new Renderer();
 	
 	/**
 	 * A map of descriptors
@@ -175,6 +183,25 @@ public class SeventyEight {
 		}
 	}
 	
+	
+	/**
+	 * Get a list of extension classes that implements this 
+	 * @param extensionType
+	 * @return
+	 */
+	public <T> List<T> getExtensions( Class<T> extensionType ) {
+		logger.debug( "Getting extensions for " + extensionType );
+		List<T> r = new ArrayList<T>();
+		for( Class<Extension> e : extensions ) {
+			//if( extensionType.isAssignableFrom( e ) ) {
+			if( extensionType.equals( e ) ) {
+				r.add( (T) e );
+			}			
+		}
+
+		return r;
+	}
+	
 	private void install() {
 		logger.info( "Installing system" );
 		
@@ -266,9 +293,9 @@ public class SeventyEight {
 	}
 	
 	public List<ODocument> getEdges( Item item, String label ) {
-		Set<OIdentifiable> edges = graphdb.getOutEdges( item.getNode() );
+		Set<OIdentifiable> edges = graphdb.getOutEdges( item.getNode(), label );
 		List<ODocument> result = new LinkedList<ODocument>();
-		
+
 		for( OIdentifiable e : edges ) {
 			ODocument edge = (ODocument) e;
 			if( edge.field( OGraphDatabase.LABEL ) != null && edge.field( OGraphDatabase.LABEL ).equals( label ) ) {
@@ -279,8 +306,21 @@ public class SeventyEight {
 		return result;
 	}
 	
-	public T addLabel() {
+	public List<ODocument> getNodes( Item item, String label ) {
+		Set<OIdentifiable> edges = graphdb.getOutEdges( item.getNode(), label );
+		List<ODocument> nodes = new LinkedList<ODocument>();
 		
+		for( OIdentifiable e : edges ) {
+			nodes.add( graphdb.getOutVertex( e ) );
+		}
+		
+		return nodes;
+	}
+	
+	public Item setLabel( Item item, String label ) {
+		item.getNode().field( OGraphDatabase.LABEL, label );
+		
+		return item;
 	}
 	
 	/**
@@ -408,4 +448,28 @@ public class SeventyEight {
 		
 		return objects;
 	}
+	
+	
+	
+	public Writer render( Writer writer, String template, AbstractTheme theme, VelocityContext context, Locale locale ) throws TemplateDoesNotExistException {
+		/* Resolve template */
+		Template t = null;
+		logger.debug( "Rendering " + template );
+		try {
+			t = renderer.getTemplate( theme, template );
+		} catch( TemplateDoesNotExistException e ) {
+			/* If it goes wrong, try the default theme */
+			t = renderer.getTemplate( defaultTheme, template );
+		}
+
+		logger.debug( "Using the template file: " + t.getName() );
+		
+		/* I18N */
+		context.put( "locale", locale );
+		
+		t.merge( context, writer );
+		
+		return writer;
+	}
+
 }
