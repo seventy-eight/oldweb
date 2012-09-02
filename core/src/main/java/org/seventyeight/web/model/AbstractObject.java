@@ -45,7 +45,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 			logger.debug( "Saving Object" );
 			
 			/* Try to get language */
-			String lang = request.getKey( "language" );
+			String lang = request.getParameter( "language" );
 			logger.debug( "LANG: " + lang );
 			if( lang != null ) {
 				logger.debug( "SETTING" );

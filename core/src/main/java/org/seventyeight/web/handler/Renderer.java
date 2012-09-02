@@ -2,6 +2,7 @@ package org.seventyeight.web.handler;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -9,10 +10,14 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.seventyeight.web.SeventyEight;
+import org.seventyeight.web.exceptions.DictionaryDoesNotExistException;
 import org.seventyeight.web.exceptions.TemplateDoesNotExistException;
 import org.seventyeight.web.model.AbstractTheme;
+import org.seventyeight.web.model.Locale;
 
 
 public class Renderer {
@@ -123,6 +128,121 @@ public class Renderer {
 	public VelocityEngine getRenderer() {
 		return renderer;
 	}
+	
+	public Render getRender( Writer writer ) {
+		return new Render( writer );
+	}
+	
+	public class Render {
+		private Writer writer;
+		private AbstractTheme theme;
+		private Locale locale;
+		
+		public Render( Writer writer ) {
+			this( writer, SeventyEight.getInstance().getDefaultTheme(), SeventyEight.getInstance().getDefaultLocale() );
+		}
+		
+		public Render( Writer writer, AbstractTheme theme, Locale locale ) {
+			this.writer = writer;
+			this.theme = theme;
+			this.locale = locale;
+		}
+		
+		public String render() {
+			return writer.toString();
+		}
+		
+
+		public Render render( String template, VelocityContext context ) throws TemplateDoesNotExistException {
+			/* Resolve template */
+			Template t = null;
+			logger.debug( "Rendering " + template );
+			try {
+				t = getTemplate( theme, template );
+			} catch( TemplateDoesNotExistException e ) {
+				/* If it goes wrong, try the default theme */
+				t = getTemplate( SeventyEight.getInstance().getDefaultTheme(), template );
+			}
+
+			logger.debug( "Using the template file: " + t.getName() );
+			
+			/* I18N */
+			context.put( "locale", locale );
+			
+			t.merge( context, writer );
+			
+			return this;
+		}
+		
+		public Render render( Object object, String template, VelocityContext context ) throws TemplateDoesNotExistException {
+			context.put( "item", object );
+			return render( template, context );
+		}
+		
+		public Render renderObject( Class<?> clazz, Object object, String method, VelocityContext context ) throws TemplateDoesNotExistException {
+			/* Resolve template */
+			String template = getUrlFromClass( clazz.getCanonicalName(), method );
+			context.put( "item", object );
+			try {
+				context.put( "i18n", SeventyEight.getInstance().getI18N().getDictionary( clazz ) );
+			} catch( DictionaryDoesNotExistException e ) {
+				context.put( "i18n", null );
+			}
+			
+			return render( template, context );
+		}
+
+	}
+		
+	
+	public List<String> getTemplateFile( Object object, String method, int depth ) {
+		/* Resolve template */
+		List<String> list = new ArrayList<String>();
+		Class<?> clazz = object.getClass();
+		int cnt = 0;
+		while( clazz != Object.class && clazz != null && cnt != depth ) {
+			list.add( getUrlFromClass( clazz.getCanonicalName(), method ) );
+			cnt++;
+			clazz = clazz.getSuperclass();
+		}
+		
+		return list;
+	}
+	
+	public List<String> getTemplateFile( Class<?> clazz, String method, int depth ) {
+		/* Resolve template */
+		List<String> list = new ArrayList<String>();
+		int cnt = 0;
+		while( clazz != Object.class && clazz != null && cnt != depth ) {
+			list.add( getUrlFromClass( clazz.getCanonicalName(), method ) );
+			cnt++;
+			clazz = clazz.getSuperclass();
+		}
+		
+		return list;
+	}
+	
+	/**
+	 * Given an object and the velocity method, get the url of the file.
+	 * @param object - Some object
+	 * @param method - A velocity method, view.vm or configure.vm
+	 * @return A relative path to the velocity file
+	 */
+	public String getUrlFromClass( Object object, String method ) {
+		return getUrlFromClass( object.getClass().getCanonicalName(), method );
+	}
+	
+	/**
+	 * Given a string representation of a class and the velocity method, get the url of the file.
+	 * @param clazz - A string representing a class
+	 * @param method - A velocity method, view.vm or configure.vm
+	 * @return A relative path to the velocity file
+	 */
+	public String getUrlFromClass( String clazz, String method ) {
+		return clazz.replace( '.', '/' ).replace( '$', '/' ) + "/" + method;
+	}
+
+
 	
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

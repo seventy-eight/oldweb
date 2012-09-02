@@ -58,6 +58,7 @@ public class SeventyEight {
 	
 	public enum EdgeType {
 		owner,
+		contributor,
 		extension,
 		translation,
 		
@@ -76,6 +77,8 @@ public class SeventyEight {
 	private Locale defaultLocale;
 	
 	private Renderer renderer = new Renderer();
+	private AbstractTheme defaultTheme;
+	private I18N i18n;
 	
 	/**
 	 * A map of descriptors
@@ -224,6 +227,11 @@ public class SeventyEight {
 		
 		try {
 			graphdb.createEdgeType( EdgeType.owner.name() );
+		} catch( Exception e ) {
+			/* No op */
+		}
+		try {
+			graphdb.createEdgeType( EdgeType.contributor.name() );
 		} catch( Exception e ) {
 			/* No op */
 		}
@@ -416,6 +424,18 @@ public class SeventyEight {
 		return defaultLocale;
 	}
 	
+	public AbstractTheme getDefaultTheme() {
+		return defaultTheme;
+	}
+	
+	public Renderer getRenderer() {
+		return renderer;
+	}
+	
+	public I18N getI18N() {
+		return i18n;
+	}
+	
 	/* 
 	 * JSON
 	 */
@@ -451,25 +471,6 @@ public class SeventyEight {
 	
 	
 	
-	public Writer render( Writer writer, String template, AbstractTheme theme, VelocityContext context, Locale locale ) throws TemplateDoesNotExistException {
-		/* Resolve template */
-		Template t = null;
-		logger.debug( "Rendering " + template );
-		try {
-			t = renderer.getTemplate( theme, template );
-		} catch( TemplateDoesNotExistException e ) {
-			/* If it goes wrong, try the default theme */
-			t = renderer.getTemplate( defaultTheme, template );
-		}
 
-		logger.debug( "Using the template file: " + t.getName() );
-		
-		/* I18N */
-		context.put( "locale", locale );
-		
-		t.merge( context, writer );
-		
-		return writer;
-	}
 
 }

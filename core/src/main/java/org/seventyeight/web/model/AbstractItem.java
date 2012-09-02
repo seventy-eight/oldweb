@@ -22,6 +22,7 @@ import org.seventyeight.web.exceptions.IncorrectTypeException;
 import org.seventyeight.web.exceptions.ParameterDoesNotExistException;
 import org.seventyeight.web.exceptions.ResourceDoesNotExistException;
 import org.seventyeight.web.exceptions.TemplateDoesNotExistException;
+import org.seventyeight.web.handler.Renderer.Render;
 
 import com.google.gson.JsonObject;
 import com.orientechnologies.orient.core.record.impl.ODocument;
@@ -104,7 +105,7 @@ public abstract class AbstractItem implements Item {
 						logger.debug( "Class is " + clazz );
 						Descriptor<?> d = SeventyEight.getInstance().getDescriptor( clazz );
 						logger.debug( "Descroiptor is " + d );
-						List<Item> nodes = SeventyEight.getInstance().getNodeRelation( AbstractItem.this, "extension", "class", cls );
+						List<Item> nodes = SeventyEight.getInstance().getNodeRelation( AbstractItem.this, EdgeType.extension.toString(), "class", cls );
 						
 						logger.debug( "Extension nodes: " + nodes.size() );
 						if( nodes.size() > 0 ) {
@@ -118,7 +119,7 @@ public abstract class AbstractItem implements Item {
 							logger.debug( "Saving configurable " + e );
 							e.save( request, o );
 							logger.debug( "Configurable saved" );
-							GraphDragon.getInstance().addNodeRelation( getNode(), e.getNode(), ExtensionRelations.EXTENSION, false );
+							SeventyEight.getInstance().addNodeRelation( getNode(), e.getNode(), EdgeType.extension.toString(), false );
 						}
 					} catch( Exception e ) {
 						logger.warn( "Unable to get descriptor for " + o + ": " + e.getMessage() );
@@ -218,6 +219,8 @@ public abstract class AbstractItem implements Item {
 		
 		StringBuilder sb = new StringBuilder();
 		
+		Render render = SeventyEight.getInstance().getRenderer().getRender( new StringWriter() );
+		
 		for( Class<Extension> ext : list ) {
 			logger.debug( "CLASS: " + ext.getCanonicalName() );
 			
@@ -234,10 +237,11 @@ public abstract class AbstractItem implements Item {
 					continue;
 				}
 				
-				for( Node n : ns ) {
+				for( ODocument n : ns ) {
 					
 					try {
-						sb.append( SeventyEight.getInstance().renderObject( new StringWriter(), ext, c.newInstance( n ), "configure.vm", GraphDragon.getInstance().getDefaultTheme(), new VelocityContext() ).toString() );
+						//sb.append( SeventyEight.getInstance().getRenderer().renderObject( new StringWriter(), ext, c.newInstance( n ), "configure.vm", SeventyEight.getInstance().getDefaultTheme(), new VelocityContext(), SeventyEight.getInstance().getDefaultLocale() ).toString() );
+						render.renderObject( ext, c.newInstance( n ), "configure.vm", new VelocityContext() );
 					} catch( Exception e1 ) {
 						logger.warn( "Unable to append " + ext + "-node(" + n + "): " + e1.getMessage() );
 						logger.warn( e1 );
@@ -247,7 +251,8 @@ public abstract class AbstractItem implements Item {
 			} else {
 				logger.debug( "No configured nodes" );
 				try {
-					sb.append( GraphDragon.getInstance().renderObject( new StringWriter(), ext, null, "configure.vm", GraphDragon.getInstance().getDefaultTheme(), new VelocityContext() ).toString() );
+					//sb.append( SeventyEight.getInstance().renderObject( new StringWriter(), ext, null, "configure.vm", SeventyEight.getInstance().getDefaultTheme(), new VelocityContext(), SeventyEight.getInstance().getDefaultLocale() ).toString() );
+					render.renderObject( ext, null, "configure.vm", new VelocityContext() );
 				} catch( TemplateDoesNotExistException e1 ) {
 					logger.warn( "Unable to append " + ext + ": " + e1.getMessage() );
 					logger.warn( e1 );
