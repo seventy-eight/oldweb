@@ -4,9 +4,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.resource.spi.IllegalStateException;
+
 import org.apache.log4j.Logger;
+import org.seventyeight.web.SeventyEight;
+import org.seventyeight.web.SeventyEight.EdgeType;
 import org.seventyeight.web.exceptions.ErrorWhileSavingException;
 import org.seventyeight.web.exceptions.InconsistentParameterException;
+import org.seventyeight.web.exceptions.TextNodeDoesNotExistException;
+import org.seventyeight.web.model.resources.User;
 
 
 import com.google.gson.JsonObject;
@@ -56,47 +62,45 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 					language = request.getUser().getLanguage();
 				} else {
 					logger.debug( "DEFAULT" );
-					language = GraphDragon.getInstance().getDefaultLocale().getLanguage();
+					language = SeventyEight.getInstance().getDefaultLocale().getLanguage();
 				}
 			}
 			logger.debug( "Language is " + language );
 			
 			/* Setting title */
-			String title = request.getKey( "title" );
+			String title = request.getParameter( "title" );
 			logger.debug( "Title is " + title );
 			if( title != null ) {
 				setText( "title", title, language );
-				//node.setProperty( "title", title );
 			}
 			
-			String subtitle = request.getKey( "subtitle" );
+			String subtitle = request.getParameter( "subtitle" );
 			if( subtitle != null ) {
-				node.setProperty( "subtitle", subtitle );
+				node.field( "subtitle", subtitle );
 			}
 			
 			/* Setting description */
-			String description = request.getKey( "description" );
+			String description = request.getParameter( "description" );
 			if( description != null ) {
 				setText( "description", description, language );
-				//node.setProperty( "description", description );
 			}
 			
 			/* Access groups */
-			String[] accessGroupIds = request.getKeys( __ACCESS_GROUP_NAME );
+			String[] accessGroupIds = request.getParameterValues( __ACCESS_GROUP_NAME );
 			if( accessGroupIds != null ) {
-				addGroupsById( accessGroupIds, GroupRelation.GROUP_HAS_ACCESS );				
+				addGroupsById( accessGroupIds, EdgeType.readAccess.toString() );				
 			}
 			
 			/* Editor groups */
-			String[] editorGroupIds = request.getKeys( __EDITOR_GROUP_NAME );
+			String[] editorGroupIds = request.getParameterValues( __EDITOR_GROUP_NAME );
 			if( editorGroupIds != null ) {
-				addGroupsById( editorGroupIds, GroupRelation.GROUP_CAN_EDIT );				
+				addGroupsById( editorGroupIds, EdgeType.writeAccess.toString() );
 			}
 			
 			/* Review groups */
-			String[] reviewGroupIds = request.getKeys( __REVIEW_GROUP_NAME );
+			String[] reviewGroupIds = request.getParameterValues( __REVIEW_GROUP_NAME );
 			if( reviewGroupIds != null ) {
-				addGroupsById( reviewGroupIds, GroupRelation.GROUP_CAN_REVIEW );				
+				addGroupsById( reviewGroupIds, EdgeType.reviewAccess.toString() );				
 			}
 		}
 		
@@ -109,11 +113,13 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 			AbstractObject.this.setOwner( request.getUser() );
 		}
 		
+		/*
 		@Override
 		public void updateIndexes() {
 			logger.debug( "UPDATING INDEXES: " + getIdentifier() );
 			object.updateIndexes( GraphDragon.getInstance().getResourceIndex() );
 		}
+		*/
 		
 	}
 	
@@ -131,7 +137,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 	}
 	
 	public Text getText( String language, String property ) throws TextNodeDoesNotExistException {
-		Node n = getTextNode( language, property );
+		ODocument n = getTextNode( language, property );
 		if( n != null ) {
 			return new Text( n );
 		} else {
@@ -145,19 +151,19 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 	 * @param property
 	 * @return
 	 */
-	public Node getTextNode( String language, String property ) {
-		Iterator<Relationship> it = node.getRelationships( Direction.OUTGOING, I18N.TRANSLATION ).iterator();
-		
-		Node d = null;
+	public ODocument getTextNode( String language, String property ) {
+		List<ODocument> edges = SeventyEight.getInstance().getEdges( this, EdgeType.translation.toString() );
+		ODocument d = null;
 
-		while( it.hasNext() ) {
-			Relationship r = it.next();
+		for( ODocument e : edges ) {
 
-			if( r.getProperty( "property", "" ).equals( property ) ) {
-				if( r.getProperty( "language", "" ).equals( language ) ) {
-					return r.getEndNode();
+			String prop = e.field( "property" );
+			if( prop != null && prop.equals( property ) ) {
+				String lang  = e.field( "language" );
+				if( lang != null && lang.equals( language ) ) {
+					return SeventyEight.getInstance().getOutNode( e );
 				} else {
-					d = r.getEndNode();
+					d = SeventyEight.getInstance().getOutNode( e );
 				}
 			}
 		}
@@ -165,8 +171,17 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 		return d;
 	}
 	
-	public User getOwner() {
-		return new User( node.getSingleRelationship( Relationships.OWNER, Direction.OUTGOING ).getEndNode() );
+	public User getOwner() throws IllegalStateException {
+		List<ODocument> nodes = SeventyEight.getInstance().getNodes( this, EdgeType.owner.toString() );
+		if( nodes.size() == 1 ) {
+			return new User( nodes.get( 0 ) );
+		} else {
+			if( nodes.size() > 1 ) {
+				throw new IllegalStateException( "Too many owners" );
+			} else {
+				throw new IllegalStateException( "No owner" );
+			}
+		}
 	}
 
 	public void setOwner( User owner ) {
@@ -206,7 +221,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 		return getGroups( GroupRelation.GROUP_HAS_ACCESS );
 	}
 	
-	public void addGroupsById( String[] accessGroupIds, GroupRelation rel ) {
+	public void addGroupsById( String[] accessGroupIds, String label ) {
 		logger.debug( "Adding " + rel.name() );
 		removeGroups( rel );
 		

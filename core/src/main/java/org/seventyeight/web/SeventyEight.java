@@ -343,6 +343,15 @@ public class SeventyEight {
 		return graphdb.createEdge( from.getNode(), to.getNode(), type.name() );
 	}
 	
+	public ODocument getOutNode( ODocument edge ) throws IllegalStateException {
+		ODocument node = graphdb.getOutVertex( edge );
+		if( node == null ) {
+			throw new IllegalStateException( "End node for " + edge + " not found" );
+		} else {
+			return node;
+		}
+	}
+	
 	
 	/**
 	 * Add an edge

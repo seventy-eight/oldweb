@@ -17,7 +17,6 @@ public class Text {
 		return node.field("text");
 	}
 	
-	/*
 	public static Text create( Object item, String property, String language ) {
 		//Node node = GraphDragon.getInstance().getGraphDB().createNode();
 		//Relationship rel = item.node.createRelationshipTo( node, I18N.TRANSLATION );
@@ -26,5 +25,4 @@ public class Text {
 		
 		return new Text( node );
 	}
-	*/
 }
