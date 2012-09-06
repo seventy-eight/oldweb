@@ -9,9 +9,12 @@ import javax.resource.spi.IllegalStateException;
 import org.apache.log4j.Logger;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.SeventyEight.EdgeType;
+import org.seventyeight.web.SeventyEight.GroupEdgeType;
+import org.seventyeight.web.SeventyEight.ResourceEdgeType;
 import org.seventyeight.web.exceptions.ErrorWhileSavingException;
 import org.seventyeight.web.exceptions.InconsistentParameterException;
 import org.seventyeight.web.exceptions.TextNodeDoesNotExistException;
+import org.seventyeight.web.model.resources.Group;
 import org.seventyeight.web.model.resources.User;
 
 
@@ -40,7 +43,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 		protected AbstractObject object;
 		protected String language;
 		
-		public ObjectSave( AbstractObject object, Request configuration, JsonObject jsonData ) {
+		public ObjectSave( AbstractObject object, ParameterRequest configuration, JsonObject jsonData ) {
 			super( object, configuration, jsonData );
 			
 			this.object = object;
@@ -88,19 +91,19 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 			/* Access groups */
 			String[] accessGroupIds = request.getParameterValues( __ACCESS_GROUP_NAME );
 			if( accessGroupIds != null ) {
-				addGroupsById( accessGroupIds, EdgeType.readAccess.toString() );				
+				addGroupsById( accessGroupIds, GroupEdgeType.readAccess );				
 			}
 			
 			/* Editor groups */
 			String[] editorGroupIds = request.getParameterValues( __EDITOR_GROUP_NAME );
 			if( editorGroupIds != null ) {
-				addGroupsById( editorGroupIds, EdgeType.writeAccess.toString() );
+				addGroupsById( editorGroupIds, GroupEdgeType.writeAccess );
 			}
 			
 			/* Review groups */
 			String[] reviewGroupIds = request.getParameterValues( __REVIEW_GROUP_NAME );
 			if( reviewGroupIds != null ) {
-				addGroupsById( reviewGroupIds, EdgeType.reviewAccess.toString() );				
+				addGroupsById( reviewGroupIds, GroupEdgeType.reviewAccess );				
 			}
 		}
 		
@@ -133,7 +136,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 			logger.debug( "The " + property + " text node for " + language + " does not exist, creating it" );
 			tt = Text.create( AbstractObject.this, property, language );
 		}
-		tt.setText( language, value );
+		tt.setText( value );
 	}
 	
 	public Text getText( String language, String property ) throws TextNodeDoesNotExistException {
@@ -152,7 +155,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 	 * @return
 	 */
 	public ODocument getTextNode( String language, String property ) {
-		List<ODocument> edges = SeventyEight.getInstance().getEdges( this, EdgeType.translation.toString() );
+		List<ODocument> edges = SeventyEight.getInstance().getEdges( this, ResourceEdgeType.translation );
 		ODocument d = null;
 
 		for( ODocument e : edges ) {
@@ -172,7 +175,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 	}
 	
 	public User getOwner() throws IllegalStateException {
-		List<ODocument> nodes = SeventyEight.getInstance().getNodes( this, EdgeType.owner.toString() );
+		List<ODocument> nodes = SeventyEight.getInstance().getNodes( this, ResourceEdgeType.owner );
 		if( nodes.size() == 1 ) {
 			return new User( nodes.get( 0 ) );
 		} else {
@@ -188,25 +191,22 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 		/* Removing all owners */
 		removeAllOwners();
 		/* Adding new owner */
-		node.createRelationshipTo( owner.getNode(), Relationships.OWNER );
+		//SeventyEight.getInstance().createEdge( this, owner, EdgeType.owner );
 	}
 	
 	protected void removeAllOwners() {
 		logger.debug( "Removing all owners for " + this );
-		Iterator<Relationship> i = node.getRelationships( Relationships.OWNER ).iterator();
-		while( i.hasNext() ) {
-			i.next().delete();
-		}
+		SeventyEight.getInstance().removeOutEdges( this, ResourceEdgeType.owner );
 	}
 	
-	public List<Group> getGroups( GroupRelation rel ) {
-		logger.debug( "Getting all groups for  " + rel.name() );
+	public List<Group> getGroups( GroupEdgeType rel ) {
+		logger.debug( "Getting all groups for  " + rel.toString() );
 		
 		List<Group> groups = new ArrayList<Group>();
-		
-		Iterator<Relationship> i = node.getRelationships( rel ).iterator();
-		while( i.hasNext() ) {
-			Group grp = new Group( i.next().getEndNode() );
+
+		List<ODocument> nodes = SeventyEight.getInstance().getNodes( this, rel );
+		for( ODocument node : nodes ) {
+			Group grp = new Group( node );
 			groups.add( grp );
 		}
 		
@@ -214,38 +214,35 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 	}
 	
 	public List<Group> getGroups( String namedEnum ) {
-		return getGroups( GroupRelation.valueOf( namedEnum ) );
+		return getGroups( GroupEdgeType.valueOf( namedEnum ) );
 	}
 	
 	public List<Group> getAccessGroups() {
-		return getGroups( GroupRelation.GROUP_HAS_ACCESS );
+		return getGroups( GroupEdgeType.readAccess );
 	}
 	
-	public void addGroupsById( String[] accessGroupIds, String label ) {
-		logger.debug( "Adding " + rel.name() );
-		removeGroups( rel );
+	public void addGroupsById( String[] accessGroupIds, GroupEdgeType type ) {
+		logger.debug( "Adding " + type.toString() );
+		removeGroups( type );
 		
 		for( String agid : accessGroupIds ) {
 			try {
 				long id = new Long( agid );
-				Group grp = (Group) GraphDragon.getInstance().getResource( id );
-				addGroup( grp, rel );
+				Group grp = (Group) SeventyEight.getInstance().getResource( id );
+				addGroup( grp, type );
 			} catch( Exception e ) {
 				logger.warn( "Unable to add group: " + e.getMessage() );
 			}
 		}
 	}
 	
-	public void addGroup( Group group, GroupRelation rel ) {
-		node.createRelationshipTo( group.getNode(), rel );
+	public void addGroup( Group group, GroupEdgeType type ) {
+		SeventyEight.getInstance().createEdge( this, group, type );
 	}
 	
-	protected void removeGroups( GroupRelation rel ) {
-		logger.debug( "Removing all " + rel.name() + " for " + this );
-		Iterator<Relationship> i = node.getRelationships( rel ).iterator();
-		while( i.hasNext() ) {
-			i.next().delete();
-		}
+	protected void removeGroups( GroupEdgeType type ) {
+		logger.debug( "Removing all " + type.toString() + " for " + this );
+		SeventyEight.getInstance().removeOutEdges( this, type );
 	}
 	
 	public void setTitle( String title, Locale locale ) {
@@ -263,25 +260,31 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 	}
 	
 	public void setSubTitle( String subTitle ) {
-		node.setProperty( "subtitle", subTitle );
+		node.field( "subtitle", subTitle );
+		node.save();
 	}
 
 	public String getSubTitle() {
-		return (String) node.getProperty( "subtitle", "" );
+		return getField( "subtitle", "" );
 	}
 	
 	public void setDescription( String description, Locale locale ) {
 		setText( "description", description, locale.getLanguage() );
 	}
 
+	/**
+	 * Should be text?
+	 * @return
+	 */
 	public String getDescription() {
-		return (String) node.getProperty( "description", "" );
+		return getField( "description", "" );
 	}
 	
 	public Descriptor<?> getDescriptor() {
-		return GraphDragon.getInstance().getDescriptor( getClass() );
+		return SeventyEight.getInstance().getDescriptor( getClass() );
 	}
-		
+	
+	/*
 	public void updateIndexes( Index<Node> idx ) {
 		super.updateIndexes( idx );
 		
@@ -289,7 +292,6 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 		idx.add( getNode(), "title", getTitle().toLowerCase() );
 		idx.add( getNode(), "class", getClass() );
 		
-		/**/
 		List<Group> gs = getAccessGroups();
 		logger.debug( "Storing accessible groups" );
 		for( Group g : gs ) {
@@ -300,6 +302,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 		logger.debug( "Store owner " );
 		idx.add( getNode(), "owner", getOwner().getIdentifier() );
 	}
+	*/
 	
 	@Override
 	public String toString() {

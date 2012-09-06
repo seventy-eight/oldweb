@@ -1,57 +1,49 @@
-package org.seventyeight.model.resources;
+package org.seventyeight.web.model.resources;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.index.IndexHits;
-import org.seventyeight.GraphDragon;
-import org.seventyeight.annotations.ResourceType;
-import org.seventyeight.exceptions.ErrorWhileSavingException;
-import org.seventyeight.exceptions.InconsistentParameterException;
-import org.seventyeight.exceptions.IncorrectTypeException;
-import org.seventyeight.exceptions.ParameterDoesNotExistException;
-import org.seventyeight.exceptions.ResourceDoesNotExistException;
-import org.seventyeight.exceptions.UnableToInstantiateObjectException;
-import org.seventyeight.model.AbstractObject;
-import org.seventyeight.model.AbstractResource;
-import org.seventyeight.model.Extension;
-import org.seventyeight.model.Portrait;
-import org.seventyeight.model.RequestContext;
-import org.seventyeight.model.ResourceDescriptor;
+import org.seventyeight.web.SeventyEight;
+import org.seventyeight.web.SeventyEight.EdgeType;
+import org.seventyeight.web.exceptions.ErrorWhileSavingException;
+import org.seventyeight.web.exceptions.InconsistentParameterException;
+import org.seventyeight.web.exceptions.IncorrectTypeException;
+import org.seventyeight.web.exceptions.ParameterDoesNotExistException;
+import org.seventyeight.web.exceptions.ResourceDoesNotExistException;
+import org.seventyeight.web.exceptions.UnableToInstantiateObjectException;
+import org.seventyeight.web.graph.Edge;
+import org.seventyeight.web.model.AbstractResource;
+import org.seventyeight.web.model.Extension;
+import org.seventyeight.web.model.ParameterRequest;
+import org.seventyeight.web.model.ResourceDescriptor;
 
 import com.google.gson.JsonObject;
+import com.orientechnologies.orient.core.record.impl.ODocument;
 
 
-@ResourceType
 public class Group extends AbstractResource {
 	
 	private static Logger logger = Logger.getLogger( Group.class );
 	
+	public enum GroupMember implements EdgeType {
+		member
+	}
+	
 	public boolean selected = false;
 	
-	public enum RelationShips implements RelationshipType {
-		MEMBER
-	}
-
-
-	public Group( Node node ) {
+	public Group( ODocument node ) {
 		super( node );
 	}
 
-	public void save( RequestContext request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+	public void save( ParameterRequest request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
 		doSave( new GroupSaveImpl( this, request, jsonData ) );
 	}
 	
 	public class GroupSaveImpl extends ResourceSaveImpl {
 
-		public GroupSaveImpl( AbstractResource resource, RequestContext request, JsonObject jsonData ) {
+		public GroupSaveImpl( AbstractResource resource, ParameterRequest request, JsonObject jsonData ) {
 			super( resource, request, jsonData );
 		}
 		
@@ -59,15 +51,14 @@ public class Group extends AbstractResource {
 			super.save();
 			
 			/* Save the list of members */
-			String[] users = request.getKeys( "users" );
+			String[] users = request.getParameterValues( "users" );
 			if( users != null ) {
-				GraphDragon gd = GraphDragon.getInstance();
 				for( String user : users ) {
 					try {
 						logger.debug( "Adding " + user + " to group" );
 						Long id = new Long( user );
-						AbstractResource r = gd.getResource( id );
-						node.createRelationshipTo( r.getNode(), RelationShips.MEMBER );
+						AbstractResource r = SeventyEight.getInstance().getResource( id );
+						SeventyEight.getInstance().createEdge( resource, r, GroupMember.member );
 					} catch( Exception e ) {
 						logger.warn( "Unable to get user resource: " + e.getMessage() );
 					}
@@ -81,8 +72,8 @@ public class Group extends AbstractResource {
 		logger.debug( "Adding user to group " + this );
 		List<User> users = new ArrayList<User>();
 		
-		List<Node> nodes = AbstractResource.getResources( User.__TYPENAME );
-		for( Node node : nodes ) {
+		List<ODocument> nodes = AbstractResource.getResources( User.__TYPENAME );
+		for( ODocument node : nodes ) {
 			User user = new User( node );
 			logger.debug( "Adding " + user + " to group" );
 			users.add( user );
@@ -92,19 +83,19 @@ public class Group extends AbstractResource {
 	}
 	
 	public void addMember( User user ) {
-		node.createRelationshipTo( user.getNode(), RelationShips.MEMBER );
+		SeventyEight.getInstance().createEdge( this, user, GroupMember.member );
 	}
 	
 	public boolean removeMember( User user ) {
 		logger.debug( "Removing member " + user );
-		Iterator<Relationship> rls = node.getRelationships( Direction.OUTGOING, RelationShips.MEMBER ).iterator();
+		//Iterator<Relationship> rls = node.getRelationships( Direction.OUTGOING, RelationShips.MEMBER ).iterator();
+		List<Edge> edges = SeventyEight.getInstance().getEdges2( this, GroupMember.member );
 		
-		while( rls.hasNext() ) {
-			Relationship rl = rls.next();
-			Node node = rl.getEndNode();
-			if( node.getId() == user.getNode().getId() ) {
-				logger.debug( "Deleting node " + rl );
-				rl.delete();
+		//while( rls.hasNext() ) {
+		for( Edge edge : edges ) {
+			if( edge.getOutNode().equals( user.getNode() ) ) {
+				logger.debug( "Deleting node " + edge );
+				edge.delete();
 				return true;
 			}
 		}
@@ -113,21 +104,15 @@ public class Group extends AbstractResource {
 	}
 	
 	public void removeMembers() {
-		Iterator<Relationship> rls = node.getRelationships( Direction.OUTGOING, RelationShips.MEMBER ).iterator();
-		
-		while( rls.hasNext() ) {
-			rls.next().delete();
-		}
+		SeventyEight.getInstance().removeOutEdges( this, GroupMember.member );
 	}
 	
 	public boolean isMember( User user ) {
 		logger.debug( "is " + user + " member of " + this );
-		Iterator<Relationship> rls = node.getRelationships( Direction.OUTGOING, RelationShips.MEMBER ).iterator();
+		List<Edge> edges = SeventyEight.getInstance().getEdges2( this, GroupMember.member );
 		
-		while( rls.hasNext() ) {
-			Relationship rl = rls.next();
-			Node node = rl.getEndNode();
-			if( node.getId() == user.getNode().getId() ) {
+		for( Edge edge : edges ) {
+			if( edge.getOutNode().equals( user.getNode() ) ) {
 				return true;
 			}
 		}
@@ -139,11 +124,13 @@ public class Group extends AbstractResource {
 		return "group";
 	}
 	
+	/*
 	public void updateIndexes( Index<Node> idx ) {
 		super.updateIndexes( idx );
 		
 		logger.debug( "Adding group indexes for " + this );
 	}
+	*/
 	
 	public boolean isSelected() {
 		return selected;

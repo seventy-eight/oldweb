@@ -1,4 +1,4 @@
-package org.seventyeight.model;
+package org.seventyeight.web.model;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -8,41 +8,36 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.index.IndexHits;
-import org.neo4j.index.lucene.ValueContext;
-import org.seventyeight.GraphDragon;
-import org.seventyeight.exceptions.CouldNotLoadResourceException;
-import org.seventyeight.exceptions.ErrorWhileSavingException;
-import org.seventyeight.exceptions.InconsistentParameterException;
-import org.seventyeight.exceptions.TemplateDoesNotExistException;
-import org.seventyeight.exceptions.ThemeDoesNotExistException;
-import org.seventyeight.model.resources.User;
-import org.seventyeight.util.Date;
+import org.seventyeight.web.SeventyEight;
+import org.seventyeight.web.exceptions.CouldNotLoadResourceException;
+import org.seventyeight.web.exceptions.ErrorWhileSavingException;
+import org.seventyeight.web.exceptions.InconsistentParameterException;
+import org.seventyeight.web.exceptions.ThemeDoesNotExistException;
+import org.seventyeight.web.model.resources.User;
+import org.seventyeight.web.util.Date;
 
 import com.google.gson.JsonObject;
+import com.orientechnologies.orient.core.record.impl.ODocument;
 
 
 public abstract class AbstractResource extends AbstractObject implements Portraitable {
 	
 	private static Logger logger = Logger.getLogger( AbstractResource.class );
 
-	protected AbstractResource( Node node ) {
+	protected AbstractResource( ODocument node ) {
 		super( node );
 	}
 	
-	public AbstractResource( Node node, Locale locale ) {
+	public AbstractResource( ODocument node, Locale locale ) {
 		super( node, locale );
 	}
 	
 	public class ResourceSaveImpl extends ObjectSave {
-		public ResourceSaveImpl( AbstractResource resource, RequestContext configuration, JsonObject jsonData ) {
+		protected AbstractResource resource;
+		public ResourceSaveImpl( AbstractResource resource, ParameterRequest configuration, JsonObject jsonData ) {
 			super( resource, configuration, jsonData );
+			
+			this.resource = resource;
 		}
 		
 		@Override
@@ -55,29 +50,29 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 		public void save() throws InconsistentParameterException, ErrorWhileSavingException {
 			super.save();
 			
-			String theme = request.getKey( "theme" );
+			String theme = request.getParameter( "theme" );
 			if( theme != null ) {
 				logger.debug( "Setting theme: " + theme );
-				node.setProperty( "theme", theme );
+				node.field( "theme", theme );
 			}
 						
-			Integer rev = (Integer) node.getProperty( "revision", 0 );
+			Integer rev = getField( "revision", 0 );
 			logger.debug( "REVISION: " + rev );
 			if( rev != null ) {
-				node.setProperty( "revision", rev + 1 );
+				node.field( "revision", rev + 1 );
 			}
 			
 			if( rev > 0 ) {
-				node.setProperty( "updated", new Date().getDate().getTime() );
+				node.field( "updated", new Date().getTime() );
 			}
 		}
 		
 		public void setOwner() {
-			Long ownerId = request.getIntegerKey( "owner" );
+			Long ownerId = request.getValue( "owner" );
 			if( ownerId != null ) {
 				logger.debug( "OwnerId is " + ownerId );
 				try {
-					AbstractResource o = GraphDragon.getInstance().getResource( ownerId );
+					AbstractResource o = SeventyEight.getInstance().getResource( ownerId );
 					if( o instanceof User ) {
 						logger.debug( "Owner is " + ownerId );
 						AbstractResource.this.setOwner( (User)o );
@@ -100,20 +95,19 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 	
 		
 	public Date getCreatedAsDate() {
-		return new Date( (Long)node.getProperty( "created" ) );
+		return new Date( (Long)getField( "created" ) );
 	}
 	
 	public Long getCreated() {
-		return (Long)node.getProperty( "created" );
+		return getField( "created" );
 	}
 
 	public void setCreated( Date created ) {
-		node.setProperty( "created", created.getDate().getTime() );
-	}
-	
+		node.field( "created", created.getTime() );
+	}	
 
 	public Date getUpdatedAsDate() {
-		Long l = (Long)node.getProperty( "updated", null );
+		Long l = getField( "updated", null );
 		if( l != null ) {
 			return new Date( l );
 		} else {
@@ -122,93 +116,109 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 	}
 	
 	public Long getUpdated() {
-		return (Long)node.getProperty( "updated", null );
+		return getField( "updated", null );
 	}
 
 	public void setUpdated( Date updated ) {
-		node.setProperty( "updated", updated.getDate().getTime() );
+		node.field( "updated", updated.getTime() );
 	}
 
 
 	public Date getActivatesAsDate() {
-		return new Date( (Long)node.getProperty( "activates" ) );
+		Long l = getField( "activates", null );
+		if( l != null ) {
+			return new Date( l );
+		} else {
+			return null;
+		}
 	}
 	
 	public Long getActivates() {
-		return (Long)node.getProperty( "activates" );
+		return getField( "activates" );
 	}
 
 	public void setActivates( Date activates ) {
-		node.setProperty( "activates", activates.getDate().getTime() );
+		node.field( "activates", activates.getTime() );
 	}
 
 
 	public Date getExpiresAsDate() {
-		return new Date( (Long)node.getProperty( "expires" ) );
+		Long l = getField( "expires", null );
+		if( l != null ) {
+			return new Date( l );
+		} else {
+			return null;
+		}
 	}
 	
 	public Long getExpires() {
-		return (Long)node.getProperty( "expires" );
+		return getField( "expires" );
 	}
 
 	public void setExpires( Date expires ) {
-		node.setProperty( "expires", expires.getDate().getTime() );
+		node.field( "expires", expires.getTime() );
 	}
 
+	
 	public Date getDeletedAsDate() {
-		return new Date( (Long)node.getProperty( "deleted" ) );
+		Long l = getField( "deleted", null );
+		if( l != null ) {
+			return new Date( l );
+		} else {
+			return null;
+		}
 	}
 	
 	public Long getDeleted() {
-		return (Long)node.getProperty( "deleted" );
+		return getField( "deleted" );
 	}
 
 	public void setDeleted( Date deleted ) {
-		node.setProperty( "deleted", deleted.getDate().getTime() );
+		node.field( "deleted", deleted.getTime() );
 	}
 	
 	public Long getViews() {
-		return (Long)node.getProperty( "views", 0l );
+		return getField( "views", 0l );
 	}
 	
 	public void incrementViews() {
-		node.setProperty( "views", getViews() + 1 );
+		node.field( "views", getViews() + 1 );
 	}
 	
 	public int getRevision() {
-		return (Integer) node.getProperty( "revision", 1 );
+		return getField( "revision", 1 );
 	}
 	
 	public AbstractTheme getTheme() throws ThemeDoesNotExistException {
-		return GraphDragon.getInstance().getTheme( (String)node.getProperty( "theme", GraphDragon.defaultThemeName ) );
+		return SeventyEight.getInstance().getTheme( getField( "theme", SeventyEight.defaultThemeName ) );
 	}
 	
 	public void setTheme( AbstractTheme theme ) {
-		node.setProperty( "theme", theme.getName() );
+		node.field( "theme", theme.getName() );
 	}
 	
 	public boolean hasRatings() {
-		return (Boolean)node.getProperty( "hasratings", true );
+		return getField( "hasratings", true );
 	}
 	
 	public void setRateble( boolean b ) {
-		node.setProperty( "hasratings", b );
+		node.field( "hasratings", b );
 	}
 	
 	public boolean hasComments() {
-		return (Boolean)node.getProperty( "hascomments", true );
+		return getField( "hascomments", true );
 	}
 	
 	public void setCommentable( boolean b ) {
-		node.setProperty( "hascomments", b );
+		node.field( "hascomments", b );
 	}
 	
 	public String getDisplayName() {
 		return getTitle();
 	}
 
-	public static List<Node> getResources( String type ) {
-		List<Node> list = new ArrayList<Node>();
+	public static List<ODocument> getResources( String type ) {
+		List<ODocument> list = new ArrayList<ODocument>();
 		IndexHits<Node> nodes = GraphDragon.getInstance().getResourceIndex().get( "type", type );
 		
 		while( nodes.hasNext() ) {
@@ -218,6 +228,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 		return list;
 	}
 	
+	/*
 	public void updateIndexes( Index<Node> idx ) {
 		super.updateIndexes( idx );
 		
@@ -230,6 +241,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 		logger.debug( "Type from descriptor: " + this.getDescriptor().getType() );
 		idx.add( getNode(), "type", this.getDescriptor().getType().toLowerCase() );
 	}
+	*/
 	
 
 }

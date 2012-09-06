@@ -14,11 +14,15 @@ import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.seventyeight.web.exceptions.CouldNotLoadObjectException;
+import org.seventyeight.web.exceptions.CouldNotLoadResourceException;
 import org.seventyeight.web.exceptions.TemplateDoesNotExistException;
+import org.seventyeight.web.graph.Edge;
 import org.seventyeight.web.handler.Renderer;
 import org.seventyeight.web.model.AbstractItem;
+import org.seventyeight.web.model.AbstractResource;
 import org.seventyeight.web.model.AbstractTheme;
 import org.seventyeight.web.model.Descriptor;
+import org.seventyeight.web.model.Extension;
 import org.seventyeight.web.model.Item;
 import org.seventyeight.web.model.Locale;
 import org.seventyeight.web.model.ResourceDescriptor;
@@ -39,6 +43,8 @@ public class SeventyEight {
 	private static Logger logger = Logger.getLogger( SeventyEight.class );
 	private static SeventyEight instance;
 	
+	public static final String defaultThemeName = "default";
+	
 	private org.seventyeight.loader.ClassLoader classLoader = null;
 
 	private ODocument systemNode = null;
@@ -50,18 +56,24 @@ public class SeventyEight {
 		/*resource,*/
 		widgit,
 		/*system*/
+		text,
 		
 		unknown
 	}
 	
 	private static final String SYSTEM_NODE_TYPE = "system";
 	
-	public enum EdgeType {
+	public interface EdgeType {
+	}
+	
+	public enum ResourceEdgeType implements EdgeType {
 		owner,
 		contributor,
 		extension,
-		translation,
+		translation
+	}
 		
+	public enum GroupEdgeType implements EdgeType {
 		readAccess,
 		writeAccess,
 		reviewAccess
@@ -105,8 +117,16 @@ public class SeventyEight {
 		instance = this;
 		initialize( new File( path ) );
 	}
+	
+	public SeventyEight( File path ) {
+		if( instance != null ) {
+			throw new IllegalStateException( "Instance already defined" );
+		}
+		instance = this;
+		initialize( path );
+	}
 
-	public void initialize( File path ) {
+	private SeventyEight initialize( File path ) {
 		logger.debug( "Path: " + path.getAbsolutePath() );
 		
 		/* Prepare environment */
@@ -128,38 +148,63 @@ public class SeventyEight {
 			graphdb = new OGraphDatabase( "local:" + orientdbPath.toString() ).open( "admin", "admin" );
 		} catch( Exception e ) {
 			logger.info( "Installing OrientDB to " + orientdbPath );
-			graphdb = new OGraphDatabase( "local:" + orientdbPath.toString() ).create();
+			graphdb = new OGraphDatabase( "local:" + orientdbPath.toString() );
+			logger.info( "GRAPHDB: " + graphdb );
+			graphdb.create();
 		}
 
-		OClass cl = graphdb.getVertexType( SYSTEM_NODE_TYPE );
-		
-		if( cl == null ) {
-			logger.info( "System node type not found, commencing installation" );
-			install();
+
+		/* Get the system node */
+		graphdb.getDictionary().containsKey( SYSTEM_NODE_TYPE );
+		if( graphdb.getDictionary().containsKey( SYSTEM_NODE_TYPE ) ) {
+			systemNode = graphdb.getDictionary().get( SYSTEM_NODE_TYPE );
 		} else {
-			/* Get the system node */
-			List<ODocument> result = graphdb.query( new OSQLSynchQuery<ODocument>( "select * from " + SYSTEM_NODE_TYPE ) );
-
-			if( result.size() == 1 ) {
-				systemNode = result.get( 0 );
-			} else if( result.size() == 0 ) {
-				logger.info( "System node not found, reinstalling" );
-				install();
-			} else {
-				throw new IllegalStateException( "Too many system nodes" );
-			}
+			logger.info( "System node not found, installing" );
+			install();
 		}
-		
-		cl = graphdb.getVertexType( SYSTEM_NODE_TYPE );
-		logger.debug( "OCLASS: " + cl );
 		
 		/* Settings */
 		defaultLocale = new Locale( "danish" );
+		
+		return this;
 	}
 	
 	public static SeventyEight getInstance() {
 		return instance;
 	}
+	
+	public void shutdown() {
+		graphdb.close();
+	}
+	
+	public AbstractResource getResource( Long id ) throws CouldNotLoadResourceException {
+		ODocument node = getNodeByIndex();
+		
+		if( node != null ) {
+			try {
+				return (AbstractResource)getItemByNode( node );
+			} catch( CouldNotLoadObjectException e ) {
+				logger.warn( "Unable to load resource object " + id );
+				throw new CouldNotLoadResourceException( "Unable to get resource", e );
+			}
+		} else {
+			throw new CouldNotLoadResourceException( id + "" );
+		}
+	}
+	
+	public ODocument getNodeByIndex() {
+		return null;
+	}
+	
+	public AbstractResource getResource( ODocument node ) throws CouldNotLoadObjectException {
+		try {
+			long id = (Long) node.field( "identifier" );
+			return getResource( id );
+		} catch( Exception e ) {
+			throw new CouldNotLoadObjectException( node + " does not have identifier property", e );
+		}
+	}
+	
 	
 	public Descriptor<?> getDescriptor( Class<?> clazz ) {
 		logger.debug( "Getting descriptor for " + clazz );
@@ -192,6 +237,7 @@ public class SeventyEight {
 	 * @param extensionType
 	 * @return
 	 */
+	/*
 	public <T> List<T> getExtensions( Class<T> extensionType ) {
 		logger.debug( "Getting extensions for " + extensionType );
 		List<T> r = new ArrayList<T>();
@@ -204,6 +250,7 @@ public class SeventyEight {
 
 		return r;
 	}
+	*/
 	
 	private void install() {
 		logger.info( "Installing system" );
@@ -219,47 +266,49 @@ public class SeventyEight {
 		} catch( Exception e ) {
 			/* No op */
 		}
+		
 		try {
 			graphdb.createVertexType( SYSTEM_NODE_TYPE );
 		} catch( Exception e ) {
 			/* No op */
 		}
+
 		
 		try {
-			graphdb.createEdgeType( EdgeType.owner.name() );
+			graphdb.createEdgeType( ResourceEdgeType.owner.name() );
 		} catch( Exception e ) {
 			/* No op */
 		}
 		try {
-			graphdb.createEdgeType( EdgeType.contributor.name() );
+			graphdb.createEdgeType( ResourceEdgeType.contributor.name() );
 		} catch( Exception e ) {
 			/* No op */
 		}
 		try {
-			graphdb.createEdgeType( EdgeType.extension.name() );
+			graphdb.createEdgeType( ResourceEdgeType.extension.name() );
 		} catch( Exception e ) {
 			/* No op */
 		}
 		try {
-			graphdb.createEdgeType( EdgeType.translation.name() );
+			graphdb.createEdgeType( ResourceEdgeType.translation.name() );
 		} catch( Exception e ) {
 			/* No op */
 		}
 		
 		/* Access types */
 		try {
-			graphdb.createEdgeType( EdgeType.readAccess.name() );
+			graphdb.createEdgeType( GroupEdgeType.readAccess.name() );
 		} catch( Exception e ) {
 			/* No op */
 		}
 		
 		try {
-			graphdb.createEdgeType( EdgeType.writeAccess.name() );
+			graphdb.createEdgeType( GroupEdgeType.writeAccess.name() );
 		} catch( Exception e ) {
 			/* No op */
 		}
 		try {
-			graphdb.createEdgeType( EdgeType.reviewAccess.name() );
+			graphdb.createEdgeType( GroupEdgeType.reviewAccess.name() );
 		} catch( Exception e ) {
 			/* No op */
 		}
@@ -267,12 +316,13 @@ public class SeventyEight {
 		/* TODO: Do a check on the system node */
 		
 		systemNode = graphdb.createVertex( SYSTEM_NODE_TYPE );
+		graphdb.getDictionary().put( SYSTEM_NODE_TYPE, systemNode );
 		systemNode.save();
 	}
 
 	public ODocument createNode( Class<?> clazz, NodeType type ) {
 		logger.debug( "Creating a vertex of type " + type + ", " + clazz.getName() );
-		ODocument node = graphdb.createVertex( type.name() ).field( "class", clazz.getName() );
+		ODocument node = graphdb.createVertex( type.name() ).field( "class", clazz.getName() ).save();
 
 		//mainNode.createRelationshipTo( node, TestRel.RELATION );
 
@@ -296,8 +346,12 @@ public class SeventyEight {
 			return instance;
 		} catch( Exception e ) {
 			logger.error( "Unable to get the class " + clazz );
-			throw new CouldNotLoadObjectException( "Unable to get the class " + clazz );
+			throw new CouldNotLoadObjectException( "Unable to get the class " + clazz, e );
 		}
+	}
+	
+	public List<ODocument> getEdges( Item item, EdgeType type ) {
+		return getEdges( item, type.toString() );
 	}
 	
 	public List<ODocument> getEdges( Item item, String label ) {
@@ -314,8 +368,8 @@ public class SeventyEight {
 		return result;
 	}
 	
-	public List<ODocument> getNodes( Item item, String label ) {
-		Set<OIdentifiable> edges = graphdb.getOutEdges( item.getNode(), label );
+	public List<ODocument> getNodes( Item item, EdgeType type ) {
+		Set<OIdentifiable> edges = graphdb.getOutEdges( item.getNode(), type.toString() );
 		List<ODocument> nodes = new LinkedList<ODocument>();
 		
 		for( OIdentifiable e : edges ) {
@@ -323,6 +377,32 @@ public class SeventyEight {
 		}
 		
 		return nodes;
+	}
+	
+	public List<Edge> getEdges( Item from, Item to ) {
+		Set<ODocument> edges = graphdb.getEdgesBetweenVertexes( from.getNode(), to.getNode() );
+		List<Edge> es = new LinkedList<Edge>();
+		
+		for( OIdentifiable e : edges ) {
+			ODocument out = graphdb.getOutVertex( e );
+			es.add( new Edge( (ODocument) e, from.getNode(), out ) );
+		}
+		
+		return es;
+	}
+	
+	public List<Edge> getEdges2( Item item, EdgeType type ) {
+		logger.debug( "Getting edges from " + item + " of type " + type );
+		Set<OIdentifiable> edges = graphdb.getOutEdges( item.getNode(), type.toString() );
+		logger.debug( "EDGES: " + edges );
+		List<Edge> es = new LinkedList<Edge>();
+		
+		for( OIdentifiable e : edges ) {
+			ODocument out = graphdb.getOutVertex( e );
+			es.add( new Edge( (ODocument) e, item.getNode(), out ) );
+		}
+		
+		return es;
 	}
 	
 	public Item setLabel( Item item, String label ) {
@@ -340,7 +420,7 @@ public class SeventyEight {
 	 */
 	public ODocument createEdge( Item from, Item to, EdgeType type ) {
 		logger.debug( "Creating edge(" + type + ") from " + from.getNode().getClassName() + " to " + to.getNode().getClassName() );
-		return graphdb.createEdge( from.getNode(), to.getNode(), type.name() );
+		return graphdb.createEdge( from.getNode(), to.getNode(), type.toString() ).save();
 	}
 	
 	public ODocument getOutNode( ODocument edge ) throws IllegalStateException {
@@ -352,6 +432,30 @@ public class SeventyEight {
 		}
 	}
 	
+	public void removeOutEdges( Item item, EdgeType type ) {
+		logger.debug( "Removing out edges " + type + " from " + item );
+		Set<OIdentifiable> edges = graphdb.getOutEdges( item.getNode(), type.toString() );
+		for( OIdentifiable edge : edges ) {
+			graphdb.removeEdge( (ODocument) edge );
+		}
+	}
+	
+	public void removeEdges( Item from, Item to, EdgeType type ) {
+		logger.debug( "Removing relations " + type + " from " + from + " to " + to );
+		List<Edge> edges = getEdges2( from, type );
+				
+		for( Edge edge : edges ) {
+			if( edge.getOutNode().equals( to.getNode() ) ) {
+				logger.debug( "Removing the edge " + edge );
+				graphdb.removeEdge( edge.getEdge() );
+			}
+		}
+	}
+	
+	public void removeEdge( ODocument edge ) {
+		graphdb.removeEdge( edge );
+	}
+	
 	
 	/**
 	 * Add an edge
@@ -360,21 +464,14 @@ public class SeventyEight {
 	 * @param label
 	 * @param replace
 	 */
-	public void addNodeRelation( ODocument node, ODocument other, String label, boolean replace ) {
-		logger.debug( "Adding " + label + " to " + node );
+	public void addNodeRelation( Item from, Item to, EdgeType type, boolean replace ) {
+		logger.debug( "Adding " + type + " to " + from );
 		
 		if( replace ) {
-			logger.debug( "Removing relations " + label + " for " + node );
-			Set<OIdentifiable> edges = graphdb.getOutEdges( node, label );
-			graphdb.getOutEdges( null ).
-			
-			for( OIdentifiable edge : edges ) {
-				graphdb.removeEdge( (ODocument) edge );
-			}
+			removeEdges( from, to, type );
 		}
 		
-		graphdb.createed
-		node.createRelationshipTo( other, label );
+		createEdge( from, to, type );
 	}
 	
 	/**
@@ -383,8 +480,8 @@ public class SeventyEight {
 	 * @param rel
 	 * @return
 	 */
-	public List<Node> getNodeRelation( Node node, RelationshipType rel ) {
-		return getNodeRelation( node, rel, null, null );
+	public List<ODocument> getNodeRelation( Item item, EdgeType type ) {
+		return getNodes( item, type );
 	}
 	
 	/**
@@ -395,10 +492,11 @@ public class SeventyEight {
 	 * @param value
 	 * @return
 	 */
-	public List<Item> getNodeRelation( Item item, String label, String key, Object value ) {
+	/*
+	public List<Item> getNodeRelation( Item item, EdgeType type, String key, Object value ) {
 		logger.debug( "Getting relations for " + item + "(" + key + "/" + value + ")" );
 		//Iterator<Relationship> it = node.getRelationships( rel, Direction.OUTGOING ).iterator();
-		List<ODocument> edges = getEdges( item, label );
+		List<ODocument> edges = getEdges( item, type );
 		List<Item> items = new LinkedList<Item>();
 		
 		if( key != null ) {
@@ -424,6 +522,7 @@ public class SeventyEight {
 		
 		return list;
 	}
+	*/
 	
 	/*
 	 * Basic getters

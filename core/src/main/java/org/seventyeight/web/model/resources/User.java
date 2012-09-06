@@ -4,6 +4,19 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.seventyeight.web.SeventyEight;
+import org.seventyeight.web.exceptions.ErrorWhileSavingException;
+import org.seventyeight.web.exceptions.InconsistentParameterException;
+import org.seventyeight.web.exceptions.IncorrectTypeException;
+import org.seventyeight.web.exceptions.ParameterDoesNotExistException;
+import org.seventyeight.web.exceptions.ResourceDoesNotExistException;
+import org.seventyeight.web.exceptions.UnableToSavePasswordException;
+import org.seventyeight.web.model.AbstractResource;
+import org.seventyeight.web.model.Extension;
+import org.seventyeight.web.model.ParameterRequest;
+import org.seventyeight.web.model.ResourceDescriptor;
+import org.seventyeight.web.util.Date;
+import org.seventyeight.web.util.Utils;
 
 import com.google.gson.JsonObject;
 import com.orientechnologies.orient.core.record.impl.ODocument;
@@ -20,13 +33,13 @@ public class User extends AbstractResource {
 		super( node );
 	}
 
-	public void save( Request request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+	public void save( ParameterRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
 		doSave( new UserSaveImpl( this, request, jsonData ) );
 	}
 	
 	public class UserSaveImpl extends ResourceSaveImpl {
 
-		public UserSaveImpl( AbstractResource resource, RequestContext request, JsonObject jsonData ) {
+		public UserSaveImpl( AbstractResource resource, ParameterRequest request, JsonObject jsonData ) {
 			super( resource, request, jsonData );
 		}
 		
@@ -36,8 +49,8 @@ public class User extends AbstractResource {
 			logger.debug( "Saving user" );
 
 			/* Saving basic properties */
-			String password1 = request.getKey( "password" );
-			String password2 = request.getKey( "password_again" );
+			String password1 = request.getValue( "password" );
+			String password2 = request.getValue( "password_again" );
 			if( password1 != null ) {
 				//String oldPassword = (String) node.getProperty( "password" );
 				if( password2 == null || !password1.equals( password2 ) ) {
@@ -45,22 +58,22 @@ public class User extends AbstractResource {
 					throw new InconsistentParameterException( "The passwords does not match" );
 				}
 				try {
-					node.setProperty( "password", Util.md5( password1 ) );
+					node.field( "password", Utils.md5( password1 ) );
 				} catch( NoSuchAlgorithmException e ) {
 					logger.error( "Unable to hash password." );
 					throw new ErrorWhileSavingException( "Unable to hash password: " + e.getMessage() );
 				}
 			}
 			
-			String username = request.getKey( "username" );
+			String username = request.getValue( "username" );
 			logger.debug( "USERNAME: " + username );
 			if( username != null ) {
-				node.setProperty( "username", username );
+				node.field( "username", username );
 			}
 			
-			String nickname = request.getKey( "nickname" );
+			String nickname = request.getValue( "nickname" );
 			if( nickname != null ) {
-				node.setProperty( "nickname", nickname );
+				node.field( "nickname", nickname );
 			}
 		}
 		
@@ -74,30 +87,30 @@ public class User extends AbstractResource {
 	}
 	
 	public void setUsername( String username ) {
-		node.setProperty( "username", username );
+		node.field( "username" );
 	}
 
 	public String getUsername() {
-		return (String) node.getProperty( "username", "" );
+		return getField( "username", "" );
 	}
 	
 	
 	public void setNickname( String nickname ) {
-		node.setProperty( "nickname", nickname );
+		node.field( "nickname", nickname );
 	}
 
 	public String getNickname() {
-		return (String) node.getProperty( "nickname", "" );
+		return getField( "nickname", "" );
 	}
 	
 	
 	public void setPassword( String password ) {
-		node.setProperty( "password", password );
+		node.field( "password", password );
 	}
 	
 	public void setUnEncryptedPassword( String password ) throws UnableToSavePasswordException {
 		try {
-			node.setProperty( "password", Util.md5( password ) );
+			node.field( "password", Utils.md5( password ) );
 		} catch( NoSuchAlgorithmException e ) {
 			logger.warn( "Could not set password: " + e.getMessage() );
 			throw new UnableToSavePasswordException( e.getMessage() );
@@ -105,7 +118,7 @@ public class User extends AbstractResource {
 	}
 
 	public String getPassword() {
-		return (String) node.getProperty( "password", null );
+		return getField( "password", null );
 	}
 	
 	public String getDisplayName() {
@@ -113,30 +126,31 @@ public class User extends AbstractResource {
 	}
 
 	public Date getSeenAsDate() {
-		return new Date( (Long)node.getProperty( "seen", 0l ) );
+		return new Date( getField( "seen", 0l ) );
 	}
 	
 	public Long getSeen() {
-		return (Long)node.getProperty( "seen", 0l );
+		return getField( "seen", 0l );
 	}
 	
 	public void setVisibility( boolean visible ) {
-		node.setProperty( "visible", visible );
+		node.field( "visible", visible );
 	}
 	
 	public boolean isVisible() {
-		return (Boolean)node.getProperty( "visible", false );
+		return getField( "visible", false );
 	}
 	
 	public String getLanguage() {
-		return (String)node.getProperty( "language", "danish" );
+		return getField( "language", "danish" );
 	}
 
 	public void setSeen() {
-		Long now = new Date().getDate().getTime();
-		node.setProperty( "seen", now );
+		Long now = new Date().getTime();
+		node.field( "seen", now );
 		logger.debug( "Setting seen to " + now );
 		/* Fast track index */
+		/*
 		Index<Node> idx = GraphDragon.getInstance().getResourceIndex();
 		try {
 			idx.remove( node, "seen" );
@@ -153,9 +167,10 @@ public class User extends AbstractResource {
 		}
 		
 		logger.debug( "Seen index DONE" );
+		*/
 	}
 	
-
+	/*
 	public void updateIndexes( Index<Node> idx ) {
 		super.updateIndexes( idx );
 		
@@ -163,12 +178,13 @@ public class User extends AbstractResource {
 		idx.add( getNode(), "username", getUsername().toLowerCase() );
 		idx.add( getNode(), "nickname", getNickname().toLowerCase() );
 		
-		/* Setting seen index again */
+		// Setting seen index again 
 		long seen = getSeen();
 		if( seen > 0 ) {
 			idx.add( node, "seen", new ValueContext( seen ).indexNumeric() );
 		}
 	}
+	*/
 	
 	/**
 	 *  Get user resource by username 
@@ -217,7 +233,7 @@ public class User extends AbstractResource {
 	}
 
 	public String getPortrait() {
-		List<AbstractExtension> list = GraphDragon.getInstance().getExtensions( this, UserAvatar.class );
+		List<AbstractExtension> list = SeventyEight.getInstance().getExtensions( this, UserAvatar.class );
 		
 		logger.debug( "I found " + list );
 		

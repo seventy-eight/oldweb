@@ -11,12 +11,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.resource.spi.IllegalStateException;
+
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.SeventyEight.EdgeType;
+import org.seventyeight.web.SeventyEight.ResourceEdgeType;
 import org.seventyeight.web.exceptions.ErrorWhileSavingException;
+import org.seventyeight.web.exceptions.IllegalStateRuntimeException;
 import org.seventyeight.web.exceptions.InconsistentParameterException;
 import org.seventyeight.web.exceptions.IncorrectTypeException;
 import org.seventyeight.web.exceptions.ParameterDoesNotExistException;
@@ -59,16 +63,18 @@ public abstract class AbstractItem implements Item {
 		save.after();
 		save.updateIndexes();
 		
+		node.save();
+		
 		logger.debug( "End saving" );
 	}
 
 	protected abstract class Save {
 
 		protected AbstractItem item;
-		protected Request request;
+		protected ParameterRequest request;
 		protected JsonObject jsonData;
 
-		public Save( AbstractItem type, Request request, JsonObject jsonData ) {
+		public Save( AbstractItem type, ParameterRequest request, JsonObject jsonData ) {
 			this.item = type;
 			this.request = request;
 			this.jsonData = jsonData;
@@ -82,7 +88,7 @@ public abstract class AbstractItem implements Item {
 		
 		public void updateIndexes() {}
 		
-		public Request getRequest() {
+		public ParameterRequest getRequest() {
 			return request;
 		}
 		
@@ -105,7 +111,7 @@ public abstract class AbstractItem implements Item {
 						logger.debug( "Class is " + clazz );
 						Descriptor<?> d = SeventyEight.getInstance().getDescriptor( clazz );
 						logger.debug( "Descroiptor is " + d );
-						List<Item> nodes = SeventyEight.getInstance().getNodeRelation( AbstractItem.this, EdgeType.extension.toString(), "class", cls );
+						List<ODocument> nodes = SeventyEight.getInstance().getNodeRelation( item, ResourceEdgeType.extension );
 						
 						logger.debug( "Extension nodes: " + nodes.size() );
 						if( nodes.size() > 0 ) {
@@ -119,7 +125,7 @@ public abstract class AbstractItem implements Item {
 							logger.debug( "Saving configurable " + e );
 							e.save( request, o );
 							logger.debug( "Configurable saved" );
-							SeventyEight.getInstance().addNodeRelation( getNode(), e.getNode(), EdgeType.extension.toString(), false );
+							SeventyEight.getInstance().addNodeRelation( item, e, ResourceEdgeType.extension, false );
 						}
 					} catch( Exception e ) {
 						logger.warn( "Unable to get descriptor for " + o + ": " + e.getMessage() );
@@ -168,7 +174,7 @@ public abstract class AbstractItem implements Item {
 
 	
 	public Map<String, List<ODocument>> getExtensionNodes() {
-		List<ODocument> ns = SeventyEight.getInstance().getNodes( this, EdgeType.extension.toString() );
+		List<ODocument> ns = SeventyEight.getInstance().getNodes( this, ResourceEdgeType.extension );
 		
 		Map<String, List<ODocument>> nodes = new HashMap<String, List<ODocument>>();
 		
@@ -187,14 +193,16 @@ public abstract class AbstractItem implements Item {
 		return nodes;
 	}
 	
+	/*
 	public String getConfigurableExtensions() {
 		return getConfigurableExtensions( this.getClass(), this );
 	}
+	*/
 	
 	/**
 	 * This used for preprocessing items before viewing.
 	 */
-	public void prepareView( Request request ) {
+	public void prepareView( ParameterRequest request ) {
 		/* Default implementation is no op */
 	}
 	
@@ -204,6 +212,7 @@ public abstract class AbstractItem implements Item {
 	}
 	*/
 	
+	/*
 	@SuppressWarnings( "unchecked" )
 	public static String getConfigurableExtensions( Class<?> clazz, AbstractItem item ) {
 		logger.debug( "I AM HERE " + clazz );
@@ -261,6 +270,29 @@ public abstract class AbstractItem implements Item {
 		}
 		
 		return sb.toString();
+	}
+	*/
+	
+	/**
+	 * Get a field
+	 * @param key
+	 * @param def
+	 * @return
+	 */
+	public <T> T getField( String key, T def ) {
+		if( node.field( key ) == null ) {
+			return def;
+		} else {
+			return node.field( key );
+		}
+	}
+	
+	public <T> T getField( String key ) throws IllegalStateRuntimeException {
+		if( node.field( key ) == null ) {
+			throw new IllegalStateRuntimeException( "Field " + key + " does not exist" );
+		} else {
+			return node.field( key );
+		}
 	}
 
 	/*
