@@ -1,4 +1,4 @@
-package org.seventyeight.model.resources;
+package org.seventyeight.web.model.resources;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,51 +10,36 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.RelationshipType;
-import org.seventyeight.GraphDragon;
-import org.seventyeight.exceptions.ErrorWhileSavingException;
-import org.seventyeight.exceptions.InconsistentParameterException;
-import org.seventyeight.exceptions.IncorrectTypeException;
-import org.seventyeight.exceptions.ParameterDoesNotExistException;
-import org.seventyeight.exceptions.ResourceDoesNotExistException;
-import org.seventyeight.exceptions.TemplateDoesNotExistException;
-import org.seventyeight.exceptions.UnableToInstantiateObjectException;
-import org.seventyeight.model.AbstractObject;
-import org.seventyeight.model.AbstractResource;
-import org.seventyeight.model.Extension;
-import org.seventyeight.model.Parameters;
-import org.seventyeight.model.Portrait;
-import org.seventyeight.model.RequestContext;
-import org.seventyeight.model.ResourceDescriptor;
-import org.seventyeight.model.UserExtension;
 
 import com.google.gson.JsonObject;
+import org.seventyeight.web.SeventyEight;
+import org.seventyeight.web.exceptions.*;
+import org.seventyeight.web.model.*;
 
 
 public class FileResource extends AbstractResource {
 
 	private static Logger logger = Logger.getLogger( FileResource.class );
+
+    public enum FileResourceEdgeType implements SeventyEight.EdgeType {
+        file
+    }
 	
-	public enum Relationships implements RelationshipType {
-		FILE
-	}
-	
-	public FileResource( Node node ) {
+	public FileResource( ODocument node ) {
 		super( node );
 	}
 
-	public void save( RequestContext request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+	public void save( ParameterRequest request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
 		doSave( new FileSaveImpl( this, request, jsonData ) );
 	}
 	
 	public class FileSaveImpl extends ResourceSaveImpl {
 
-		public FileSaveImpl( AbstractResource resource, RequestContext request, JsonObject jsonData ) {
+		public FileSaveImpl( AbstractResource resource, ParameterRequest request, JsonObject jsonData ) {
 			super( resource, request, jsonData );
 		}
 		
@@ -64,19 +49,19 @@ public class FileResource extends AbstractResource {
 
 			Long nodeid = null;
 			try {
-				nodeid = request.getIntegerKey( "nodeid" );
+				nodeid = request.getValue( "nodeid" );
 			} catch( Exception e ) {
 				logger.debug( "NAN: " + e.getMessage() );
 			}
 
 			logger.debug( "Setting file relation to " + nodeid );
 			if( nodeid != null ) {
-				Node node = GraphDragon.getInstance().getNode( nodeid );
-				setFileRelation( node );
+				Item item = SeventyEight.getInstance().getItem( nodeid );
+				setFileRelation( item );
 			}
 			
 			File file = getLocalFile();
-			node.setProperty( "ext", FileResource.getExtension( file ) );
+			node.field( "ext", FileResource.getExtension( file ) );
 			
 		}
 	}
@@ -90,7 +75,7 @@ public class FileResource extends AbstractResource {
 	}
 	*/
 	
-	public void doGet( Parameters request, PrintWriter writer ) throws IOException {
+	public void doGet( ParameterRequest request, PrintWriter writer ) throws IOException {
 		File file = getFile();
 		
 		FileReader reader = new FileReader( file );
@@ -98,27 +83,32 @@ public class FileResource extends AbstractResource {
 		//fwriter.
 	}
 	
-	public void setFileRelation( Node node ) {
+	public void setFileRelation( Item item ) {
 		removeFileRelations();
-		this.node.createRelationshipTo( node, Relationships.FILE );
+		//this.node.createRelationshipTo( node, Relationships.FILE );
+        SeventyEight.getInstance().createEdge( this, item, FileResourceEdgeType.file );
 	}
 	
 	public void removeFileRelations() {
 		logger.debug( "Removing all file relationships for " + this );
-		Iterator<Relationship> i = node.getRelationships( Relationships.FILE ).iterator();
-		while( i.hasNext() ) {
-			i.next().delete();
-		}
+        SeventyEight.getInstance().removeOutEdges( this, FileResourceEdgeType.file );
 	}
 	
 	public File getLocalFile() {
-		Node fnode = node.getRelationships( Direction.OUTGOING, Relationships.FILE ).iterator().next().getEndNode();
-		return new File( (String) fnode.getProperty( "file" ) );
+        List<ODocument> nodes = SeventyEight.getInstance().getNodes( this, FileResourceEdgeType.file );
+        if( nodes.size() == 1 ) {
+            return new File( (String) nodes.get( 0 ).field( "file" ) );
+        } else if( nodes.size() > 1 ) {
+            throw new IllegalStateException( "Too many file items found for " + this );
+        } else {
+            throw new IllegalStateException( "File item not found for " + this );
+        }
+
 	}
 	
 	public File getFile() {
 		File f = getLocalFile();
-		int l = GraphDragon.getInstance().getPath().toString().length();
+		int l = SeventyEight.getInstance().getPath().toString().length();
 		int l2 = f.getAbsoluteFile().toString().length();
 		
 		logger.debug( "PATH: " + l + ", " + l2 );

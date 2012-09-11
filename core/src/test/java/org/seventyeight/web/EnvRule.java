@@ -37,20 +37,27 @@ public class EnvRule implements TestRule {
 	}
 	
 	public static class DummyItem extends AbstractItem {
-
+		protected String name;
 		public DummyItem( ODocument node ) {
 			super( node );
+		}
+		
+		public String getName() {
+			return getField( "name" );
 		}
 
 		@Override
 		public String getDisplayName() {
-			return "Dummy item";
+			return "Dummy item:" + name;
 		}
 
 		@Override
 		public void save( ParameterRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
 		}
 		
+		public String toString() {
+			return "" + name;
+		}
 	}
 
 

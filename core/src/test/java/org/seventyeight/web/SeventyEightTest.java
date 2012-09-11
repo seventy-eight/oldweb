@@ -10,7 +10,6 @@ import org.seventyeight.web.SeventyEight.NodeType;
 import org.seventyeight.web.SeventyEight.ResourceEdgeType;
 import org.seventyeight.web.exceptions.CouldNotLoadObjectException;
 import org.seventyeight.web.graph.Edge;
-import org.seventyeight.web.model.AbstractItem;
 import org.seventyeight.web.model.Item;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
@@ -43,7 +42,7 @@ public class SeventyEightTest {
 		ODocument node1 = se.createNode( DummyItem.class, NodeType.item );
 		assertThat( (String)node1.field( "class" ), is( DummyItem.class.getName() ) );
 		
-		Item item1 = se.getItemByNode( node1 );
+		Item item1 = se.getItem( node1 );
 		
 		assertThat( item1.getNode(), is( node1  ) );
 	}
@@ -51,24 +50,21 @@ public class SeventyEightTest {
 	@Test
 	public void createEdge() throws CouldNotLoadObjectException {
 		SeventyEight se = SeventyEight.getInstance();
-		ODocument node1 = se.createNode( DummyItem.class, NodeType.item );
-		ODocument node2 = se.createNode( DummyItem.class, NodeType.item );
+		ODocument node1 = se.createNode( DummyItem.class, NodeType.item ).field( "name", "manse" ); // The out node
+		ODocument node2 = se.createNode( DummyItem.class, NodeType.item ).field( "name", "svenne" ); // The in node
 		assertThat( (String)node1.field( "class" ), is( DummyItem.class.getName() ) );
 		assertThat( (String)node2.field( "class" ), is( DummyItem.class.getName() ) );
 		
-		Item item1 = se.getItemByNode( node1 );
-		Item item2 = se.getItemByNode( node2 );
+		Item item1 = se.getItem( node1 );
+		Item item2 = se.getItem( node2 );
 		
 		ODocument edge = se.createEdge( item1, item2, ResourceEdgeType.owner );
 		System.out.println( "Edge: " + edge );
 		assertThat( edge, not( nullValue()) );
-		
-		List<Edge> es = se.getEdges( item1, item2 );
-		assertThat( es.size(), is( 1 ) );
-		
 		List<Edge> edges = se.getEdges2( item1, ResourceEdgeType.owner );
 		assertThat( edges.size(), is( 1 ) );
-		assertThat( edges.get( 0 ).getInNode(), is( node1 ) );
-		assertThat( edges.get( 0 ).getOutNode(), is( node2 ) );
+		
+		assertThat( edges.get( 0 ).getOutNode(), is( node1 ) );
+		assertThat( edges.get( 0 ).getInNode(), is( node2 ) );
 	}
 }

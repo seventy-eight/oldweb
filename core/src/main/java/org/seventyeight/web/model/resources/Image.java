@@ -1,4 +1,4 @@
-package org.seventyeight.model.resources;
+package org.seventyeight.web.model.resources;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -12,35 +12,23 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 
-import org.seventyeight.GraphDragon;
-import org.seventyeight.model.AbstractResource;
-import org.seventyeight.model.Extension;
-import org.seventyeight.model.RequestContext;
-import org.seventyeight.model.ResourceDescriptor;
-import org.seventyeight.model.AbstractResource.ResourceSaveImpl;
-import org.seventyeight.model.resources.FileResource;
-import org.seventyeight.model.resources.User.UserSaveImpl;
-
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
-import org.neo4j.graphdb.Node;
-import org.seventyeight.annotations.ResourceType;
-import org.seventyeight.exceptions.ErrorWhileSavingException;
-import org.seventyeight.exceptions.InconsistentParameterException;
-import org.seventyeight.exceptions.IncorrectTypeException;
-import org.seventyeight.exceptions.ParameterDoesNotExistException;
-import org.seventyeight.exceptions.ResourceDoesNotExistException;
-import org.seventyeight.exceptions.UnableToInstantiateObjectException;
-import org.seventyeight.exceptions.UnableToLoadImageException;
-import org.seventyeight.exceptions.UnableToSaveImageException;
 
 import com.google.gson.JsonObject;
+import org.seventyeight.web.SeventyEight;
+import org.seventyeight.web.exceptions.*;
+import org.seventyeight.web.model.AbstractResource;
+import org.seventyeight.web.model.Extension;
+import org.seventyeight.web.model.ParameterRequest;
+import org.seventyeight.web.model.ResourceDescriptor;
+import org.seventyeight.web.model.resources.FileResource;
 
-@ResourceType
 public class Image extends FileResource {
 
 	private static Logger logger = Logger.getLogger( Image.class );
 
-	public Image( Node node ) {
+	public Image( ODocument node ) {
 		super( node );
 	}
 
@@ -48,13 +36,13 @@ public class Image extends FileResource {
 		jpeg, png, gif
 	}
 
-	public void save( RequestContext request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+	public void save( ParameterRequest request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
 		doSave( new ImageSaveImpl( this, request, jsonData ) );
 	}
 
 	public class ImageSaveImpl extends FileSaveImpl {
 
-		public ImageSaveImpl( AbstractResource resource, RequestContext request, JsonObject jsonData ) {
+		public ImageSaveImpl( AbstractResource resource, ParameterRequest request, JsonObject jsonData ) {
 			super( resource, request, jsonData );
 		}
 
@@ -107,7 +95,7 @@ public class Image extends FileResource {
 	
 	public File getFile( String type ) {
 		File f = getLocalFile();
-		int l = GraphDragon.getInstance().getPath().toString().length();
+		int l = SeventyEight.getInstance().getPath().toString().length();
 		int l2 = f.getParentFile().getAbsoluteFile().toString().length();
 		
 		logger.debug( "PATH: " + l + ", " + l2 );

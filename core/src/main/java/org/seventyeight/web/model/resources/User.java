@@ -5,16 +5,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.seventyeight.web.SeventyEight;
-import org.seventyeight.web.exceptions.ErrorWhileSavingException;
-import org.seventyeight.web.exceptions.InconsistentParameterException;
-import org.seventyeight.web.exceptions.IncorrectTypeException;
-import org.seventyeight.web.exceptions.ParameterDoesNotExistException;
-import org.seventyeight.web.exceptions.ResourceDoesNotExistException;
-import org.seventyeight.web.exceptions.UnableToSavePasswordException;
-import org.seventyeight.web.model.AbstractResource;
-import org.seventyeight.web.model.Extension;
-import org.seventyeight.web.model.ParameterRequest;
-import org.seventyeight.web.model.ResourceDescriptor;
+import org.seventyeight.web.exceptions.*;
+import org.seventyeight.web.model.*;
+import org.seventyeight.web.model.extensions.UserAvatar;
 import org.seventyeight.web.util.Date;
 import org.seventyeight.web.util.Utils;
 
@@ -190,6 +183,7 @@ public class User extends AbstractResource {
 	 *  Get user resource by username 
 	 * @return
 	 */
+    /*
 	public static User getUserByUsername( String username ) {
 		
 		Index<Node> idx = GraphDragon.getInstance().getResourceIndex();
@@ -201,6 +195,7 @@ public class User extends AbstractResource {
 			return null;
 		}
 	}
+	*/
 	
 	public static class UserDescriptor extends ResourceDescriptor<User> {
 

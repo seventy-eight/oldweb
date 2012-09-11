@@ -1,4 +1,4 @@
-package org.seventyeight.model.resources;
+package org.seventyeight.web.model.resources;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,52 +14,27 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
+import com.orientechnologies.orient.core.db.ODatabase;
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Path;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.index.IndexHits;
-import org.neo4j.graphdb.traversal.Evaluators;
-import org.neo4j.graphdb.traversal.Traverser;
-import org.neo4j.kernel.Traversal;
-import org.seventyeight.GraphDragon;
-import org.seventyeight.exceptions.CouldNotLoadObjectException;
-import org.seventyeight.exceptions.CouldNotLoadResourceException;
-import org.seventyeight.exceptions.ErrorWhileSavingException;
-import org.seventyeight.exceptions.InconsistentParameterException;
-import org.seventyeight.exceptions.IncorrectTypeException;
-import org.seventyeight.exceptions.NoSuchJsonElementException;
-import org.seventyeight.exceptions.ParameterDoesNotExistException;
-import org.seventyeight.exceptions.ResourceDoesNotExistException;
-import org.seventyeight.exceptions.TemplateDoesNotExistException;
-import org.seventyeight.exceptions.UnableToInstantiateObjectException;
-import org.seventyeight.graph.OrderedExpander;
-import org.seventyeight.model.AbstractResource;
-import org.seventyeight.model.CheckCheckable;
-import org.seventyeight.model.Extension;
-import org.seventyeight.model.RequestContext;
-import org.seventyeight.model.ResourceDescriptor;
-import org.seventyeight.model.ResourceList;
-import org.seventyeight.util.ExceptionUtils;
-import org.seventyeight.util.RelationshipSorter;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.seventyeight.web.SeventyEight;
+import org.seventyeight.web.exceptions.*;
+import org.seventyeight.web.model.AbstractResource;
+import org.seventyeight.web.model.ParameterRequest;
 
 public class Collection extends AbstractResource {
 
 	private static Logger logger = Logger.getLogger( Collection.class );
-	
-	public enum CollectionType implements RelationshipType {
-		IN_COLLECTION
-	}
+
+    public enum CollectionEdgeType implements SeventyEight.EdgeType {
+        in_collection
+    }
 	
 	private Set<Long> cached;
 	
-	public Collection( Node node ) {
+	public Collection( ODocument node ) {
 		super( node );
 	}
 
@@ -67,7 +42,7 @@ public class Collection extends AbstractResource {
 		return null;
 	}
 
-	public void save( RequestContext request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+	public void save( ParameterRequest request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
 		doSave( new ResourceSaveImpl( this, request, jsonData ) );
 	}
 	
@@ -76,7 +51,7 @@ public class Collection extends AbstractResource {
 	}
 	
 	public void addResource( long identifier, long position ) throws CouldNotLoadResourceException {
-		AbstractResource r = GraphDragon.getInstance().getResource( identifier );
+		AbstractResource r = SeventyEight.getInstance().getResource( identifier );
 
 		addResource( r, position );
 	}

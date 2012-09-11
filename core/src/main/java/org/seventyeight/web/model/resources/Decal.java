@@ -1,31 +1,26 @@
-package org.seventyeight.model.resources;
+package org.seventyeight.web.model.resources;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.orientechnologies.orient.core.db.ODatabase;
 import org.apache.log4j.Logger;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.index.IndexHits;
-import org.seventyeight.GraphDragon;
-import org.seventyeight.annotations.ResourceType;
-import org.seventyeight.exceptions.ErrorWhileSavingException;
-import org.seventyeight.exceptions.UnableToInstantiateObjectException;
-import org.seventyeight.model.AbstractResource;
-import org.seventyeight.model.Extension;
-import org.seventyeight.model.RequestContext;
-import org.seventyeight.model.ResourceDescriptor;
 
 import com.google.gson.JsonObject;
+import org.seventyeight.web.exceptions.ErrorWhileSavingException;
+import org.seventyeight.web.exceptions.UnableToInstantiateObjectException;
+import org.seventyeight.web.model.AbstractResource;
+import org.seventyeight.web.model.Extension;
+import org.seventyeight.web.model.ParameterRequest;
+import org.seventyeight.web.model.ResourceDescriptor;
 
-@ResourceType
 public class Decal extends Image {
 
 	private static Logger logger = Logger.getLogger( Decal.class );
 	public static final String __TYPE = "decal";
 
-	public Decal( Node node ) {
+	public Decal( ODatabase node ) {
 		super( node );
 	}
 	
@@ -36,7 +31,7 @@ public class Decal extends Image {
 	
 	public class DecalSaveImpl extends ImageSaveImpl {
 
-		public DecalSaveImpl( AbstractResource resource, RequestContext request, JsonObject jsonData ) {
+		public DecalSaveImpl( AbstractResource resource, ParameterRequest request, JsonObject jsonData ) {
 			super( resource, request, jsonData );
 		}
 

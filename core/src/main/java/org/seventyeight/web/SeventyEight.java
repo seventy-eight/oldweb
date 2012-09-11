@@ -1,7 +1,6 @@
 package org.seventyeight.web;
 
 import java.io.File;
-import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,33 +10,18 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
 import org.seventyeight.web.exceptions.CouldNotLoadObjectException;
 import org.seventyeight.web.exceptions.CouldNotLoadResourceException;
-import org.seventyeight.web.exceptions.TemplateDoesNotExistException;
 import org.seventyeight.web.graph.Edge;
 import org.seventyeight.web.handler.Renderer;
-import org.seventyeight.web.model.AbstractItem;
-import org.seventyeight.web.model.AbstractResource;
-import org.seventyeight.web.model.AbstractTheme;
-import org.seventyeight.web.model.Descriptor;
-import org.seventyeight.web.model.Extension;
-import org.seventyeight.web.model.Item;
-import org.seventyeight.web.model.Locale;
-import org.seventyeight.web.model.ResourceDescriptor;
+import org.seventyeight.web.model.*;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
-import com.orientechnologies.orient.core.metadata.schema.OClass;
-import com.orientechnologies.orient.core.query.nativ.ONativeSynchQuery;
-import com.orientechnologies.orient.core.query.nativ.OQueryContextNativeSchema;
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 
 public class SeventyEight {
 	private static Logger logger = Logger.getLogger( SeventyEight.class );
@@ -182,7 +166,7 @@ public class SeventyEight {
 		
 		if( node != null ) {
 			try {
-				return (AbstractResource)getItemByNode( node );
+				return (AbstractResource) getItem( node );
 			} catch( CouldNotLoadObjectException e ) {
 				logger.warn( "Unable to load resource object " + id );
 				throw new CouldNotLoadResourceException( "Unable to get resource", e );
@@ -328,8 +312,17 @@ public class SeventyEight {
 
 		return node;
 	}
+
+    /**
+     * TODO: Implement
+     * @param id
+     * @return
+     */
+    public Item getItem( long id ) {
+         return null;
+    }
 	
-	public Item getItemByNode( ODocument node ) throws CouldNotLoadObjectException {		
+	public Item getItem( ODocument node ) throws CouldNotLoadObjectException {
 		String clazz = null;
 		try {
 			clazz = (String) node.field( "class" );
@@ -393,13 +386,16 @@ public class SeventyEight {
 	
 	public List<Edge> getEdges2( Item item, EdgeType type ) {
 		logger.debug( "Getting edges from " + item + " of type " + type );
-		Set<OIdentifiable> edges = graphdb.getOutEdges( item.getNode(), type.toString() );
+		Set<OIdentifiable> edges = graphdb.getOutEdges( item.getNode(), ( type != null ? type.toString() : null ) );
 		logger.debug( "EDGES: " + edges );
 		List<Edge> es = new LinkedList<Edge>();
 		
 		for( OIdentifiable e : edges ) {
-			ODocument out = graphdb.getOutVertex( e );
-			es.add( new Edge( (ODocument) e, item.getNode(), out ) );
+			ODocument out = graphdb.getInVertex( e );
+			
+			Edge edge = new Edge( (ODocument) e, item.getNode(), out );
+			es.add( edge );
+			logger.debug( "Edge: " + edge );
 		}
 		
 		return es;
@@ -420,7 +416,7 @@ public class SeventyEight {
 	 */
 	public ODocument createEdge( Item from, Item to, EdgeType type ) {
 		logger.debug( "Creating edge(" + type + ") from " + from.getNode().getClassName() + " to " + to.getNode().getClassName() );
-		return graphdb.createEdge( from.getNode(), to.getNode(), type.toString() ).save();
+		return graphdb.createEdge( from.getNode(), to.getNode(), type.toString() ).field( OGraphDatabase.LABEL, type.toString() ).save();
 	}
 	
 	public ODocument getOutNode( ODocument edge ) throws IllegalStateException {
@@ -459,9 +455,9 @@ public class SeventyEight {
 	
 	/**
 	 * Add an edge
-	 * @param node
-	 * @param other
-	 * @param label
+	 * @param from
+	 * @param to
+	 * @param type
 	 * @param replace
 	 */
 	public void addNodeRelation( Item from, Item to, EdgeType type, boolean replace ) {
@@ -475,30 +471,6 @@ public class SeventyEight {
 	}
 	
 	/**
-	 * Given a {@link Node}, retrieve the {@link Node}s that relates to it with {@link RelationshipType}. 
-	 * @param node
-	 * @param rel
-	 * @return
-	 */
-	public List<ODocument> getNodeRelation( Item item, EdgeType type ) {
-		return getNodes( item, type );
-	}
-	
-	/**
-	 * Given an {@link Item}, retrieve the {@link Item}s that relates to it with a label and have a special property with a given value.
-	 * @param node
-	 * @param rel
-	 * @param key
-	 * @param value
-	 * @return
-	 */
-	/*
-	public List<Item> getNodeRelation( Item item, EdgeType type, String key, Object value ) {
-		logger.debug( "Getting relations for " + item + "(" + key + "/" + value + ")" );
-		//Iterator<Relationship> it = node.getRelationships( rel, Direction.OUTGOING ).iterator();
-		List<ODocument> edges = getEdges( item, type );
-		List<Item> items = new LinkedList<Item>();
-		
 		if( key != null ) {
 			for( ODocument i : edges ) {
 				if( i.field( key ) != null && i.field( key ).equals( value ) ) {
@@ -523,6 +495,42 @@ public class SeventyEight {
 		return list;
 	}
 	*/
+
+
+    /**
+     * Get the list of {@link AbstractExtension}s from an {@link AbstractItem}, that satisfies a given extension class
+     * @param item - The item in question
+     * @param oftype - The extensions must be of this class
+     * @return A list of extensions
+     */
+    public List<AbstractExtension> getExtensions( AbstractItem item, Class<?> oftype ) {
+        logger.debug( "Getting extensions for " + item + " of type " + oftype );
+        //Iterator<Relationship> it = item.getNode().getRelationships( ExtensionRelations.EXTENSION, Direction.OUTGOING ).iterator();
+        List<Edge> edges = getEdges2( item, ResourceEdgeType.extension );
+
+        List<AbstractExtension> extensions = new ArrayList<AbstractExtension>();
+
+        for( Edge edge : edges  ) {
+            ODocument node = edge.getInNode();
+            String c = (String) node.field( "class" );
+
+            if( c != null && ( ( oftype == null ) || ( oftype != null && c.equals( oftype.getName() ) ) ) ) {
+                logger.debug( "Adding " + c );
+                AbstractExtension other = null;
+                try {
+                    Class<AbstractExtension> clazz = (Class<AbstractExtension>) Class.forName( c );
+                    Constructor<AbstractExtension> constructor = clazz.getConstructor( ODocument.class );
+                    other = constructor.newInstance( node );
+                    extensions.add( other );
+                } catch( Exception e ) {
+                    logger.warn( "Unable to instantiate class " + c );
+                }
+            }
+        }
+
+        return extensions;
+    }
+
 	
 	/*
 	 * Basic getters
@@ -543,6 +551,10 @@ public class SeventyEight {
 	public I18N getI18N() {
 		return i18n;
 	}
+
+    public File getPath() {
+        return path;
+    }
 	
 	/* 
 	 * JSON
