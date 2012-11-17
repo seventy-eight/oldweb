@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
 
@@ -29,17 +30,17 @@ public class FileResource extends AbstractResource {
         file
     }
 	
-	public FileResource( ODocument node ) {
-		super( node );
+	public FileResource( OGraphDatabase db, ODocument node ) {
+		super( db, node );
 	}
 
-	public void save( ParameterRequest request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+	public void save( Request request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
 		doSave( new FileSaveImpl( this, request, jsonData ) );
 	}
 	
 	public class FileSaveImpl extends ResourceSaveImpl {
 
-		public FileSaveImpl( AbstractResource resource, ParameterRequest request, JsonObject jsonData ) {
+		public FileSaveImpl( AbstractResource resource, Request request, JsonObject jsonData ) {
 			super( resource, request, jsonData );
 		}
 		
@@ -86,16 +87,16 @@ public class FileResource extends AbstractResource {
 	public void setFileRelation( Item item ) {
 		removeFileRelations();
 		//this.node.createRelationshipTo( node, Relationships.FILE );
-        SeventyEight.getInstance().createEdge( this, item, FileResourceEdgeType.file );
+        SeventyEight.getInstance().createEdge( db, this, item, FileResourceEdgeType.file );
 	}
 	
 	public void removeFileRelations() {
 		logger.debug( "Removing all file relationships for " + this );
-        SeventyEight.getInstance().removeOutEdges( this, FileResourceEdgeType.file );
+        SeventyEight.getInstance().removeOutEdges( db, this, FileResourceEdgeType.file );
 	}
 	
 	public File getLocalFile() {
-        List<ODocument> nodes = SeventyEight.getInstance().getNodes( this, FileResourceEdgeType.file );
+        List<ODocument> nodes = SeventyEight.getInstance().getNodes( db, this, FileResourceEdgeType.file );
         if( nodes.size() == 1 ) {
             return new File( (String) nodes.get( 0 ).field( "file" ) );
         } else if( nodes.size() > 1 ) {

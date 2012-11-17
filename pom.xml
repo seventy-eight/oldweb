@@ -16,7 +16,9 @@
 
 	<modules>
 		<module>core</module>
-	</modules>
+        <module>WAR</module>
+        <module>JAR</module>
+    </modules>
 
 	<build>
 		<pluginManagement>

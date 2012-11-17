@@ -12,5 +12,5 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 
 public interface Savable {
 	public ODocument getNode();
-	public void save( ParameterRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException;
+	public void save( Request request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException;
 }

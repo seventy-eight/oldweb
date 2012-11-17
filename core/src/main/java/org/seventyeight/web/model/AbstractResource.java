@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import org.apache.log4j.Logger;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.CouldNotLoadResourceException;
@@ -24,8 +25,8 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 	
 	private static Logger logger = Logger.getLogger( AbstractResource.class );
 
-	protected AbstractResource( ODocument node ) {
-		super( node );
+	protected AbstractResource( OGraphDatabase db, ODocument node ) {
+		super( db, node );
 	}
 	
 	public AbstractResource( ODocument node, Locale locale ) {
@@ -34,7 +35,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 	
 	public class ResourceSaveImpl extends ObjectSave {
 		protected AbstractResource resource;
-		public ResourceSaveImpl( AbstractResource resource, ParameterRequest configuration, JsonObject jsonData ) {
+		public ResourceSaveImpl( AbstractResource resource, Request configuration, JsonObject jsonData ) {
 			super( resource, configuration, jsonData );
 			
 			this.resource = resource;

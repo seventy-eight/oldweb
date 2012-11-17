@@ -13,6 +13,7 @@ import java.util.Set;
 
 import javax.resource.spi.IllegalStateException;
 
+import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -36,11 +37,13 @@ public abstract class AbstractItem implements Item {
 
 	private static Logger logger = Logger.getLogger( AbstractItem.class );
 	protected ODocument node;
+    protected OGraphDatabase db;
 	
 	//protected Long identifier;
 	protected Locale locale;
 		
-	public AbstractItem( ODocument node ) {
+	public AbstractItem( OGraphDatabase db, ODocument node ) {
+        this.db = db;
 		this.node = node;
 		this.locale = SeventyEight.getInstance().getDefaultLocale();
 		//this.identifier = (Long) node.getProperty( "identifier" );
@@ -71,10 +74,10 @@ public abstract class AbstractItem implements Item {
 	protected abstract class Save {
 
 		protected AbstractItem item;
-		protected ParameterRequest request;
+		protected Request request;
 		protected JsonObject jsonData;
 
-		public Save( AbstractItem type, ParameterRequest request, JsonObject jsonData ) {
+		public Save( AbstractItem type, Request request, JsonObject jsonData ) {
 			this.item = type;
 			this.request = request;
 			this.jsonData = jsonData;
@@ -88,7 +91,7 @@ public abstract class AbstractItem implements Item {
 		
 		public void updateIndexes() {}
 		
-		public ParameterRequest getRequest() {
+		public Request getRequest() {
 			return request;
 		}
 		

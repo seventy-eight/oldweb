@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.resource.spi.IllegalStateException;
 
+import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import org.apache.log4j.Logger;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.SeventyEight.EdgeType;
@@ -31,8 +32,8 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 	public static final String __REVIEW_GROUP_NAME = "review-group";
 	
 	
-	public AbstractObject( ODocument node ) {
-		super( node );
+	public AbstractObject( OGraphDatabase db, ODocument node ) {
+		super( db, node );
 	}
 	
 	public AbstractObject( ODocument node, Locale locale ) {
@@ -43,7 +44,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 		protected AbstractObject object;
 		protected String language;
 		
-		public ObjectSave( AbstractObject object, ParameterRequest configuration, JsonObject jsonData ) {
+		public ObjectSave( AbstractObject object, Request configuration, JsonObject jsonData ) {
 			super( object, configuration, jsonData );
 			
 			this.object = object;
