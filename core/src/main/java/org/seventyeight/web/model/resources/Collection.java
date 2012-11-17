@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
 import com.orientechnologies.orient.core.db.ODatabase;
+import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
 import com.google.gson.JsonElement;
@@ -34,8 +35,8 @@ public class Collection extends AbstractResource {
 	
 	private Set<Long> cached;
 	
-	public Collection( ODocument node ) {
-		super( node );
+	public Collection( OGraphDatabase db, ODocument node ) {
+		super( db, node );
 	}
 
 	public String getPortrait() {

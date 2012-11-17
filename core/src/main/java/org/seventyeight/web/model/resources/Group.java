@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import org.apache.log4j.Logger;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.SeventyEight.EdgeType;
@@ -33,8 +34,8 @@ public class Group extends AbstractResource {
 	
 	public boolean selected = false;
 	
-	public Group( ODocument node ) {
-		super( node );
+	public Group( OGraphDatabase db, ODocument node ) {
+		super( db, node );
 	}
 
 	public void save( ParameterRequest request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
@@ -58,7 +59,7 @@ public class Group extends AbstractResource {
 						logger.debug( "Adding " + user + " to group" );
 						Long id = new Long( user );
 						AbstractResource r = SeventyEight.getInstance().getResource( id );
-						SeventyEight.getInstance().createEdge( resource, r, GroupMember.member );
+						SeventyEight.getInstance().createEdge( db, resource, r, GroupMember.member );
 					} catch( Exception e ) {
 						logger.warn( "Unable to get user resource: " + e.getMessage() );
 					}
@@ -83,13 +84,13 @@ public class Group extends AbstractResource {
 	}
 	
 	public void addMember( User user ) {
-		SeventyEight.getInstance().createEdge( this, user, GroupMember.member );
+		SeventyEight.getInstance().createEdge( db, this, user, GroupMember.member );
 	}
 	
 	public boolean removeMember( User user ) {
 		logger.debug( "Removing member " + user );
 		//Iterator<Relationship> rls = node.getRelationships( Direction.OUTGOING, RelationShips.MEMBER ).iterator();
-		List<Edge> edges = SeventyEight.getInstance().getEdges2( this, GroupMember.member );
+		List<Edge> edges = SeventyEight.getInstance().getEdges2( db, this, GroupMember.member );
 		
 		//while( rls.hasNext() ) {
 		for( Edge edge : edges ) {
@@ -104,12 +105,12 @@ public class Group extends AbstractResource {
 	}
 	
 	public void removeMembers() {
-		SeventyEight.getInstance().removeOutEdges( this, GroupMember.member );
+		SeventyEight.getInstance().removeOutEdges( db, this, GroupMember.member );
 	}
 	
 	public boolean isMember( User user ) {
 		logger.debug( "is " + user + " member of " + this );
-		List<Edge> edges = SeventyEight.getInstance().getEdges2( this, GroupMember.member );
+		List<Edge> edges = SeventyEight.getInstance().getEdges2( db, this, GroupMember.member );
 		
 		for( Edge edge : edges ) {
 			if( edge.getOutNode().equals( user.getNode() ) ) {

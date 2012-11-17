@@ -35,7 +35,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 	
 	public class ResourceSaveImpl extends ObjectSave {
 		protected AbstractResource resource;
-		public ResourceSaveImpl( AbstractResource resource, Request configuration, JsonObject jsonData ) {
+		public ResourceSaveImpl( AbstractResource resource, ParameterRequest configuration, JsonObject jsonData ) {
 			super( resource, configuration, jsonData );
 			
 			this.resource = resource;

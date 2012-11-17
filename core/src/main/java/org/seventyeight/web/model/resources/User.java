@@ -3,6 +3,7 @@ package org.seventyeight.web.model.resources;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import org.apache.log4j.Logger;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
@@ -22,8 +23,8 @@ public class User extends AbstractResource {
 	
 	public static final String __USERNAME = "username";
 
-	public User( ODocument node ) {
-		super( node );
+	public User( OGraphDatabase db, ODocument node ) {
+		super( db, node );
 	}
 
 	public void save( ParameterRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
@@ -228,7 +229,7 @@ public class User extends AbstractResource {
 	}
 
 	public String getPortrait() {
-		List<AbstractExtension> list = SeventyEight.getInstance().getExtensions( this, UserAvatar.class );
+		List<AbstractExtension> list = SeventyEight.getInstance().getExtensions( db, this, UserAvatar.class );
 		
 		logger.debug( "I found " + list );
 		

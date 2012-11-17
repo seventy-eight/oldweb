@@ -12,6 +12,7 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 
+import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
 
@@ -28,8 +29,8 @@ public class Image extends FileResource {
 
 	private static Logger logger = Logger.getLogger( Image.class );
 
-	public Image( ODocument node ) {
-		super( node );
+	public Image( OGraphDatabase db, ODocument node ) {
+		super( db, node );
 	}
 
 	public enum ImageType {

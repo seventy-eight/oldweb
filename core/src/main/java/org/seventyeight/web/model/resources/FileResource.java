@@ -40,7 +40,7 @@ public class FileResource extends AbstractResource {
 	
 	public class FileSaveImpl extends ResourceSaveImpl {
 
-		public FileSaveImpl( AbstractResource resource, Request request, JsonObject jsonData ) {
+		public FileSaveImpl( AbstractResource resource, ParameterRequest request, JsonObject jsonData ) {
 			super( resource, request, jsonData );
 		}
 		

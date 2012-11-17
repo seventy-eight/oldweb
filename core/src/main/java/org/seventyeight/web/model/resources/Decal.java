@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.orientechnologies.orient.core.db.ODatabase;
+import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
 
@@ -21,8 +22,8 @@ public class Decal extends Image {
 	private static Logger logger = Logger.getLogger( Decal.class );
 	public static final String __TYPE = "decal";
 
-	public Decal( ODocument node ) {
-		super( node );
+	public Decal( OGraphDatabase db, ODocument node ) {
+		super( db, node );
 	}
 	
 	@Override

@@ -74,10 +74,10 @@ public abstract class AbstractItem implements Item {
 	protected abstract class Save {
 
 		protected AbstractItem item;
-		protected Request request;
+		protected ParameterRequest request;
 		protected JsonObject jsonData;
 
-		public Save( AbstractItem type, Request request, JsonObject jsonData ) {
+		public Save( AbstractItem type, ParameterRequest request, JsonObject jsonData ) {
 			this.item = type;
 			this.request = request;
 			this.jsonData = jsonData;
@@ -91,7 +91,7 @@ public abstract class AbstractItem implements Item {
 		
 		public void updateIndexes() {}
 		
-		public Request getRequest() {
+		public ParameterRequest getRequest() {
 			return request;
 		}
 		
@@ -128,7 +128,7 @@ public abstract class AbstractItem implements Item {
 							logger.debug( "Saving configurable " + e );
 							e.save( request, o );
 							logger.debug( "Configurable saved" );
-							SeventyEight.getInstance().addNodeRelation( item, e, ResourceEdgeType.extension, false );
+							SeventyEight.getInstance().addNodeRelation( db, item, e, ResourceEdgeType.extension, false );
 						}
 					} catch( Exception e ) {
 						logger.warn( "Unable to get descriptor for " + o + ": " + e.getMessage() );
@@ -177,7 +177,7 @@ public abstract class AbstractItem implements Item {
 
 	
 	public Map<String, List<ODocument>> getExtensionNodes() {
-		List<ODocument> ns = SeventyEight.getInstance().getNodes( this, ResourceEdgeType.extension );
+		List<ODocument> ns = SeventyEight.getInstance().getNodes( db, this, ResourceEdgeType.extension );
 		
 		Map<String, List<ODocument>> nodes = new HashMap<String, List<ODocument>>();
 		
