@@ -15,6 +15,7 @@
 	</properties>
 
 	<modules>
+        <module>orientdb-common</module>
 		<module>core</module>
         <module>WAR</module>
         <module>JAR</module>

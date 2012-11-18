@@ -131,7 +131,8 @@ public class SeventyEight {
         /* Initialize database */
         OGraphDatabase graphdb = null;
 		try {
-			graphdb = getDB();
+			graphdb = new OGraphDatabase( "local:" + orientdbPath.toString() ).open( "admin", "admin" );
+            graphdb.n
 		} catch( Exception e ) {
 			logger.info( "Installing OrientDB to " + orientdbPath );
 			graphdb = new OGraphDatabase( "local:" + orientdbPath.toString() );
@@ -155,8 +156,8 @@ public class SeventyEight {
 		return this;
 	}
 
-    public OGraphDatabase getDB() {
-        return (OGraphDatabase) ODatabaseDocumentPool.global().acquire( "local:" + orientdbPath.toString(), "admin", "admin" );
+    public static void getDB() {
+        ODatabaseDocumentPool.global().acquire( "local:" + orientdbPath.toString() "admin", "admin" );
     }
 	
 	public static SeventyEight getInstance() {
@@ -380,7 +381,7 @@ public class SeventyEight {
 	}
 	
 	public List<Edge> getEdges( OGraphDatabase graphdb, Item from, Item to ) {
-		Set<ODocument> edges = (Set<ODocument>) graphdb.getEdgesBetweenVertexes( from.getNode(), to.getNode() );
+		Set<ODocument> edges = graphdb.getEdgesBetweenVertexes( from.getNode(), to.getNode() );
 		List<Edge> es = new LinkedList<Edge>();
 		
 		for( OIdentifiable e : edges ) {
