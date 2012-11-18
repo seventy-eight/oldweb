@@ -1,4 +1,4 @@
-package org.seventyeight.database.orientdb;
+package org.seventyeight.database;
 
 /**
  * User: cwolfgang

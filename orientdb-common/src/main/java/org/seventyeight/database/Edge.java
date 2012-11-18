@@ -1,7 +1,8 @@
-package org.seventyeight.database.orientdb;
+package org.seventyeight.database;
 
 import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import org.seventyeight.database.orientdb.OrientDBUtils;
 
 /**
  * <pre>

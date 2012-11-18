@@ -3,6 +3,7 @@ package org.seventyeight.database.orientdb;
 import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import org.seventyeight.database.EdgeType;
 
 import java.util.*;
 

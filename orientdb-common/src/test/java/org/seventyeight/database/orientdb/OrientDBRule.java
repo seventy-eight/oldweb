@@ -1,14 +1,13 @@
 package org.seventyeight.database.orientdb;
 
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
 import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import org.seventyeight.database.Node;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * User: cwolfgang

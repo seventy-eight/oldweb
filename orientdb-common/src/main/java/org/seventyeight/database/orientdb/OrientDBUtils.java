@@ -4,6 +4,9 @@ import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
+import org.seventyeight.database.Edge;
+import org.seventyeight.database.EdgeType;
+import org.seventyeight.database.Node;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -22,7 +25,7 @@ public class OrientDBUtils {
 
 
     /**
-     * Create an {@link EdgeType} edge between from {@link Node} and to {@link Node}
+     * Create an {@link org.seventyeight.database.EdgeType} edge between from {@link org.seventyeight.database.Node} and to {@link org.seventyeight.database.Node}
      * @param graphdb
      * @param from
      * @param to
@@ -36,7 +39,7 @@ public class OrientDBUtils {
 
 
     /**
-     * Get a {@link List} of {@link Edge}'s from a {@link Node} with a certain {@link EdgeType}.
+     * Get a {@link List} of {@link org.seventyeight.database.Edge}'s from a {@link Node} with a certain {@link EdgeType}.
      * @param db
      * @param item
      * @param type

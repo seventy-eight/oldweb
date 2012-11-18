@@ -3,9 +3,8 @@ package org.seventyeight.database.orientdb;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.junit.ClassRule;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.seventyeight.database.EdgeType;
+import org.seventyeight.database.Node;
 
 /**
  * User: cwolfgang
