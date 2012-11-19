@@ -37,6 +37,15 @@ public interface Node<NODE extends Node<NODE, EDGE>, EDGE extends Edge<EDGE, NOD
      */
     public List<EDGE> getEdges( NODE other, EdgeType type );
 
+    /**
+     * Get the {@link Edge}'s between this and the other {@link Node} with a certain {@link EdgeType} in a given {@link Direction}
+     * @param other
+     * @param type
+     * @param direction
+     * @return
+     */
+    public List<EDGE> getEdges( NODE other, EdgeType type, Direction direction );
+
 
     /**
      * Get the {@link Edge}'s from this to the other {@link Node} with a certain {@link EdgeType}

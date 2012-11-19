@@ -96,9 +96,7 @@ public class OrientNode implements Node<OrientNode, OrientEdge> {
     public List<OrientEdge> getEdgesTo( OrientNode to, EdgeType type ) {
         logger.debug( "Getting edges from " + this + " to " + to + " of type " + type );
 
-        OrientNode n = (OrientNode) to;
-
-        Set<OIdentifiable> ois = db.getInternalDatabase().getEdgesBetweenVertexes( doc, n.doc, ( type != null ? new String[]{ type.toString() } : null ) );
+        Set<OIdentifiable> ois = db.getInternalDatabase().getEdgesBetweenVertexes( doc, to.doc, ( type != null ? new String[]{ type.toString() } : null ) );
 
         logger.debug( "EDGES: " + ois );
         List<OrientEdge> es = new LinkedList<OrientEdge>();
@@ -112,6 +110,24 @@ public class OrientNode implements Node<OrientNode, OrientEdge> {
         }
 
         return es;
+    }
+
+    @Override
+    public List<OrientEdge> getEdges( OrientNode other, EdgeType type, Direction direction ) {
+        logger.debug( "Getting edges between " + this + " and " + other + " of type " + type + " " + direction );
+
+        Set<OIdentifiable> ois = db.getInternalDatabase().getEdgesBetweenVertexes( doc, other.doc, ( type != null ? new String[]{ type.toString() } : null ) );
+
+        for( OIdentifiable e : ois ) {
+            switch( direction ) {
+                if( db.getInternalDatabase().getOutVertex( e ).equals( doc )) {
+                    OrientEdge edge = new OrientEdge( e, this, to );
+                    es.add( edge );
+                    logger.debug( "Edge2: " + edge );
+                }
+            }
+        }
+
     }
 
     @Override
@@ -136,6 +152,7 @@ public class OrientNode implements Node<OrientNode, OrientEdge> {
     @Override
     public OrientNode removeEdges( EdgeType type, Direction direction ) {
         db.getInternalDatabase().removeEdge(null);
+
 
         return this;
     }
