@@ -135,6 +135,11 @@ public class OrientNode implements Node<OrientDatabase> {
     }
 
     @Override
+    public Node removeEdges( EdgeType type, Direction direction ) {
+        db.getInternalDatabase().
+    }
+
+    @Override
     public String toString() {
         return "OrientNode[" + doc + "]";
     }

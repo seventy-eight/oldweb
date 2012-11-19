@@ -34,10 +34,10 @@ import com.google.gson.JsonObject;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 
 
-public abstract class AbstractItem implements Item {
+public abstract class AbstractItem<DB> implements Item<DB> {
 
 	private static Logger logger = Logger.getLogger( AbstractItem.class );
-	protected Node node;
+	protected Node<DB> node;
 	
 	//protected Long identifier;
 	protected Locale locale;

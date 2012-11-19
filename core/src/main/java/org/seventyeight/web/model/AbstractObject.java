@@ -6,12 +6,10 @@ import java.util.List;
 
 import javax.resource.spi.IllegalStateException;
 
-import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Edge;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
-import org.seventyeight.web.SeventyEight.EdgeType;
 import org.seventyeight.web.SeventyEight.GroupEdgeType;
 import org.seventyeight.web.SeventyEight.ResourceEdgeType;
 import org.seventyeight.web.exceptions.ErrorWhileSavingException;
@@ -25,7 +23,7 @@ import com.google.gson.JsonObject;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 
 
-public abstract class AbstractObject extends AbstractItem implements Ownable, Configurable {
+public abstract class AbstractObject<DB> extends AbstractItem<DB> implements Ownable, Configurable {
 
 	private static Logger logger = Logger.getLogger( AbstractObject.class );
 
@@ -137,7 +135,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 			tt = getText( language, property );
 		} catch( TextNodeDoesNotExistException e ) {
 			logger.debug( "The " + property + " text node for " + language + " does not exist, creating it" );
-			tt = Text.create( AbstractObject.this, property, language );
+			tt = Text.create( node.getDB(), AbstractObject.this, property, language );
 		}
 		tt.setText( value );
 	}
@@ -242,7 +240,8 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 	}
 	
 	public void addGroup( Group group, GroupEdgeType type ) {
-		SeventyEight.getInstance().createEdge( db, this, group, type );
+		//SeventyEight.getInstance().createEdge( db, this, group, type );
+        node.createEdge( group.getNode(), type );
 	}
 	
 	protected void removeGroups( GroupEdgeType type ) {
@@ -265,7 +264,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 	}
 	
 	public void setSubTitle( String subTitle ) {
-		node.field( "subtitle", subTitle );
+		node.set( "subtitle", subTitle );
 		node.save();
 	}
 

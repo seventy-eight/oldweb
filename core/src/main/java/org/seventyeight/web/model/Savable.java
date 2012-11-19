@@ -10,7 +10,7 @@ import org.seventyeight.web.exceptions.ResourceDoesNotExistException;
 import com.google.gson.JsonObject;
 
 
-public interface Savable {
-	public Node getNode();
+public interface Savable<DB> {
+	public Node<DB> getNode();
 	public void save( ParameterRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException;
 }
