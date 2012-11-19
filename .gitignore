@@ -5,3 +5,5 @@ build
 target
 logger_*
 *~
+*.iml
+*.idea/*

@@ -1,4 +1,4 @@
-package org.seventyeight.web.util;
+package org.seventyeight.utils;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

@@ -1,4 +1,4 @@
-package org.seventyeight.util;
+package org.seventyeight.utils;
 
 import java.util.LinkedList;
 import java.util.List;

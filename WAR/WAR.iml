@@ -13,16 +13,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax:javaee-api:6.0" level="project" />
-    <orderEntry type="module" module-name="web-core" />
-    <orderEntry type="library" name="Maven: org.seventyeight:loader:0.1.1" level="project" />
-    <orderEntry type="library" name="Maven: commons-io:commons-io:2.1" level="project" />
-    <orderEntry type="library" name="Maven: com.orientechnologies:orientdb-core:1.2.0" level="project" />
-    <orderEntry type="library" name="Maven: com.orientechnologies:orient-commons:1.2.0" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.velocity:velocity:1.7" level="project" />
-    <orderEntry type="library" name="Maven: commons-collections:commons-collections:3.2.1" level="project" />
-    <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.4" level="project" />
-    <orderEntry type="library" name="Maven: log4j:log4j:1.2.16" level="project" />
-    <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.1" level="project" />
+    <orderEntry type="library" name="Maven: org.seventyeight:seventyeight-web-core:0.1.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.neo4j:neo4j:1.6.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.neo4j:neo4j-kernel:1.6.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.geronimo.specs:geronimo-jta_1.1_spec:1.1.1" level="project" />
@@ -35,6 +26,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.scala-lang:scala-library:2.9.0-1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.neo4j:neo4j-jmx:1.6.1" level="project" />
     <orderEntry type="library" name="Maven: org.json:json:20090211" level="project" />
+    <orderEntry type="library" name="Maven: log4j:log4j:1.2.16" level="project" />
   </component>
 </module>
 

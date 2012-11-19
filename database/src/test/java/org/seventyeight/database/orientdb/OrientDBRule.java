@@ -6,6 +6,7 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.seventyeight.database.Node;
+import org.seventyeight.database.orientdb.impl.orientdb.OrientDatabase;
 
 import java.io.File;
 
@@ -17,20 +18,20 @@ import java.io.File;
 public class OrientDBRule implements TestRule {
 
     private File path;
-    private OGraphDatabase db;
+    private OrientDatabase db;
 
     private void before() {
         //this.db = (OGraphDatabase) ODatabaseDocumentPool.global().acquire( "local:" + path.toString(), "admin", "admin" );
         //db = new OGraphDatabase( "local:" + path.toString() ).create().open( "admin", "admin" );
         //db = new OGraphDatabase( "memory:test" ).open( "admin", "admin" );
-        db = new OGraphDatabase( "memory:test" ).create();
+        db = new OrientDatabase( (OGraphDatabase) new OGraphDatabase( "memory:test" ).create() );
     }
 
     private void after() {
-        db.close();
+        db.getInternalDatabase().close();
     }
 
-    public OGraphDatabase getDB() {
+    public OrientDatabase getDB() {
         return db;
     }
 
