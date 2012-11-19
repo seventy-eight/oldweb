@@ -25,12 +25,21 @@ public interface Node {
     public List<Edge> getEdges( EdgeType type );
 
     /**
-     * The the {@link Edge}'s to another {@link Node} with a certain {@link EdgeType}
+     * Get the {@link Edge}'s between this and the other {@link Node} with a certain {@link EdgeType}
      * @param to
      * @param type
      * @return
      */
-    public List<Edge> getEdges( Node to, EdgeType type );
+    public List<Edge> getEdges( Node other, EdgeType type );
+
+
+    /**
+     * Get the {@link Edge}'s from this to the other {@link Node} with a certain {@link EdgeType}
+     * @param to
+     * @param type
+     * @return
+     */
+    public List<Edge> getEdgesTo( Node to, EdgeType type );
 
     /**
      * Get a property from the {@link Node}

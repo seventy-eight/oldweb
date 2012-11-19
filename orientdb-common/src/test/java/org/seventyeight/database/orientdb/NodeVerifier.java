@@ -27,9 +27,17 @@ public class NodeVerifier {
     private class Relation {
         Node other;
         EdgeType type;
+        boolean bidirectional = true;
+
         public Relation( Node other, EdgeType type ) {
             this.other = other;
             this.type = type;
+        }
+
+        public Relation( Node other, EdgeType type, boolean bidirectional ) {
+            this.other = other;
+            this.type = type;
+            this.bidirectional = bidirectional;
         }
 
         public String toString() {
@@ -71,9 +79,15 @@ public class NodeVerifier {
     private void verifyRelations( List<Relation> relations ) {
         for( Relation r : relations ) {
             System.out.println( "Checking " + r );
-            List<Edge> edges = node.getEdges( r.other, r.type );
+            List<Edge> edges = null;
+            if( r.bidirectional ) {
+                edges = node.getEdges( r.other, r.type );
+            } else {
+                edges = node.getEdgesTo( r.other, r.type );
+            }
+
             if( edges.size() == 0 ) {
-                fail( "The relation between does not have " + r.type.toString() );
+                fail( "No relation with type " + r.type.toString() );
             }
 
             for( Edge e : edges ) {
@@ -96,8 +110,20 @@ public class NodeVerifier {
         return this;
     }
 
+    public NodeVerifier addInBoundRelation( Node other, EdgeType type, boolean bidirectional ) {
+        inBoundRelations.add( new Relation( other, type, bidirectional ) );
+
+        return this;
+    }
+
     public NodeVerifier addOutBoundRelation( Node other, EdgeType type ) {
         outBoundRelations.add( new Relation( other, type ) );
+
+        return this;
+    }
+
+    public NodeVerifier addOutBoundRelation( Node other, EdgeType type, boolean bidirectional ) {
+        outBoundRelations.add( new Relation( other, type, bidirectional ) );
 
         return this;
     }

@@ -44,4 +44,19 @@ public class OrientNodeTest {
 
         NodeVerifier verifier = new NodeVerifier( n1 ).addField( "field", "a" ).addOutBoundRelation( n2, TestType.TEST ).verify();
     }
+
+    @Test
+    public void test3() {
+        Node n1 = new OrientNode( orule.getDB() );
+        n1.set( "field", "a" );
+        n1.save();
+
+        Node n2 = new OrientNode( orule.getDB() );
+        n2.set( "field", "b" );
+        n2.save();
+
+        Edge e = new OrientEdge( n2, n1, TestType.TEST );
+
+        NodeVerifier verifier = new NodeVerifier( n1 ).addField( "field", "a" ).addInBoundRelation( n2, TestType.TEST, true ).verify();
+    }
 }
