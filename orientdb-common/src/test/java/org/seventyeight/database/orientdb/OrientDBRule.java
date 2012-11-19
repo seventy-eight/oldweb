@@ -74,19 +74,4 @@ public class OrientDBRule implements TestRule {
     }
 
 
-    public Node createNode() {
-        return new NodeImpl( db.createVertex() );
-    }
-
-    public class NodeImpl implements Node {
-        private ODocument d;
-        public NodeImpl( ODocument d ) {
-            this.d = d;
-        }
-
-        @Override
-        public ODocument getNode() {
-            return d;
-        }
-    }
 }

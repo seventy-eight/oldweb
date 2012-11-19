@@ -1,8 +1,5 @@
 package org.seventyeight.database;
 
-import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
-import com.orientechnologies.orient.core.record.impl.ODocument;
-
 import java.util.List;
 
 /**
@@ -12,10 +9,44 @@ import java.util.List;
  */
 public interface Node {
 
-    public Node createEdge( Node from, Node to, EdgeType type );
+    /**
+     * Create an {@link Edge} to another {@link Node}
+     * @param to
+     * @param type
+     * @return
+     */
+    public Edge createEdge( Node to, EdgeType type );
 
-    public List<Edge> getEdges( Node item, EdgeType type );
-    public List<Edge> getEdges( Node from, Node to, EdgeType type );
+    /**
+     * Get the {@link Edge}'s with a certain {@link EdgeType}
+     * @param type
+     * @return
+     */
+    public List<Edge> getEdges( EdgeType type );
 
-    public void removeEdge( Edge edge );
+    /**
+     * The the {@link Edge}'s to another {@link Node} with a certain {@link EdgeType}
+     * @param to
+     * @param type
+     * @return
+     */
+    public List<Edge> getEdges( Node to, EdgeType type );
+
+    /**
+     * Get a property from the {@link Node}
+     * @param key
+     * @param <T>
+     * @return
+     */
+    public <T> T get( String key );
+
+    /**
+     * Set a property on the {@link Node}
+     * @param key
+     * @param value
+     * @param <T>
+     */
+    public <T> void set( String key, T value );
+
+    public void save();
 }
