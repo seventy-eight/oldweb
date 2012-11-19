@@ -2,6 +2,7 @@ package org.seventyeight.database.orientdb.impl.orientdb;
 
 import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Edge;
 import org.seventyeight.database.EdgeType;
@@ -49,6 +50,26 @@ public class OrientEdge implements Edge {
         logger.debug( "Removing the edge " + this );
         ((OrientNode)out).getDB().getInternalDatabase().removeEdge( edge );
     }
+
+    @Override
+    public <T> T get( String key ) {
+        ((ODocument)edge).field( key );
+    }
+
+    @Override
+    public <T> Edge set( String key, T value ) {
+        ((ODocument)edge).field( key, value );
+
+        return this;
+    }
+
+    @Override
+    public Edge save() {
+        edge.getRecord().save();
+
+        return this;
+    }
+
 
     @Override
     public String toString() {

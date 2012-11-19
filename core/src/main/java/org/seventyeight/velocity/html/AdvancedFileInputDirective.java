@@ -40,7 +40,7 @@ public class AdvancedFileInputDirective extends Directive {
 		}
 
 		writer.write( "<div style=\"float: left\">" );
-		writer.write( "<iframe id=\"uploadframe\" src=\"/static/fileupload.html\" style=\"display:inline;border-style:solid; width:250px;height:50px\"></iframe></div>" );
+		writer.write( "<iframe id=\"uploadframe\" src=\"/static/fileupload.org.seventyeight.velocity.html.html\" style=\"display:inline;border-style:solid; width:250px;height:50px\"></iframe></div>" );
 		writer.write( "<div style=\"float: left;border-style:solid;width:250px;height:25px\">" );
 		writer.write( "<div style=\"background-color:#345676;width:0px;height:25px\" id=\"status\"></div></div>" );
 		writer.write( "<input type=\"text\" id=\"nodeid\" name=\"nodeid\" value=\"\" readonly>" );

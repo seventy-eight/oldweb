@@ -7,7 +7,7 @@ import java.util.List;
  * Date: 17-11-12
  * Time: 22:44
  */
-public interface Node<DB> {
+public interface Node<DB> extends Parameterized<Node> {
 
     /**
      * Get the {@link Database} attached to this {@link Node}
@@ -46,22 +46,6 @@ public interface Node<DB> {
      * @return
      */
     public List<Edge> getEdgesTo( Node to, EdgeType type );
-
-    /**
-     * Get a property from the {@link Node}
-     * @param key
-     * @param <T>
-     * @return
-     */
-    public <T> T get( String key );
-
-    /**
-     * Set a property on the {@link Node}
-     * @param key
-     * @param value
-     * @param <T>
-     */
-    public <T> Node set( String key, T value );
 
     public Node save();
 }

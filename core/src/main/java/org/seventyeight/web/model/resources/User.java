@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import org.apache.log4j.Logger;
+import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
@@ -23,8 +24,8 @@ public class User extends AbstractResource {
 	
 	public static final String __USERNAME = "username";
 
-	public User( OGraphDatabase db, ODocument node ) {
-		super( db, node );
+	public User( Node node ) {
+		super( node );
 	}
 
 	public void save( ParameterRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {

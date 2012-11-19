@@ -11,6 +11,7 @@ import java.util.Set;
 
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
 import org.apache.log4j.Logger;
+import org.seventyeight.database.EdgeType;
 import org.seventyeight.web.exceptions.CouldNotLoadObjectException;
 import org.seventyeight.web.exceptions.CouldNotLoadResourceException;
 import org.seventyeight.web.graph.Edge;
@@ -47,9 +48,6 @@ public class SeventyEight {
 	}
 	
 	private static final String SYSTEM_NODE_TYPE = "system";
-	
-	public interface EdgeType {
-	}
 	
 	public enum ResourceEdgeType implements EdgeType {
 		owner,

@@ -110,16 +110,16 @@ public class Renderer {
 		//velocityProperties.setProperty( "file.resource.loader.modificationCheckInterval", "2" );
 		
 		/* Custom directives */
-		velocityProperties.setProperty( "userdirective", "org.seventyeight.velocity.html.TextInputDirective,"
-				                                       + "org.seventyeight.velocity.html.AdvancedFileInputDirective," 
-				                                       + "org.seventyeight.velocity.html.WidgetDirective,"
-				                                       + "org.seventyeight.velocity.html.GroupSelectInputDirective,"
-				                                       + "org.seventyeight.velocity.html.ThemeSelectInputDirective,"
-				                                       + "org.seventyeight.velocity.html.I18NDirective,"
-				                                       + "org.seventyeight.velocity.html.ResourceViewDirective,"
-				                                       + "org.seventyeight.velocity.html.ResourcePreviewDirective,"
-				                                       + "org.seventyeight.velocity.html.ResourceSelectorDirective,"
-				                                       + "org.seventyeight.velocity.html.FileInputDirective" );
+		velocityProperties.setProperty( "userdirective", "org.seventyeight.velocity.org.seventyeight.velocity.html.html.TextInputDirective,"
+				                                       + "org.seventyeight.velocity.org.seventyeight.velocity.html.html.AdvancedFileInputDirective,"
+				                                       + "org.seventyeight.velocity.org.seventyeight.velocity.html.html.WidgetDirective,"
+				                                       + "org.seventyeight.velocity.org.seventyeight.velocity.html.html.GroupSelectInputDirective,"
+				                                       + "org.seventyeight.velocity.org.seventyeight.velocity.html.html.ThemeSelectInputDirective,"
+				                                       + "org.seventyeight.velocity.org.seventyeight.velocity.html.html.I18NDirective,"
+				                                       + "org.seventyeight.velocity.org.seventyeight.velocity.html.html.ResourceViewDirective,"
+				                                       + "org.seventyeight.velocity.org.seventyeight.velocity.html.html.ResourcePreviewDirective,"
+				                                       + "org.seventyeight.velocity.org.seventyeight.velocity.html.html.ResourceSelectorDirective,"
+				                                       + "org.seventyeight.velocity.org.seventyeight.velocity.html.html.FileInputDirective" );
 		
 		/* Initialize velocity */
 		renderer.init( velocityProperties );

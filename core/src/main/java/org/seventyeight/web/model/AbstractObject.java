@@ -8,6 +8,8 @@ import javax.resource.spi.IllegalStateException;
 
 import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import org.apache.log4j.Logger;
+import org.seventyeight.database.Edge;
+import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.SeventyEight.EdgeType;
 import org.seventyeight.web.SeventyEight.GroupEdgeType;
@@ -32,11 +34,11 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 	public static final String __REVIEW_GROUP_NAME = "review-group";
 	
 	
-	public AbstractObject( OGraphDatabase db, ODocument node ) {
-		super( db, node );
+	public AbstractObject( Node node ) {
+		super( node );
 	}
 	
-	public AbstractObject( ODocument node, Locale locale ) {
+	public AbstractObject( Node node, Locale locale ) {
 		super( node, locale );
 	}
 	
@@ -80,7 +82,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 			
 			String subtitle = request.getParameter( "subtitle" );
 			if( subtitle != null ) {
-				node.field( "subtitle", subtitle );
+				node.set( "subtitle", subtitle );
 			}
 			
 			/* Setting description */
@@ -156,12 +158,13 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 	 * @return
 	 */
 	public ODocument getTextNode( String language, String property ) {
-		List<ODocument> edges = SeventyEight.getInstance().getEdges( db, this, ResourceEdgeType.translation );
+		//List<ODocument> edges = SeventyEight.getInstance().getEdges( db, this, ResourceEdgeType.translation );
+        List<Edge> edges = node.getEdges( ResourceEdgeType.translation );
 		ODocument d = null;
 
-		for( ODocument e : edges ) {
+		for( Edge e : edges ) {
 
-			String prop = e.field( "property" );
+			String prop = e.get( "property" );
 			if( prop != null && prop.equals( property ) ) {
 				String lang  = e.field( "language" );
 				if( lang != null && lang.equals( language ) ) {
@@ -176,11 +179,11 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 	}
 	
 	public User getOwner() throws IllegalStateException {
-		List<ODocument> nodes = SeventyEight.getInstance().getNodes( db, this, ResourceEdgeType.owner );
-		if( nodes.size() == 1 ) {
-			return new User( nodes.get( 0 ) );
+        List<Edge> edges = node.getEdges( ResourceEdgeType.owner );
+		if( edges.size() == 1 ) {
+            return new User( edges.get( 0 ).getInNode() );
 		} else {
-			if( nodes.size() > 1 ) {
+			if( edges.size() > 1 ) {
 				throw new IllegalStateException( "Too many owners" );
 			} else {
 				throw new IllegalStateException( "No owner" );
