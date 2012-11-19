@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import org.apache.log4j.Logger;
+import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.CouldNotLoadResourceException;
 import org.seventyeight.web.exceptions.ErrorWhileSavingException;
@@ -25,11 +26,11 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 	
 	private static Logger logger = Logger.getLogger( AbstractResource.class );
 
-	protected AbstractResource( OGraphDatabase db, ODocument node ) {
-		super( db, node );
+	protected AbstractResource( Node node ) {
+		super( node );
 	}
 	
-	public AbstractResource( ODocument node, Locale locale ) {
+	public AbstractResource( Node node, Locale locale ) {
 		super( node, locale );
 	}
 	

@@ -17,6 +17,7 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
 
 import com.google.gson.JsonObject;
+import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.AbstractResource;
@@ -29,8 +30,8 @@ public class Image extends FileResource {
 
 	private static Logger logger = Logger.getLogger( Image.class );
 
-	public Image( OGraphDatabase db, ODocument node ) {
-		super( db, node );
+	public Image( Node node ) {
+		super( node );
 	}
 
 	public enum ImageType {

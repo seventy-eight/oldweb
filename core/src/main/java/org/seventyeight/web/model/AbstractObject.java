@@ -7,6 +7,7 @@ import java.util.List;
 import javax.resource.spi.IllegalStateException;
 
 import org.apache.log4j.Logger;
+import org.seventyeight.database.Database;
 import org.seventyeight.database.Edge;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
@@ -23,7 +24,7 @@ import com.google.gson.JsonObject;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 
 
-public abstract class AbstractObject<DB> extends AbstractItem<DB> implements Ownable, Configurable {
+public abstract class AbstractObject<IDB, DB extends Database, NODE extends Node<IDB, DB, NODE>> extends AbstractItem<IDB, DB, NODE> implements Ownable, Configurable {
 
 	private static Logger logger = Logger.getLogger( AbstractObject.class );
 
@@ -32,11 +33,11 @@ public abstract class AbstractObject<DB> extends AbstractItem<DB> implements Own
 	public static final String __REVIEW_GROUP_NAME = "review-group";
 	
 	
-	public AbstractObject( Node node ) {
+	public AbstractObject( NODE node ) {
 		super( node );
 	}
 	
-	public AbstractObject( Node node, Locale locale ) {
+	public AbstractObject( NODE node, Locale locale ) {
 		super( node, locale );
 	}
 	

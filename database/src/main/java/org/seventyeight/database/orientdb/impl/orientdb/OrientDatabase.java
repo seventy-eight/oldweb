@@ -9,7 +9,7 @@ import org.seventyeight.database.Node;
  * Date: 19-11-12
  * Time: 12:29
  */
-public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
+public class OrientDatabase implements Database<OGraphDatabase, OrientDatabase, OrientNode> {
 
     private OGraphDatabase db;
 

@@ -7,7 +7,7 @@ import java.util.List;
  * Date: 17-11-12
  * Time: 22:44
  */
-public interface Node extends Parameterized<Node> {
+public interface Node<IDB, DB extends Database, NODE extends Node> extends Parameterized<NODE> {
 
     /**
      * Get the {@link Database} attached to this {@link Node}
@@ -21,7 +21,7 @@ public interface Node extends Parameterized<Node> {
      * @param type
      * @return
      */
-    public Edge createEdge( Node to, EdgeType type );
+    public Edge createEdge( NODE to, EdgeType type );
 
     /**
      * Get the {@link Edge}'s with a certain {@link EdgeType}
@@ -35,7 +35,7 @@ public interface Node extends Parameterized<Node> {
      * @param type
      * @return
      */
-    public List<Edge> getEdges( Node other, EdgeType type );
+    public List<Edge> getEdges( NODE other, EdgeType type );
 
 
     /**
@@ -44,7 +44,7 @@ public interface Node extends Parameterized<Node> {
      * @param type
      * @return
      */
-    public List<Edge> getEdgesTo( Node to, EdgeType type );
+    public List<Edge> getEdgesTo( NODE to, EdgeType type );
 
     /**
      * Remove {@link Edge}'s of a certain type in the {@link Direction}
@@ -54,5 +54,5 @@ public interface Node extends Parameterized<Node> {
      */
     public Node removeEdges( EdgeType type, Direction direction );
 
-    public Node save();
+    public NODE save();
 }

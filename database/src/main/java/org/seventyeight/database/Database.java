@@ -7,7 +7,7 @@ package org.seventyeight.database;
  * Date: 19-11-12
  * Time: 12:29
  */
-public interface Database<IDB, NT extends Node> {
+public interface Database<IDB, DB, NT extends Node> {
 
     /**
      * Get the internal database behind this wrapper

@@ -13,15 +13,15 @@ import org.seventyeight.database.Node;
  * Date: 18-11-12
  * Time: 22:37
  */
-public class OrientEdge implements Edge {
+public class OrientEdge implements Edge<OrientEdge, OrientNode> {
 
     private static Logger logger = Logger.getLogger( OrientEdge.class );
 
     private OIdentifiable edge;
-    private Node out;
-    private Node in;
+    private OrientNode out;
+    private OrientNode in;
 
-    public OrientEdge( Node out, Node in, EdgeType type ) {
+    public OrientEdge( OrientNode out, OrientNode in, EdgeType type ) {
         OrientNode n1 = (OrientNode) out;
         OrientNode n2 = (OrientNode) in;
         edge = n1.getDB().getInternalDatabase().createEdge( n1.getDocument(), n2.getDocument() ).field( OGraphDatabase.LABEL, type.toString() ).save();
@@ -29,19 +29,19 @@ public class OrientEdge implements Edge {
         this.in = in;
     }
 
-    public OrientEdge( OIdentifiable edge, Node out, Node in ) {
+    public OrientEdge( OIdentifiable edge, OrientNode out, OrientNode in ) {
         this.edge = edge;
         this.out = out;
         this.in = in;
     }
 
     @Override
-    public Node getOutNode() {
+    public OrientNode getOutNode() {
         return out;
     }
 
     @Override
-    public Node getInNode() {
+    public OrientNode getInNode() {
         return in;
     }
 
@@ -57,14 +57,14 @@ public class OrientEdge implements Edge {
     }
 
     @Override
-    public <T> Edge set( String key, T value ) {
+    public <T> OrientEdge set( String key, T value ) {
         ((ODocument)edge).field( key, value );
 
         return this;
     }
 
     @Override
-    public Edge save() {
+    public OrientEdge save() {
         edge.getRecord().save();
 
         return this;

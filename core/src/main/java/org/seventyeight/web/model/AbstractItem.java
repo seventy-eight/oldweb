@@ -17,6 +17,7 @@ import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.seventyeight.database.Database;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.SeventyEight.EdgeType;
@@ -34,21 +35,21 @@ import com.google.gson.JsonObject;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 
 
-public abstract class AbstractItem<DB> implements Item<DB> {
+public abstract class AbstractItem<IDB, DB extends Database, NODE extends Node<IDB, DB, NODE>> implements Item<DB> {
 
 	private static Logger logger = Logger.getLogger( AbstractItem.class );
-	protected Node<DB> node;
+	protected NODE node;
 	
 	//protected Long identifier;
 	protected Locale locale;
 		
-	public AbstractItem( Node node ) {
+	public AbstractItem( NODE node ) {
 		this.node = node;
 		this.locale = SeventyEight.getInstance().getDefaultLocale();
 		//this.identifier = (Long) node.getProperty( "identifier" );
 	}
 	
-	public AbstractItem( Node node, Locale locale ) {
+	public AbstractItem( NODE node, Locale locale ) {
 		this.node = node;
 		this.locale = locale;
 		//this.identifier = (Long) node.getProperty( "identifier" );

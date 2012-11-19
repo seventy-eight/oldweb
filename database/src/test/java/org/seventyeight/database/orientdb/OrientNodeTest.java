@@ -32,11 +32,11 @@ public class OrientNodeTest {
 
     @Test
     public void test2() {
-        Node n1 = new OrientNode( orule.getDB() );
+        OrientNode n1 = new OrientNode( orule.getDB() );
         n1.set( "field", "a" );
         n1.save();
 
-        Node n2 = new OrientNode( orule.getDB() );
+        OrientNode n2 = new OrientNode( orule.getDB() );
         n2.set( "field", "b" );
         n2.save();
 
@@ -47,11 +47,11 @@ public class OrientNodeTest {
 
     @Test
     public void test3() {
-        Node n1 = new OrientNode( orule.getDB() );
+        OrientNode n1 = new OrientNode( orule.getDB() );
         n1.set( "field", "a" );
         n1.save();
 
-        Node n2 = new OrientNode( orule.getDB() );
+        OrientNode n2 = new OrientNode( orule.getDB() );
         n2.set( "field", "b" );
         n2.save();
 

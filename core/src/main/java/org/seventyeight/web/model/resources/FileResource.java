@@ -17,6 +17,7 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
 
 import com.google.gson.JsonObject;
+import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
@@ -30,8 +31,8 @@ public class FileResource extends AbstractResource {
         file
     }
 	
-	public FileResource( OGraphDatabase db, ODocument node ) {
-		super( db, node );
+	public FileResource( Node node ) {
+		super( node );
 	}
 
 	public void save( Request request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {

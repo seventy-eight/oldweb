@@ -15,7 +15,7 @@ import java.util.Set;
  * Date: 18-11-12
  * Time: 22:28
  */
-public class OrientNode implements Node<OrientDatabase> {
+public class OrientNode implements Node<OGraphDatabase, OrientDatabase, OrientNode> {
 
     private static Logger logger = Logger.getLogger( OrientNode.class );
 
@@ -42,7 +42,7 @@ public class OrientNode implements Node<OrientDatabase> {
     }
 
     @Override
-    public Edge createEdge( Node to, EdgeType type ) {
+    public Edge createEdge( OrientNode to, EdgeType type ) {
         OrientNode n = (OrientNode) to;
         logger.debug( "Creating edge(" + type + ") from " + doc.getClassName() + " to " + n.getDocument().getClassName() );
 
@@ -73,7 +73,7 @@ public class OrientNode implements Node<OrientDatabase> {
     }
 
     @Override
-    public List<Edge> getEdges( Node other, EdgeType type ) {
+    public List<Edge> getEdges( OrientNode other, EdgeType type ) {
         logger.debug( "Getting edges between " + this + " and " + other + " of type " + type );
 
         OrientNode n = (OrientNode) other;
@@ -94,7 +94,7 @@ public class OrientNode implements Node<OrientDatabase> {
     }
 
     @Override
-    public List<Edge> getEdgesTo( Node to, EdgeType type ) {
+    public List<Edge> getEdgesTo( OrientNode to, EdgeType type ) {
         logger.debug( "Getting edges from " + this + " to " + to + " of type " + type );
 
         OrientNode n = (OrientNode) to;
@@ -121,22 +121,24 @@ public class OrientNode implements Node<OrientDatabase> {
     }
 
     @Override
-    public <T> Node set( String key, T value ) {
+    public <T> OrientNode set( String key, T value ) {
         doc.field( key, value );
 
         return this;
     }
 
     @Override
-    public Node save() {
+    public OrientNode save() {
         doc.save();
 
         return this;
     }
 
     @Override
-    public Node removeEdges( EdgeType type, Direction direction ) {
-        db.getInternalDatabase().
+    public OrientNode removeEdges( EdgeType type, Direction direction ) {
+        db.getInternalDatabase().removeEdge(null);
+
+        return this;
     }
 
     @Override
