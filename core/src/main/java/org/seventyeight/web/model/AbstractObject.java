@@ -24,7 +24,7 @@ import com.google.gson.JsonObject;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 
 
-public abstract class AbstractObject<IDB, DB extends Database, NODE extends Node<IDB, DB, NODE>> extends AbstractItem<IDB, DB, NODE> implements Ownable, Configurable {
+public abstract class AbstractObject<NODE extends Node<NODE, EDGE>, EDGE extends Edge<EDGE, NODE>> extends AbstractItem<NODE, EDGE> implements Ownable, Configurable {
 
 	private static Logger logger = Logger.getLogger( AbstractObject.class );
 
@@ -158,10 +158,10 @@ public abstract class AbstractObject<IDB, DB extends Database, NODE extends Node
 	 */
 	public Node getTextNode( String language, String property ) {
 		//List<ODocument> edges = SeventyEight.getInstance().getEdges( db, this, ResourceEdgeType.translation );
-        List<Edge> edges = node.getEdges( ResourceEdgeType.translation );
+        List<EDGE> edges = node.getEdges( ResourceEdgeType.translation );
 		Node d = null;
 
-		for( Edge e : edges ) {
+		for( EDGE e : edges ) {
 
 			String prop = e.get( "property" );
 			if( prop != null && prop.equals( property ) ) {
@@ -179,7 +179,7 @@ public abstract class AbstractObject<IDB, DB extends Database, NODE extends Node
 	}
 	
 	public User getOwner() throws IllegalStateException {
-        List<Edge> edges = node.getEdges( ResourceEdgeType.owner );
+        List<EDGE> edges = node.getEdges( ResourceEdgeType.owner );
 		if( edges.size() == 1 ) {
             return new User( edges.get( 0 ).getInNode() );
 		} else {
@@ -242,7 +242,7 @@ public abstract class AbstractObject<IDB, DB extends Database, NODE extends Node
 	
 	public void addGroup( Group group, GroupEdgeType type ) {
 		//SeventyEight.getInstance().createEdge( db, this, group, type );
-        node.createEdge( group.getNode(), type );
+        node.createEdge( (NODE) group.getNode(), type );
 	}
 	
 	protected void removeGroups( GroupEdgeType type ) {

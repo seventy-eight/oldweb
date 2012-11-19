@@ -17,25 +17,27 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
 
 import com.google.gson.JsonObject;
+import org.seventyeight.database.Edge;
+import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
 
 
-public class FileResource extends AbstractResource {
+public class FileResource<NODE extends Node<NODE, EDGE>, EDGE extends Edge<EDGE, NODE>> extends AbstractResource<NODE, EDGE> {
 
 	private static Logger logger = Logger.getLogger( FileResource.class );
 
-    public enum FileResourceEdgeType implements SeventyEight.EdgeType {
+    public enum FileResourceEdgeType implements EdgeType {
         file
     }
 	
-	public FileResource( Node node ) {
+	public FileResource( NODE node ) {
 		super( node );
 	}
 
-	public void save( Request request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+	public void save( ParameterRequest request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
 		doSave( new FileSaveImpl( this, request, jsonData ) );
 	}
 	
@@ -63,7 +65,7 @@ public class FileResource extends AbstractResource {
 			}
 			
 			File file = getLocalFile();
-			node.field( "ext", FileResource.getExtension( file ) );
+			node.set( "ext", FileResource.getExtension( file ) );
 			
 		}
 	}
@@ -88,7 +90,8 @@ public class FileResource extends AbstractResource {
 	public void setFileRelation( Item item ) {
 		removeFileRelations();
 		//this.node.createRelationshipTo( node, Relationships.FILE );
-        SeventyEight.getInstance().createEdge( db, this, item, FileResourceEdgeType.file );
+        //SeventyEight.getInstance().createEdge( db, this, item, FileResourceEdgeType.file );
+        node.createEdge( (NODE) item.getNode(), FileResourceEdgeType.file );
 	}
 	
 	public void removeFileRelations() {

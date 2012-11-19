@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.seventyeight.database.Database;
+import org.seventyeight.database.Edge;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.SeventyEight.EdgeType;
@@ -35,7 +36,7 @@ import com.google.gson.JsonObject;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 
 
-public abstract class AbstractItem<IDB, DB extends Database, NODE extends Node<IDB, DB, NODE>> implements Item<DB> {
+public abstract class AbstractItem<NODE extends Node<NODE, EDGE>, EDGE extends Edge<EDGE, NODE>> implements Item<NODE, EDGE> {
 
 	private static Logger logger = Logger.getLogger( AbstractItem.class );
 	protected NODE node;
@@ -159,7 +160,7 @@ public abstract class AbstractItem<IDB, DB extends Database, NODE extends Node<I
 		node.set( "identifier", identifier );
 	}
 		
-	public Node getNode() {
+	public NODE getNode() {
 		return node;
 	}
 	

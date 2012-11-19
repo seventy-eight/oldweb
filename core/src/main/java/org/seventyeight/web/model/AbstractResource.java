@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import org.apache.log4j.Logger;
+import org.seventyeight.database.Edge;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.CouldNotLoadResourceException;
@@ -22,15 +23,15 @@ import com.google.gson.JsonObject;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 
 
-public abstract class AbstractResource extends AbstractObject implements Portraitable {
+public abstract class AbstractResource<NODE extends Node<NODE, EDGE>, EDGE extends Edge<EDGE, NODE>> extends AbstractObject<NODE, EDGE> implements Portraitable {
 	
 	private static Logger logger = Logger.getLogger( AbstractResource.class );
 
-	protected AbstractResource( Node node ) {
+	protected AbstractResource( NODE node ) {
 		super( node );
 	}
 	
-	public AbstractResource( Node node, Locale locale ) {
+	public AbstractResource( NODE node, Locale locale ) {
 		super( node, locale );
 	}
 	
@@ -55,17 +56,17 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 			String theme = request.getParameter( "theme" );
 			if( theme != null ) {
 				logger.debug( "Setting theme: " + theme );
-				node.field( "theme", theme );
+				node.set( "theme", theme );
 			}
 						
 			Integer rev = getField( "revision", 0 );
 			logger.debug( "REVISION: " + rev );
 			if( rev != null ) {
-				node.field( "revision", rev + 1 );
+				node.set( "revision", rev + 1 );
 			}
 			
 			if( rev > 0 ) {
-				node.field( "updated", new Date().getTime() );
+				node.set( "updated", new Date().getTime() );
 			}
 		}
 		
@@ -105,7 +106,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 	}
 
 	public void setCreated( Date created ) {
-		node.field( "created", created.getTime() );
+		node.set( "created", created.getTime() );
 	}	
 
 	public Date getUpdatedAsDate() {
@@ -122,7 +123,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 	}
 
 	public void setUpdated( Date updated ) {
-		node.field( "updated", updated.getTime() );
+		node.set( "updated", updated.getTime() );
 	}
 
 
@@ -140,7 +141,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 	}
 
 	public void setActivates( Date activates ) {
-		node.field( "activates", activates.getTime() );
+		node.set( "activates", activates.getTime() );
 	}
 
 
@@ -158,7 +159,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 	}
 
 	public void setExpires( Date expires ) {
-		node.field( "expires", expires.getTime() );
+		node.set( "expires", expires.getTime() );
 	}
 
 	
@@ -184,7 +185,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 	}
 	
 	public void incrementViews() {
-		node.field( "views", getViews() + 1 );
+		node.set( "views", getViews() + 1 );
 	}
 	
 	public int getRevision() {
@@ -196,7 +197,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 	}
 	
 	public void setTheme( AbstractTheme theme ) {
-		node.field( "theme", theme.getName() );
+		node.set( "theme", theme.getName() );
 	}
 	
 	public boolean hasRatings() {
@@ -204,7 +205,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 	}
 	
 	public void setRateble( boolean b ) {
-		node.field( "hasratings", b );
+		node.set( "hasratings", b );
 	}
 	
 	public boolean hasComments() {
@@ -212,7 +213,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 	}
 	
 	public void setCommentable( boolean b ) {
-		node.field( "hascomments", b );
+		node.set( "hascomments", b );
 	}
 	
 	public String getDisplayName() {
