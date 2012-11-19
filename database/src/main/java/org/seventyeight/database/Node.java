@@ -7,7 +7,13 @@ import java.util.List;
  * Date: 17-11-12
  * Time: 22:44
  */
-public interface Node {
+public interface Node<DB> {
+
+    /**
+     * Get the {@link Database} attached to this {@link Node}
+     * @return
+     */
+    public DB getDB();
 
     /**
      * Create an {@link Edge} to another {@link Node}

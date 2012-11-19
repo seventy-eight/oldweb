@@ -1,5 +1,6 @@
 package org.seventyeight.database.orientdb.impl.orientdb;
 
+import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import org.seventyeight.database.Database;
 
 /**
@@ -7,6 +8,15 @@ import org.seventyeight.database.Database;
  * Date: 19-11-12
  * Time: 12:29
  */
-public class OrientDatabase implements Database {
+public class OrientDatabase implements Database<OGraphDatabase> {
 
+    private OGraphDatabase db;
+
+    public OrientDatabase( OGraphDatabase db ) {
+        this.db = db;
+    }
+
+    public OGraphDatabase getInternalDatabase() {
+        return db;
+    }
 }
