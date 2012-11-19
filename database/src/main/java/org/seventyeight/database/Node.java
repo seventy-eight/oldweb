@@ -55,7 +55,7 @@ public interface Node {
      * @param value
      * @param <T>
      */
-    public <T> void set( String key, T value );
+    public <T> Node set( String key, T value );
 
-    public void save();
+    public Node save();
 }

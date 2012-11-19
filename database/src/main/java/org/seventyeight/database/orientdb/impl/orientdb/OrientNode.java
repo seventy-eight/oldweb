@@ -123,13 +123,17 @@ public class OrientNode implements Node {
     }
 
     @Override
-    public <T> void set( String key, T value ) {
+    public <T> Node set( String key, T value ) {
         doc.field( key, value );
+
+        return this;
     }
 
     @Override
-    public void save() {
+    public Node save() {
         doc.save();
+
+        return this;
     }
 
     @Override

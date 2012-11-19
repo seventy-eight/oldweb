@@ -17,6 +17,7 @@ import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.SeventyEight.EdgeType;
 import org.seventyeight.web.SeventyEight.ResourceEdgeType;
@@ -36,20 +37,18 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 public abstract class AbstractItem implements Item {
 
 	private static Logger logger = Logger.getLogger( AbstractItem.class );
-	protected ODocument node;
-    protected OGraphDatabase db;
+	protected Node node;
 	
 	//protected Long identifier;
 	protected Locale locale;
 		
-	public AbstractItem( OGraphDatabase db, ODocument node ) {
-        this.db = db;
+	public AbstractItem( Node node ) {
 		this.node = node;
 		this.locale = SeventyEight.getInstance().getDefaultLocale();
 		//this.identifier = (Long) node.getProperty( "identifier" );
 	}
 	
-	public AbstractItem( ODocument node, Locale locale ) {
+	public AbstractItem( Node node, Locale locale ) {
 		this.node = node;
 		this.locale = locale;
 		//this.identifier = (Long) node.getProperty( "identifier" );
@@ -142,24 +141,24 @@ public abstract class AbstractItem implements Item {
 	}
 	
 	public Object getProperty( String name ) {
-		return node.field( name );
+		return node.get( name );
 	}
 	
 	public void setProperty( String name, Object property ) {
 		logger.debug( "Setting " + name + " to " + property );
-		node.field( name, property );
+		node.set( name, property );
 	}
 			
 	public Long getIdentifier() {
-		return (Long) node.field( "identifier" );
+		return (Long) node.get( "identifier" );
 	}
 
 	public void setIdentifier( Long identifier ) {
 		logger.debug( "Setting id to " + identifier );
-		node.field( "identifier", identifier );
+		node.set( "identifier", identifier );
 	}
 		
-	public ODocument getNode() {
+	public Node getNode() {
 		return node;
 	}
 	
@@ -283,18 +282,18 @@ public abstract class AbstractItem implements Item {
 	 * @return
 	 */
 	public <T> T getField( String key, T def ) {
-		if( node.field( key ) == null ) {
+		if( node.get( key ) == null ) {
 			return def;
 		} else {
-			return node.field( key );
+			return node.get( key );
 		}
 	}
 	
 	public <T> T getField( String key ) throws IllegalStateRuntimeException {
-		if( node.field( key ) == null ) {
+		if( node.get( key ) == null ) {
 			throw new IllegalStateRuntimeException( "Field " + key + " does not exist" );
 		} else {
-			return node.field( key );
+			return node.get( key );
 		}
 	}
 
