@@ -53,12 +53,12 @@ public class OrientEdge implements Edge<OrientEdge, OrientNode> {
 
     @Override
     public <T> T get( String key ) {
-        return ((ODocument)edge).field( key );
+        return ((ODocument)edge.getRecord()).field( key );
     }
 
     @Override
     public <T> OrientEdge set( String key, T value ) {
-        ((ODocument)edge).field( key, value );
+        ((ODocument)edge.getRecord()).field( key, value );
 
         return this;
     }

@@ -118,16 +118,32 @@ public class OrientNode implements Node<OrientNode, OrientEdge> {
 
         Set<OIdentifiable> ois = db.getInternalDatabase().getEdgesBetweenVertexes( doc, other.doc, ( type != null ? new String[]{ type.toString() } : null ) );
 
+        List<OrientEdge> es = new LinkedList<OrientEdge>();
+
         for( OIdentifiable e : ois ) {
+            OrientEdge edge = null;
             switch( direction ) {
-                if( db.getInternalDatabase().getOutVertex( e ).equals( doc )) {
-                    OrientEdge edge = new OrientEdge( e, this, to );
-                    es.add( edge );
-                    logger.debug( "Edge2: " + edge );
-                }
+                case OUTBOUND:
+                    if( db.getInternalDatabase().getOutVertex( e ).equals( doc )) {
+                        edge = new OrientEdge( e, this, other );
+                    }
+                    break;
+
+                case INBOUND:
+                    if( db.getInternalDatabase().getInVertex( e ).equals( doc )) {
+                        edge = new OrientEdge( e, this, other );
+                    }
+                    break;
+
+                default:
+                    edge = new OrientEdge( e, this, other );
             }
+
+            logger.debug( "Edge: " + edge );
+            es.add( edge );
         }
 
+        return es;
     }
 
     @Override
