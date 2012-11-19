@@ -53,7 +53,7 @@ public class OrientEdge implements Edge {
 
     @Override
     public <T> T get( String key ) {
-        ((ODocument)edge).field( key );
+        return ((ODocument)edge).field( key );
     }
 
     @Override

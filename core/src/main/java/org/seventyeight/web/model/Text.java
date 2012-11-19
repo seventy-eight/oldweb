@@ -1,46 +1,46 @@
 package org.seventyeight.web.model;
 
-import org.seventyeight.web.SeventyEight;
-import org.seventyeight.web.SeventyEight.EdgeType;
-import org.seventyeight.web.SeventyEight.NodeType;
+import org.seventyeight.database.Database;
+import org.seventyeight.database.Edge;
+import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight.ResourceEdgeType;
 
 import com.google.gson.JsonObject;
-import com.orientechnologies.orient.core.record.impl.ODocument;
 
 public class Text implements Item {
-	ODocument node;
+	Node node;
 	
-	public Text( ODocument node ) {
+	public Text( Node node ) {
 		this.node = node;
 	}
 	
 	public void setText( String text ) {
-		node.field( "text", text );
+		node.set( "text", text );
 		node.save();
 	}
 	
 	public String getText() {
-		return node.field("text");
+		return (String) node.get( "text" );
 	}
 	
-	public static Text create( Item item, String property, String language ) {
-		ODocument node = SeventyEight.getInstance().createNode( Text.class, NodeType.text );
-		Text t = new Text( node );
-		
-		ODocument edge = SeventyEight.getInstance().createEdge( item, t, ResourceEdgeType.translation );
+	public static Text create( Database db, Item item, String property, String language ) {
+		//ODocument node = SeventyEight.getInstance().createNode( Text.class, NodeType.text );
+		Text t = new Text( db.createNode() );
+		//List<Edge> edges = t.getNode().getEdges( ResourceEdgeType.translation );
+        Edge edge = item.getNode().createEdge( t.getNode(), ResourceEdgeType.translation );
+		//ODocument edge = SeventyEight.getInstance().createEdge( item, t, ResourceEdgeType.translation );
 
 		/* Edge data */
-		edge.field( "language", language );
-		edge.field( "property", property );
+		edge.set( "language", language );
+		edge.set( "property", property );
 		edge.save();
 		
 		/* Node data */
-		node.field( "language", language );
-		node.field( "property", property );
-		node.save();
+		t.getNode().set( "language", language );
+        t.getNode().set( "property", property );
+        t.getNode().save();
 		
-		return new Text( node );
+		return t;
 	}
 
 	@Override
@@ -50,11 +50,11 @@ public class Text implements Item {
 
 	@Override
 	public String getDisplayName() {
-		return node.field( "language" ) + ": " + node.field( "property" );
+		return node.get( "language" ) + ": " + node.get( "property" );
 	}
 
-	@Override
-	public ODocument getNode() {
-		return node;
-	}
+    @Override
+    public Node getNode() {
+        return node;
+    }
 }

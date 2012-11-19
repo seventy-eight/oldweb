@@ -143,7 +143,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 	}
 	
 	public Text getText( String language, String property ) throws TextNodeDoesNotExistException {
-		ODocument n = getTextNode( language, property );
+		Node n = getTextNode( language, property );
 		if( n != null ) {
 			return new Text( n );
 		} else {
@@ -157,20 +157,21 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 	 * @param property
 	 * @return
 	 */
-	public ODocument getTextNode( String language, String property ) {
+	public Node getTextNode( String language, String property ) {
 		//List<ODocument> edges = SeventyEight.getInstance().getEdges( db, this, ResourceEdgeType.translation );
         List<Edge> edges = node.getEdges( ResourceEdgeType.translation );
-		ODocument d = null;
+		Node d = null;
 
 		for( Edge e : edges ) {
 
 			String prop = e.get( "property" );
 			if( prop != null && prop.equals( property ) ) {
-				String lang  = e.field( "language" );
+				String lang  = e.get( "language" );
 				if( lang != null && lang.equals( language ) ) {
-					return SeventyEight.getInstance().getOutNode( db, e );
+					//return SeventyEight.getInstance().getOutNode( db, e );
+                    return e.getInNode();
 				} else {
-					d = SeventyEight.getInstance().getOutNode( db, e );
+					d = e.getInNode();
 				}
 			}
 		}
