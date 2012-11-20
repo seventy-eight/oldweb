@@ -1,7 +1,9 @@
 package org.seventyeight.database.orientdb.impl.orientdb;
 
 import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
+import com.orientechnologies.orient.core.metadata.schema.OClass;
 import org.seventyeight.database.Database;
+import org.seventyeight.database.IndexType;
 
 /**
  * User: cwolfgang
@@ -23,5 +25,9 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
     @Override
     public OrientNode createNode() {
         return new OrientNode( this );
+    }
+
+    public void setIndex( OrientNode node, String index, boolean unique, IndexType type ) {
+        String i = "CREATE INDEX " + index;
     }
 }

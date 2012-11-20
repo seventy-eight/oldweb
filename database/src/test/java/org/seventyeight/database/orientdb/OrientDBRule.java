@@ -7,6 +7,7 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.seventyeight.database.Node;
 import org.seventyeight.database.orientdb.impl.orientdb.OrientDatabase;
+import org.seventyeight.database.orientdb.impl.orientdb.OrientNode;
 
 import java.io.File;
 
@@ -25,6 +26,7 @@ public class OrientDBRule implements TestRule {
         //db = new OGraphDatabase( "local:" + path.toString() ).create().open( "admin", "admin" );
         //db = new OGraphDatabase( "memory:test" ).open( "admin", "admin" );
         db = new OrientDatabase( (OGraphDatabase) new OGraphDatabase( "memory:test" ).create() );
+        System.out.println( "DB: " + db.getInternalDatabase() );
     }
 
     private void after() {
@@ -33,6 +35,14 @@ public class OrientDBRule implements TestRule {
 
     public OrientDatabase getDB() {
         return db;
+    }
+
+    public OrientNode CreateNode( String key, Object value ) {
+        OrientNode n = new OrientNode( db );
+        n.set( key, value );
+        n.save();
+
+        return n;
     }
 
     @Override

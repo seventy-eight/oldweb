@@ -6,15 +6,17 @@ import java.util.List;
 
 import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import org.apache.log4j.Logger;
+import org.seventyeight.database.Direction;
+import org.seventyeight.database.Edge;
+import org.seventyeight.database.EdgeType;
+import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
-import org.seventyeight.web.SeventyEight.EdgeType;
 import org.seventyeight.web.exceptions.ErrorWhileSavingException;
 import org.seventyeight.web.exceptions.InconsistentParameterException;
 import org.seventyeight.web.exceptions.IncorrectTypeException;
 import org.seventyeight.web.exceptions.ParameterDoesNotExistException;
 import org.seventyeight.web.exceptions.ResourceDoesNotExistException;
 import org.seventyeight.web.exceptions.UnableToInstantiateObjectException;
-import org.seventyeight.web.graph.Edge;
 import org.seventyeight.web.model.AbstractResource;
 import org.seventyeight.web.model.Extension;
 import org.seventyeight.web.model.ParameterRequest;
@@ -34,8 +36,8 @@ public class Group extends AbstractResource {
 	
 	public boolean selected = false;
 	
-	public Group( OGraphDatabase db, ODocument node ) {
-		super( db, node );
+	public Group( Node node ) {
+		super( node );
 	}
 
 	public void save( ParameterRequest request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
@@ -59,7 +61,9 @@ public class Group extends AbstractResource {
 						logger.debug( "Adding " + user + " to group" );
 						Long id = new Long( user );
 						AbstractResource r = SeventyEight.getInstance().getResource( id );
-						SeventyEight.getInstance().createEdge( db, resource, r, GroupMember.member );
+						//SeventyEight.getInstance().createEdge( db, resource, r, GroupMember.member );
+                        //resource.getNode().createEdge( r.getNode(), GroupMember.member );
+                        resource.createRelation( r, GroupMember.member );
 					} catch( Exception e ) {
 						logger.warn( "Unable to get user resource: " + e.getMessage() );
 					}
@@ -84,17 +88,19 @@ public class Group extends AbstractResource {
 	}
 	
 	public void addMember( User user ) {
-		SeventyEight.getInstance().createEdge( db, this, user, GroupMember.member );
+		//SeventyEight.getInstance().createEdge( db, this, user, GroupMember.member );
+        this.createRelation( user, GroupMember.member );
 	}
 	
 	public boolean removeMember( User user ) {
 		logger.debug( "Removing member " + user );
 		//Iterator<Relationship> rls = node.getRelationships( Direction.OUTGOING, RelationShips.MEMBER ).iterator();
-		List<Edge> edges = SeventyEight.getInstance().getEdges2( db, this, GroupMember.member );
+		//List<Edge> edges = SeventyEight.getInstance().getEdges2( db, this, GroupMember.member );
+        List<Edge> edges = node.getEdges( GroupMember.member, Direction.OUTBOUND );
 		
 		//while( rls.hasNext() ) {
 		for( Edge edge : edges ) {
-			if( edge.getOutNode().equals( user.getNode() ) ) {
+			if( edge.getTargetNode().equals( user.getNode() ) ) {
 				logger.debug( "Deleting node " + edge );
 				edge.delete();
 				return true;
@@ -105,7 +111,8 @@ public class Group extends AbstractResource {
 	}
 	
 	public void removeMembers() {
-		SeventyEight.getInstance().removeOutEdges( db, this, GroupMember.member );
+		//SeventyEight.getInstance().removeOutEdges( db, this, GroupMember.member );
+        node.removeEdges( GroupMember.member, Direction.OUTBOUND );
 	}
 	
 	public boolean isMember( User user ) {

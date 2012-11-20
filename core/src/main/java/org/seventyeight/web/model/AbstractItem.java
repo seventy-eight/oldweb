@@ -19,6 +19,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.seventyeight.database.Database;
 import org.seventyeight.database.Edge;
+import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.SeventyEight.ResourceEdgeType;
@@ -35,7 +36,7 @@ import com.google.gson.JsonObject;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 
 
-public abstract class AbstractItem implements Item {
+public abstract class AbstractItem implements Item, GraphItem<AbstractItem> {
 
 	private static Logger logger = Logger.getLogger( AbstractItem.class );
 	protected Node node;
@@ -159,7 +160,7 @@ public abstract class AbstractItem implements Item {
 		node.set( "identifier", identifier );
 	}
 		
-	public Node<? extends Node, ? extends Edge> getNode() {
+	public Node getNode() {
 		return node;
 	}
 	
@@ -311,6 +312,11 @@ public abstract class AbstractItem implements Item {
 		}
 	}
 	*/
-	
-	
+
+    @Override
+    public AbstractItem createRelation( Item other, EdgeType type ) {
+        node.createEdge( other.getNode(), type );
+
+        return this;
+    }
 }

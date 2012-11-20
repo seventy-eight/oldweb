@@ -10,6 +10,7 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
 
 import com.google.gson.JsonObject;
+import org.seventyeight.database.Node;
 import org.seventyeight.web.exceptions.ErrorWhileSavingException;
 import org.seventyeight.web.exceptions.UnableToInstantiateObjectException;
 import org.seventyeight.web.model.AbstractResource;
@@ -22,8 +23,8 @@ public class Decal extends Image {
 	private static Logger logger = Logger.getLogger( Decal.class );
 	public static final String __TYPE = "decal";
 
-	public Decal( OGraphDatabase db, ODocument node ) {
-		super( db, node );
+	public Decal( Node node ) {
+		super( node );
 	}
 	
 	@Override
