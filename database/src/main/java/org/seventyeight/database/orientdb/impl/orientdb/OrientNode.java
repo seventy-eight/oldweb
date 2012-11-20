@@ -62,21 +62,43 @@ public class OrientNode implements Node<OrientNode, OrientEdge> {
     }
 
     @Override
-    public List<OrientEdge> getEdges( EdgeType type ) {
-        logger.debug( "Getting edges from " + this + " of type " + type );
+    public List<OrientEdge> getEdges( EdgeType type, Direction direction ) {
+        logger.debug( "Getting " + direction + " edges for " + this + " of type " + type );
 
-        Set<OIdentifiable> edges = db.getInternalDatabase().getOutEdges( doc, ( type != null ? type.toString() : null ) );
-        logger.debug( "EDGES: " + edges );
+        Set<OIdentifiable> in = null;
+        Set<OIdentifiable> out = null;
+
+        switch( direction ) {
+            case OUTBOUND:
+                out = db.getInternalDatabase().getOutEdges( doc, ( type != null ? type.toString() : null ) );
+                break;
+
+            case INBOUND:
+                in = db.getInternalDatabase().getInEdges( doc, ( type != null ? type.toString() : null ) );
+                break;
+
+            default:
+                out = db.getInternalDatabase().getOutEdges( doc, ( type != null ? type.toString() : null ) );
+                in = db.getInternalDatabase().getInEdges( doc, ( type != null ? type.toString() : null ) );
+        }
 
         List<OrientEdge> es = new LinkedList<OrientEdge>();
+        if( in != null ) {
+            for( OIdentifiable e : in ) {
+                ODocument other = db.getInternalDatabase().getOutVertex( e );
 
-        for( OIdentifiable e : edges ) {
-            //ODocument out = db.getInVertex( e );
-            ODocument other = db.getInternalDatabase().getOutVertex( e );
+                OrientEdge edge = new OrientEdge( e, new OrientNode( db, other ), this );
+                es.add( edge );
+            }
+        }
 
-            OrientEdge edge = new OrientEdge( e, this, new OrientNode( db, other ) );
-            es.add( edge );
-            logger.debug( "Edge2: " + edge );
+        if( out != null ) {
+            for( OIdentifiable e : out ) {
+                ODocument other = db.getInternalDatabase().getInVertex( e );
+
+                OrientEdge edge = new OrientEdge( e, this, new OrientNode( db, other ) );
+                es.add( edge );
+            }
         }
 
         return es;

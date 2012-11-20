@@ -24,11 +24,11 @@ public interface Node<NODE extends Node<NODE, EDGE>, EDGE extends Edge<NODE, EDG
     public EDGE createEdge( NODE to, EdgeType type );
 
     /**
-     * Get the {@link Edge}'s with a certain {@link EdgeType}
+     * Get the {@link Edge}'s with a certain {@link EdgeType} in a given {@link Direction}
      * @param type
      * @return
      */
-    public List<EDGE> getEdges( EdgeType type );
+    public List<EDGE> getEdges( EdgeType type, Direction direction );
 
     /**
      * Get the {@link Edge}'s between this and the other {@link Node} with a certain {@link EdgeType}
