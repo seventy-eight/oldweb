@@ -17,6 +17,7 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
 
 import com.google.gson.JsonObject;
+import org.seventyeight.database.Direction;
 import org.seventyeight.database.Edge;
 import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
@@ -25,7 +26,7 @@ import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
 
 
-public class FileResource<NODE extends Node<NODE, EDGE>, EDGE extends Edge<EDGE, NODE>> extends AbstractResource<NODE, EDGE> {
+public class FileResource extends AbstractResource {
 
 	private static Logger logger = Logger.getLogger( FileResource.class );
 
@@ -33,7 +34,7 @@ public class FileResource<NODE extends Node<NODE, EDGE>, EDGE extends Edge<EDGE,
         file
     }
 	
-	public FileResource( NODE node ) {
+	public FileResource( Node node ) {
 		super( node );
 	}
 
@@ -86,24 +87,33 @@ public class FileResource<NODE extends Node<NODE, EDGE>, EDGE extends Edge<EDGE,
 		//reader.re
 		//fwriter.
 	}
-	
+
+    /**
+     * Set the file relation for this {@link FileResource}. Any existing file relations are removed.
+     * @param item
+     */
 	public void setFileRelation( Item item ) {
 		removeFileRelations();
 		//this.node.createRelationshipTo( node, Relationships.FILE );
         //SeventyEight.getInstance().createEdge( db, this, item, FileResourceEdgeType.file );
-        node.createEdge( (NODE) item.getNode(), FileResourceEdgeType.file );
+        node.createEdge( item.getNode(), FileResourceEdgeType.file );
 	}
 	
 	public void removeFileRelations() {
 		logger.debug( "Removing all file relationships for " + this );
-        SeventyEight.getInstance().removeOutEdges( db, this, FileResourceEdgeType.file );
+        //SeventyEight.getInstance().removeOutEdges( db, this, FileResourceEdgeType.file );
+        node.removeEdges( FileResourceEdgeType.file, Direction.OUTBOUND );
 	}
-	
+
+    /**
+     * Get local {@link File} for this {@link FileResource}
+     * @return
+     */
 	public File getLocalFile() {
-        List<ODocument> nodes = SeventyEight.getInstance().getNodes( db, this, FileResourceEdgeType.file );
-        if( nodes.size() == 1 ) {
-            return new File( (String) nodes.get( 0 ).field( "file" ) );
-        } else if( nodes.size() > 1 ) {
+        List<Edge> edges = node.getEdges( FileResourceEdgeType.file, Direction.OUTBOUND );
+        if( edges.size() == 1 ) {
+            return new File( (String) edges.get( 0 ).getTargetNode().get( "file" ) );
+        } else if( edges.size() > 1 ) {
             throw new IllegalStateException( "Too many file items found for " + this );
         } else {
             throw new IllegalStateException( "File item not found for " + this );
