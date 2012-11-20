@@ -7,7 +7,7 @@ import java.util.List;
  * Date: 17-11-12
  * Time: 22:44
  */
-public interface Node<NODE extends Node<NODE, EDGE>, EDGE extends Edge<EDGE, NODE>> extends Parameterized<NODE> {
+public interface Node<NODE extends Node<NODE, EDGE>, EDGE extends Edge<NODE, EDGE>> extends Parameterized<NODE> {
 
     /**
      * Get the {@link Database} attached to this {@link Node}

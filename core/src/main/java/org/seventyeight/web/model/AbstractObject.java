@@ -33,11 +33,11 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 	public static final String __REVIEW_GROUP_NAME = "review-group";
 	
 	
-	public AbstractObject( Node<?, ?> node ) {
+	public AbstractObject( Node node ) {
 		super( node );
 	}
 	
-	public AbstractObject( Node<?, ?> node, Locale locale ) {
+	public AbstractObject( Node node, Locale locale ) {
 		super( node, locale );
 	}
 	

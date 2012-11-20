@@ -23,15 +23,15 @@ import com.google.gson.JsonObject;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 
 
-public abstract class AbstractResource<NODE extends Node<NODE, EDGE>, EDGE extends Edge<EDGE, NODE>> extends AbstractObject<NODE, EDGE> implements Portraitable {
+public abstract class AbstractResource extends AbstractObject implements Portraitable {
 	
 	private static Logger logger = Logger.getLogger( AbstractResource.class );
 
-	protected AbstractResource( NODE node ) {
+	protected AbstractResource( Node node ) {
 		super( node );
 	}
 	
-	public AbstractResource( NODE node, Locale locale ) {
+	public AbstractResource( Node node, Locale locale ) {
 		super( node, locale );
 	}
 	
@@ -177,7 +177,7 @@ public abstract class AbstractResource<NODE extends Node<NODE, EDGE>, EDGE exten
 	}
 
 	public void setDeleted( Date deleted ) {
-		node.field( "deleted", deleted.getTime() );
+		node.set( "deleted", deleted.getTime() );
 	}
 	
 	public Long getViews() {

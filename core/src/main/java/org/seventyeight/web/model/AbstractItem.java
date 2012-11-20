@@ -38,18 +38,18 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 public abstract class AbstractItem implements Item {
 
 	private static Logger logger = Logger.getLogger( AbstractItem.class );
-	protected Node<?, ?> node;
+	protected Node node;
 	
 	//protected Long identifier;
 	protected Locale locale;
 		
-	public AbstractItem( Node<?, ?> node ) {
+	public AbstractItem( Node node ) {
 		this.node = node;
 		this.locale = SeventyEight.getInstance().getDefaultLocale();
 		//this.identifier = (Long) node.getProperty( "identifier" );
 	}
 	
-	public AbstractItem( Node<?, ?> node, Locale locale ) {
+	public AbstractItem( Node node, Locale locale ) {
 		this.node = node;
 		this.locale = locale;
 		//this.identifier = (Long) node.getProperty( "identifier" );
@@ -159,7 +159,7 @@ public abstract class AbstractItem implements Item {
 		node.set( "identifier", identifier );
 	}
 		
-	public Node getNode() {
+	public Node<? extends Node, ? extends Edge> getNode() {
 		return node;
 	}
 	
@@ -286,7 +286,7 @@ public abstract class AbstractItem implements Item {
 		if( node.get( key ) == null ) {
 			return def;
 		} else {
-			return node.get( key );
+			return (T) node.get( key );
 		}
 	}
 	
@@ -294,7 +294,7 @@ public abstract class AbstractItem implements Item {
 		if( node.get( key ) == null ) {
 			throw new IllegalStateRuntimeException( "Field " + key + " does not exist" );
 		} else {
-			return node.get( key );
+			return (T) node.get( key );
 		}
 	}
 
