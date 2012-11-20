@@ -21,7 +21,6 @@ import org.seventyeight.database.Database;
 import org.seventyeight.database.Edge;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
-import org.seventyeight.web.SeventyEight.EdgeType;
 import org.seventyeight.web.SeventyEight.ResourceEdgeType;
 import org.seventyeight.web.exceptions.ErrorWhileSavingException;
 import org.seventyeight.web.exceptions.IllegalStateRuntimeException;
@@ -36,21 +35,21 @@ import com.google.gson.JsonObject;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 
 
-public abstract class AbstractItem<NODE extends Node<NODE, EDGE>, EDGE extends Edge<EDGE, NODE>> implements Item<NODE, EDGE> {
+public abstract class AbstractItem implements Item {
 
 	private static Logger logger = Logger.getLogger( AbstractItem.class );
-	protected NODE node;
+	protected Node<?, ?> node;
 	
 	//protected Long identifier;
 	protected Locale locale;
 		
-	public AbstractItem( NODE node ) {
+	public AbstractItem( Node<?, ?> node ) {
 		this.node = node;
 		this.locale = SeventyEight.getInstance().getDefaultLocale();
 		//this.identifier = (Long) node.getProperty( "identifier" );
 	}
 	
-	public AbstractItem( NODE node, Locale locale ) {
+	public AbstractItem( Node<?, ?> node, Locale locale ) {
 		this.node = node;
 		this.locale = locale;
 		//this.identifier = (Long) node.getProperty( "identifier" );
@@ -160,7 +159,7 @@ public abstract class AbstractItem<NODE extends Node<NODE, EDGE>, EDGE extends E
 		node.set( "identifier", identifier );
 	}
 		
-	public NODE getNode() {
+	public Node getNode() {
 		return node;
 	}
 	
