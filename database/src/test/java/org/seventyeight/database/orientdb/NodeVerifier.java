@@ -1,7 +1,5 @@
 package org.seventyeight.database.orientdb;
 
-import com.orientechnologies.orient.core.db.record.OIdentifiable;
-import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.seventyeight.database.Edge;
 import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
@@ -91,7 +89,7 @@ public class NodeVerifier {
             }
 
             for( Edge e : edges ) {
-                if( !e.getInNode().equals( r.other ) ) {
+                if( !e.getTargetNode().equals( r.other ) ) {
                     fail( "The other node was not " + r.other );
                 }
             }

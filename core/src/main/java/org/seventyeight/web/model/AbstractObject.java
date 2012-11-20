@@ -1,13 +1,11 @@
 package org.seventyeight.web.model;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.resource.spi.IllegalStateException;
 
 import org.apache.log4j.Logger;
-import org.seventyeight.database.Database;
 import org.seventyeight.database.Edge;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
@@ -167,10 +165,10 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 			if( prop != null && prop.equals( property ) ) {
 				String lang  = e.get( "language" );
 				if( lang != null && lang.equals( language ) ) {
-					//return SeventyEight.getInstance().getOutNode( db, e );
-                    return e.getInNode();
+					//return SeventyEight.getInstance().getSourceNode( db, e );
+                    return e.getTargetNode();
 				} else {
-					d = e.getInNode();
+					d = e.getTargetNode();
 				}
 			}
 		}
@@ -181,7 +179,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 	public User getOwner() throws IllegalStateException {
         List<? extends Edge<?, ?>> edges = node.getEdges( ResourceEdgeType.owner );
 		if( edges.size() == 1 ) {
-            return new User( edges.get( 0 ).getInNode() );
+            return new User( edges.get( 0 ).getTargetNode() );
 		} else {
 			if( edges.size() > 1 ) {
 				throw new IllegalStateException( "Too many owners" );

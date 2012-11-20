@@ -6,7 +6,6 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Edge;
 import org.seventyeight.database.EdgeType;
-import org.seventyeight.database.Node;
 
 /**
  * User: cwolfgang
@@ -18,37 +17,35 @@ public class OrientEdge implements Edge<OrientNode, OrientEdge> {
     private static Logger logger = Logger.getLogger( OrientEdge.class );
 
     private OIdentifiable edge;
-    private OrientNode out;
-    private OrientNode in;
+    private OrientNode source;
+    private OrientNode target;
 
-    public OrientEdge( OrientNode out, OrientNode in, EdgeType type ) {
-        OrientNode n1 = (OrientNode) out;
-        OrientNode n2 = (OrientNode) in;
-        edge = n1.getDB().getInternalDatabase().createEdge( n1.getDocument(), n2.getDocument() ).field( OGraphDatabase.LABEL, type.toString() ).save();
-        this.out = out;
-        this.in = in;
+    public OrientEdge( OrientNode source, OrientNode target, EdgeType type ) {
+        edge = source.getDB().getInternalDatabase().createEdge( source.getDocument(), target.getDocument() ).field( OGraphDatabase.LABEL, type.toString() ).save();
+        this.source = source;
+        this.target = target;
     }
 
-    public OrientEdge( OIdentifiable edge, OrientNode out, OrientNode in ) {
+    public OrientEdge( OIdentifiable edge, OrientNode source, OrientNode target ) {
         this.edge = edge;
-        this.out = out;
-        this.in = in;
+        this.source = source;
+        this.target = target;
     }
 
     @Override
-    public OrientNode getOutNode() {
-        return out;
+    public OrientNode getSourceNode() {
+        return source;
     }
 
     @Override
-    public OrientNode getInNode() {
-        return in;
+    public OrientNode getTargetNode() {
+        return target;
     }
 
     @Override
     public void delete() {
         logger.debug( "Removing the edge " + this );
-        ((OrientNode)out).getDB().getInternalDatabase().removeEdge( edge );
+        ((OrientNode) source ).getDB().getInternalDatabase().removeEdge( edge );
     }
 
     @Override
@@ -70,6 +67,18 @@ public class OrientEdge implements Edge<OrientNode, OrientEdge> {
         return this;
     }
 
+    @Override
+    public boolean equals( Object obj ) {
+        if( obj == this ) {
+            return true;
+        }
+
+        if( obj instanceof OrientEdge ) {
+            return ((OrientEdge)obj).edge.equals( edge );
+        }
+
+        return false;
+    }
 
     @Override
     public String toString() {

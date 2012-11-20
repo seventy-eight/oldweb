@@ -11,6 +11,17 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ *
+ * Taken from OrientDB man pages:<br />
+ * <pre>
+ * +--------------+                                       +--------------+
+ * |              | out       * +------------+ in         |              |
+ * |              |------------>|            |----------->|              |
+ * |   V(ertex)   |             |   E(dge)   |            |   V(ertex)   |
+ * |              |<------------|            |<-----------|              |
+ * |              |         out +------------+         in |              |
+ * +--------------+                                       +--------------+
+ * </pre>
  * User: cwolfgang
  * Date: 18-11-12
  * Time: 22:28
@@ -119,6 +130,7 @@ public class OrientNode implements Node<OrientNode, OrientEdge> {
         Set<OIdentifiable> ois = db.getInternalDatabase().getEdgesBetweenVertexes( doc, other.doc, ( type != null ? new String[]{ type.toString() } : null ) );
 
         List<OrientEdge> es = new LinkedList<OrientEdge>();
+        System.out.println( "ES: " + ois );
 
         for( OIdentifiable e : ois ) {
             OrientEdge edge = null;
@@ -126,21 +138,21 @@ public class OrientNode implements Node<OrientNode, OrientEdge> {
                 case OUTBOUND:
                     if( db.getInternalDatabase().getOutVertex( e ).equals( doc )) {
                         edge = new OrientEdge( e, this, other );
+                        es.add( edge );
                     }
                     break;
 
                 case INBOUND:
                     if( db.getInternalDatabase().getInVertex( e ).equals( doc )) {
                         edge = new OrientEdge( e, this, other );
+                        es.add( edge );
                     }
                     break;
 
                 default:
                     edge = new OrientEdge( e, this, other );
+                    es.add( edge );
             }
-
-            logger.debug( "Edge: " + edge );
-            es.add( edge );
         }
 
         return es;
@@ -172,6 +184,20 @@ public class OrientNode implements Node<OrientNode, OrientEdge> {
 
         return this;
     }
+
+    @Override
+    public boolean equals( Object obj ) {
+        if( obj == this ) {
+            return true;
+        }
+
+        if( obj instanceof OrientNode ) {
+            return ((OrientNode)obj).doc.equals( doc );
+        }
+
+        return false;
+    }
+
 
     @Override
     public String toString() {
