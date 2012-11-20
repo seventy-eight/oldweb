@@ -201,8 +201,33 @@ public class OrientNode implements Node<OrientNode, OrientEdge> {
 
     @Override
     public OrientNode removeEdges( EdgeType type, Direction direction ) {
-        db.getInternalDatabase().removeEdge(null);
+        logger.debug( "Removing " + direction + " edges from " + this + " of type " + type );
 
+        switch( direction ) {
+            case OUTBOUND:
+                Set<OIdentifiable> out = db.getInternalDatabase().getOutEdges( doc, ( type != null ? type.toString() : null ) );
+                for( OIdentifiable oi : out ) {
+                    db.getInternalDatabase().removeEdge( oi );
+                }
+                break;
+
+            case INBOUND:
+                Set<OIdentifiable> in = db.getInternalDatabase().getInEdges( doc, ( type != null ? type.toString() : null ) );
+                for( OIdentifiable oi : in ) {
+                    db.getInternalDatabase().removeEdge( oi );
+                }
+                break;
+
+            default:
+                Set<OIdentifiable> ois1 = db.getInternalDatabase().getOutEdges( doc, ( type != null ? type.toString() : null ) );
+                Set<OIdentifiable> ois2 = db.getInternalDatabase().getInEdges( doc, ( type != null ? type.toString() : null ) );
+                for( OIdentifiable oi : ois1 ) {
+                    db.getInternalDatabase().removeEdge( oi );
+                }
+                for( OIdentifiable oi : ois2 ) {
+                    db.getInternalDatabase().removeEdge( oi );
+                }
+        }
 
         return this;
     }
