@@ -7,10 +7,10 @@ import java.security.PublicKey;
  * Date: 20-11-12
  * Time: 20:58
  */
-public interface Builder<T, RT> {
+public interface Builder<T> {
 
     /**
-     * Build the {@link Builder}
+     * Build the {@link Builder} and return {@link T}
      * @return
      */
     public T build();
@@ -21,9 +21,4 @@ public interface Builder<T, RT> {
      */
     public boolean isBuilt();
 
-    /**
-     * Get the return value when built
-     * @return
-     */
-    public RT get();
 }

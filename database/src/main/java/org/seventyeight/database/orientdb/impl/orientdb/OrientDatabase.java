@@ -1,9 +1,12 @@
 package org.seventyeight.database.orientdb.impl.orientdb;
 
 import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
-import com.orientechnologies.orient.core.metadata.schema.OClass;
 import org.seventyeight.database.Database;
-import org.seventyeight.database.IndexType;
+import org.seventyeight.database.IndexValueType;
+import org.seventyeight.database.Query;
+import org.seventyeight.database.orientdb.impl.orientdb.query.OrientIndexBuilder;
+import org.seventyeight.database.orientdb.impl.orientdb.query.OrientPutIndexBuilder;
+import org.seventyeight.database.query.IndexType;
 
 /**
  * User: cwolfgang
@@ -27,7 +30,11 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
         return new OrientNode( this );
     }
 
-    public void setIndex( OrientNode node, String index, boolean unique, IndexType type ) {
-        String i = "CREATE INDEX " + index;
+    public void createIndex( OrientNode node, String index, IndexType type, IndexValueType valueType ) {
+        new OrientIndexBuilder( db, "letter" ).setIndexValueType( valueType ).setIndexType( type ).build().execute();
+    }
+
+    public <T> void putIndex( String name, OrientNode node, T key ) {
+        new OrientPutIndexBuilder( node, name ).setKey( key ).build().execute();
     }
 }
