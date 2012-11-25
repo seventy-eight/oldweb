@@ -8,12 +8,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
 import org.apache.log4j.Logger;
+import org.apache.velocity.util.introspection.ClassMap;
+import org.seventyeight.database.Database;
 import org.seventyeight.database.EdgeType;
 import org.seventyeight.web.exceptions.CouldNotLoadObjectException;
 import org.seventyeight.web.exceptions.CouldNotLoadResourceException;
+import org.seventyeight.web.exceptions.NotFoundException;
 import org.seventyeight.web.graph.Edge;
 import org.seventyeight.web.handler.Renderer;
 import org.seventyeight.web.model.*;
@@ -84,6 +89,8 @@ public class SeventyEight {
 	 * A map of resource types and their descriptors
 	 */
 	private Map<String, ResourceDescriptor<?>> resourceTypes = new HashMap<String, ResourceDescriptor<?>>();
+
+    private ConcurrentMap<Class, DatabaseInquirer> dbinq = new ConcurrentHashMap<Class, DatabaseInquirer>();
 
 	public SeventyEight() {
 		if( instance != null ) {
@@ -194,7 +201,22 @@ public class SeventyEight {
 			throw new CouldNotLoadObjectException( node + " does not have identifier property", e );
 		}
 	}
-	
+
+    public AbstractResource setIdentifier( Database db, AbstractResource resource ) {
+        logger.debug( "Setting identifier for resource" );
+        Long id = getNextResourceIdentifier( db );
+        resource.getNode().set( "identifier", id );
+
+        return resource;
+    }
+
+    private synchronized long getNextResourceIdentifier( Database db ) {
+        //Integer next = (Integer) mainNode.getProperty( "next-resource-id", 1 );
+        Long next = (Long) db.getValue( "next-resource-id", 1 );
+        //mainNode.setProperty( "next-resource-id", ( next + 1 ) );
+        db.storeKeyValue( "next-resource-id", ( next + 1 ) );
+        return next;
+    }
 	
 	public Descriptor<?> getDescriptor( Class<?> clazz ) {
 		logger.debug( "Getting descriptor for " + clazz );
@@ -426,6 +448,7 @@ public class SeventyEight {
 	}
 	
 	public ODocument getOutNode( OGraphDatabase graphdb, ODocument edge ) throws IllegalStateException {
+        graphdb.getOutEdges()
 		ODocument node = graphdb.getOutVertex( edge );
 		if( node == null ) {
 			throw new IllegalStateException( "End node for " + edge + " not found" );
@@ -501,6 +524,14 @@ public class SeventyEight {
 		return list;
 	}
 	*/
+
+    public <T extends DatabaseInquirer> T getDatabaseInquirer( Class c ) throws NotFoundException {
+        if( dbinq.containsKey( c ) ){
+            return (T) dbinq.get( c );
+        } else {
+            throw new NotFoundException( "The database inquirer " + c + " does not exist" );
+        }
+    }
 
 
     /**

@@ -1,24 +1,11 @@
 package org.seventyeight.web.model;
 
-import java.io.File;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import javax.resource.spi.IllegalStateException;
-
-import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import org.apache.log4j.Logger;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.seventyeight.database.Database;
-import org.seventyeight.database.Edge;
 import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
@@ -29,14 +16,12 @@ import org.seventyeight.web.exceptions.InconsistentParameterException;
 import org.seventyeight.web.exceptions.IncorrectTypeException;
 import org.seventyeight.web.exceptions.ParameterDoesNotExistException;
 import org.seventyeight.web.exceptions.ResourceDoesNotExistException;
-import org.seventyeight.web.exceptions.TemplateDoesNotExistException;
-import org.seventyeight.web.handler.Renderer.Render;
 
 import com.google.gson.JsonObject;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 
 
-public abstract class AbstractItem implements Item, GraphItem<AbstractItem> {
+public abstract class AbstractItem implements Item, DatabaseItem<AbstractItem> {
 
 	private static Logger logger = Logger.getLogger( AbstractItem.class );
 	protected Node node;
@@ -318,5 +303,10 @@ public abstract class AbstractItem implements Item, GraphItem<AbstractItem> {
         node.createEdge( other.getNode(), type );
 
         return this;
+    }
+
+    @Override
+    public String getItemClass() {
+        return this.getClass().getSimpleName();
     }
 }

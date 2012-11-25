@@ -176,13 +176,6 @@ public class FileResource extends AbstractResource {
 		public FileResource newInstance() throws UnableToInstantiateObjectException {
 			return super.newInstance();
 		}
-
-		/*
-		@Override
-		public FileResource get( Node node ) {
-			return new FileResource( node );
-		}
-		*/
 	}
 
 	public String getPortrait() {

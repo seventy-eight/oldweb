@@ -9,6 +9,10 @@ package org.seventyeight.database;
  */
 public interface Database<IDB, NT extends Node> {
 
+    public void storeKeyValue( String key, Object value );
+    public <T> T getValue( String key );
+    public <T> T getValue( String key, T defaultValue );
+
     /**
      * Get the internal database behind this wrapper
      * @return

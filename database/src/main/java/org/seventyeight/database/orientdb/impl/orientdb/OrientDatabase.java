@@ -37,6 +37,25 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
         return new OrientNode( this );
     }
 
+    @Override
+    public void storeKeyValue( String key, Object value ) {
+        db.getDictionary().put( key, value );
+    }
+
+    @Override
+    public <T> T getValue( String key ) {
+        return (T) db.getDictionary().get( key );
+    }
+
+    @Override
+    public <T> T getValue( String key, T defaultValue ) {
+        if( db.getDictionary().containsKey( key ) ) {
+            return (T) db.getDictionary().get( key );
+        } else {
+            return defaultValue;
+        }
+    }
+
     public void createIndex( String index, IndexType type, IndexValueType valueType ) {
         //new OrientIndexBuilder( db, "letter" ).setIndexValueType( valueType ).setIndexType( type ).build().execute();
 

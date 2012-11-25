@@ -7,6 +7,7 @@ import org.seventyeight.database.EdgeType;
  * Date: 20-11-12
  * Time: 14:53
  */
-public interface GraphItem<T> {
+public interface DatabaseItem<T> {
     public T createRelation( Item other, EdgeType type );
+    public String getItemClass();
 }
