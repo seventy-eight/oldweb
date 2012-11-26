@@ -6,6 +6,7 @@ import java.util.List;
 import javax.resource.spi.IllegalStateException;
 
 import org.apache.log4j.Logger;
+import org.seventyeight.database.Direction;
 import org.seventyeight.database.Edge;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
@@ -156,7 +157,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 	 */
 	public Node getTextNode( String language, String property ) {
 		//List<ODocument> edges = SeventyEight.getInstance().getEdges( db, this, ResourceEdgeType.translation );
-        List<? extends Edge<?, ?>> edges = node.getEdges( ResourceEdgeType.translation );
+        List<Edge> edges = node.getEdges( ResourceEdgeType.translation, Direction.OUTBOUND );
 		Node<?, ?> d = null;
 
 		for( Edge<?, ?> e : edges ) {
@@ -177,7 +178,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 	}
 	
 	public User getOwner() throws IllegalStateException {
-        List<? extends Edge<?, ?>> edges = node.getEdges( ResourceEdgeType.owner );
+        List<Edge> edges = node.getEdges( ResourceEdgeType.owner, Direction.OUTBOUND );
 		if( edges.size() == 1 ) {
             return new User( edges.get( 0 ).getTargetNode() );
 		} else {
@@ -198,7 +199,8 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 	
 	protected void removeAllOwners() {
 		logger.debug( "Removing all owners for " + this );
-		SeventyEight.getInstance().removeOutEdges( db, this, ResourceEdgeType.owner );
+		//SeventyEight.getInstance().removeOutEdges( db, this, ResourceEdgeType.owner );
+        node.removeEdges( ResourceEdgeType.owner, Direction.OUTBOUND );
 	}
 	
 	public List<Group> getGroups( GroupEdgeType rel ) {
@@ -206,9 +208,10 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 		
 		List<Group> groups = new ArrayList<Group>();
 
-		List<ODocument> nodes = SeventyEight.getInstance().getNodes( db, this, rel );
-		for( ODocument node : nodes ) {
-			Group grp = new Group( node );
+		//List<ODocument> nodes = SeventyEight.getInstance().getNodes( db, this, rel );
+        List<Edge> edges = node.getEdges( rel, Direction.OUTBOUND );
+		for( Edge edge : edges ) {
+			Group grp = new Group( edge.getTargetNode() );
 			groups.add( grp );
 		}
 		
@@ -245,7 +248,8 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 	
 	protected void removeGroups( GroupEdgeType type ) {
 		logger.debug( "Removing all " + type.toString() + " for " + this );
-		SeventyEight.getInstance().removeOutEdges( db, this, type );
+		//SeventyEight.getInstance().removeOutEdges( db, this, type );
+        node.removeEdges( type, Direction.OUTBOUND );
 	}
 	
 	public void setTitle( String title, Locale locale ) {

@@ -202,9 +202,9 @@ public class SeventyEight {
 		}
 	}
 
-    public AbstractResource setIdentifier( Database db, AbstractResource resource ) {
+    public AbstractResource setIdentifier( AbstractResource resource ) {
         logger.debug( "Setting identifier for resource" );
-        Long id = getNextResourceIdentifier( db );
+        Long id = getNextResourceIdentifier( resource.getNode().getDB() );
         resource.getNode().set( "identifier", id );
 
         return resource;

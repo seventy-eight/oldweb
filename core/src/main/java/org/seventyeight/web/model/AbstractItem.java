@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.seventyeight.database.Direction;
+import org.seventyeight.database.Edge;
 import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
@@ -100,11 +102,12 @@ public abstract class AbstractItem implements Item, DatabaseItem<AbstractItem> {
 						logger.debug( "Class is " + clazz );
 						Descriptor<?> d = SeventyEight.getInstance().getDescriptor( clazz );
 						logger.debug( "Descroiptor is " + d );
-						List<ODocument> nodes = SeventyEight.getInstance().getNodeRelation( item, ResourceEdgeType.extension );
+						//List<ODocument> nodes = SeventyEight.getInstance().getNodeRelation( item, ResourceEdgeType.extension );
+                        List<Edge> edges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND );
 						
-						logger.debug( "Extension nodes: " + nodes.size() );
-						if( nodes.size() > 0 ) {
-							logger.debug( "There was extensions defined" );
+						logger.debug( "Extension nodes: " + edges.size() );
+						if( edges.size() > 0 ) {
+							logger.debug( "There were extensions defined" );
 							//for() {
 								
 							//}
@@ -114,7 +117,8 @@ public abstract class AbstractItem implements Item, DatabaseItem<AbstractItem> {
 							logger.debug( "Saving configurable " + e );
 							e.save( request, o );
 							logger.debug( "Configurable saved" );
-							SeventyEight.getInstance().addNodeRelation( db, item, e, ResourceEdgeType.extension, false );
+							//SeventyEight.getInstance().addNodeRelation( db, item, e, ResourceEdgeType.extension, false );
+                            node.createEdge( e.getNode(), ResourceEdgeType.extension );
 						}
 					} catch( Exception e ) {
 						logger.warn( "Unable to get descriptor for " + o + ": " + e.getMessage() );
@@ -162,17 +166,19 @@ public abstract class AbstractItem implements Item, DatabaseItem<AbstractItem> {
 	}
 
 	
-	public Map<String, List<ODocument>> getExtensionNodes() {
-		List<ODocument> ns = SeventyEight.getInstance().getNodes( db, this, ResourceEdgeType.extension );
+	public Map<String, List<Node>> getExtensionNodes() {
+		//List<ODocument> ns = SeventyEight.getInstance().getNodes( db, this, ResourceEdgeType.extension );
+        List<Edge> edges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND );
 		
-		Map<String, List<ODocument>> nodes = new HashMap<String, List<ODocument>>();
+		Map<String, List<Node>> nodes = new HashMap<String, List<Node>>();
 		
-		for( ODocument node : ns ) {
-			String clazz = node.field( "class" );
+		for( Edge edge : edges ) {
+            Node node = edge.getTargetNode();
+			String clazz = (String) node.get( "class" );
 			
 			if( clazz != null ) {
 				if( !nodes.containsKey( clazz ) ) {
-					nodes.put( clazz, new ArrayList<ODocument>() );
+					nodes.put( clazz, new ArrayList<Node>() );
 				}
 				
 				nodes.get( clazz ).add( node );

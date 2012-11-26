@@ -17,10 +17,7 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
 
 import com.google.gson.JsonObject;
-import org.seventyeight.database.Direction;
-import org.seventyeight.database.Edge;
-import org.seventyeight.database.EdgeType;
-import org.seventyeight.database.Node;
+import org.seventyeight.database.*;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
@@ -157,7 +154,11 @@ public class FileResource extends AbstractResource {
 
 	public static class FileDescriptor extends ResourceDescriptor<FileResource> {
 
-		@Override
+        public FileDescriptor( Database db ) {
+            super( db );
+        }
+
+        @Override
 		public String getDisplayName() {
 			return "File";
 		}
