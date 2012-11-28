@@ -1,4 +1,4 @@
-package org.seventyeight.database.query;
+package org.seventyeight.database;
 
 /**
  * @author cwolfgang

@@ -1,12 +1,9 @@
 package org.seventyeight.database.orientdb.impl.orientdb.query;
 
-import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import org.apache.log4j.Logger;
-import org.seventyeight.database.IndexValueType;
 import org.seventyeight.database.Query;
 import org.seventyeight.database.orientdb.impl.orientdb.OrientDefaultQuery;
 import org.seventyeight.database.orientdb.impl.orientdb.OrientNode;
-import org.seventyeight.database.query.IndexType;
 import org.seventyeight.database.query.PutIndexBuilder;
 
 /**

@@ -54,6 +54,15 @@ public class OrientEdge implements Edge<OrientNode, OrientEdge> {
     }
 
     @Override
+    public <T> T get( String key, T defaultValue ) {
+        if( ((ODocument)edge.getRecord()).containsField( key ) ) {
+            return ((ODocument)edge.getRecord()).field( key );
+        } else {
+            return defaultValue;
+        }
+    }
+
+    @Override
     public <T> OrientEdge set( String key, T value ) {
         ((ODocument)edge.getRecord()).field( key, value );
 

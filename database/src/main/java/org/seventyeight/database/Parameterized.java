@@ -15,6 +15,15 @@ public interface Parameterized<R> {
     public <T> T get( String key );
 
     /**
+     * Get a propertu from the {@link Node}. If the property is not found, return the default value.
+     * @param key
+     * @param defaultValue
+     * @param <T>
+     * @return
+     */
+    public <T> T get( String key, T defaultValue );
+
+    /**
      * Set a property on the {@link Node}
      * @param key
      * @param value

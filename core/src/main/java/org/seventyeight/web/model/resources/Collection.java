@@ -20,6 +20,10 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.seventyeight.database.Direction;
+import org.seventyeight.database.Edge;
+import org.seventyeight.database.EdgeType;
+import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.AbstractResource;
@@ -29,14 +33,14 @@ public class Collection extends AbstractResource {
 
 	private static Logger logger = Logger.getLogger( Collection.class );
 
-    public enum CollectionEdgeType implements SeventyEight.EdgeType {
+    public enum CollectionEdgeType implements EdgeType {
         in_collection
     }
 	
 	private Set<Long> cached;
 	
-	public Collection( OGraphDatabase db, ODocument node ) {
-		super( db, node );
+	public Collection( Node node ) {
+		super( node );
 	}
 
 	public String getPortrait() {
@@ -46,11 +50,7 @@ public class Collection extends AbstractResource {
 	public void save( ParameterRequest request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
 		doSave( new ResourceSaveImpl( this, request, jsonData ) );
 	}
-	
-	public Index<Node> getIndex() {
-		return GraphDragon.getInstance().getResourceIndex();
-	}
-	
+
 	public void addResource( long identifier, long position ) throws CouldNotLoadResourceException {
 		AbstractResource r = SeventyEight.getInstance().getResource( identifier );
 
@@ -63,10 +63,16 @@ public class Collection extends AbstractResource {
 
 		/* We should remove first?! */
 		removeResource( resource );
-		Relationship rel = node.createRelationshipTo( resource.getNode(), CollectionType.IN_COLLECTION );
-		rel.setProperty( "order", position );
+        Edge edge = resource.getNode().createEdge( this.getNode(), CollectionEdgeType.in_collection );
+        edge.set( "order", position );
+        edge.save();
 	}
-	
+
+    /**
+     * Remove a resource from a collection
+     * @param identifier
+     * @throws CouldNotLoadResourceException
+     */
 	public void removeResource( long identifier ) throws CouldNotLoadResourceException {
 		AbstractResource r = GraphDragon.getInstance().getResource( identifier );
 		removeResource( r );
@@ -103,33 +109,34 @@ public class Collection extends AbstractResource {
 	public List<AbstractResource> getResources() {
 		return resourcesForView;
 	}
-	
-	/**
-	 * TODO This is a really stupid implementation!!!
-	 * @param resource
-	 */
+
+    /**
+     * Remove a resource from the collection
+     * @param resource
+     */
 	public void removeResource( AbstractResource resource ) {
 		logger.debug( "Removing " + resource + " from " + this );
 		logger.debug( "Removing " + resource.getNode() + " to " + node );
-		Iterator<Relationship> it = node.getRelationships( Direction.OUTGOING, CollectionType.IN_COLLECTION ).iterator();
-		
-		while( it.hasNext() ) {
-			Relationship r = it.next();
-			logger.debug( "CHECKING NODE IS " + r.getEndNode() + "/" + resource.getNode() );
-			if( r.getEndNode().equals( resource.getNode() ) ) {
-				logger.debug( "DELETING" );
-				r.delete();
-			}
-		}
+
+        List<Edge> edges = this.getNode().getEdges( resource.getNode(), CollectionEdgeType.in_collection, Direction.INBOUND );
+
+        /**
+         * Delete all
+         */
+        for( Edge e : edges ) {
+            e.delete();
+        }
 	}
 	
 	public void buildCache() {
 		logger.debug( "Building cache" );
 		cached = new HashSet<Long>();
-		Iterable<Relationship> ships = node.getRelationships( Direction.OUTGOING, CollectionType.IN_COLLECTION );
-		for( Relationship r : ships ) {
-			logger.debug( "End node is " + r.getEndNode() );
-			cached.add( (Long) r.getEndNode().getProperty( "identifier", 0l ) );
+
+        List<Edge> edges = node.getEdges( CollectionEdgeType.in_collection, Direction.INBOUND );
+
+		for( Edge e : edges ) {
+			logger.debug( "End node is " + e.getSourceNode() );
+			cached.add( (Long) e.getSourceNode().get( "identifier", 0l ) );
 		}
 		
 		logger.debug( "Cache is now: " + cached );
@@ -137,10 +144,12 @@ public class Collection extends AbstractResource {
 	
 	public void print() {
 		logger.debug( "Printing edges" );
-		Iterable<Relationship> ships = node.getRelationships( Direction.OUTGOING, CollectionType.IN_COLLECTION );
-		for( Relationship r : ships ) {
-			long id = (Long) r.getEndNode().getProperty( "identifier", 0l );
-			logger.debug( "End node is " + r.getEndNode() + " = " + id );
+
+        List<Edge> edges = node.getEdges( CollectionEdgeType.in_collection, Direction.INBOUND );
+
+        for( Edge e : edges ) {
+			long id = (Long) e.getSourceNode().get( "identifier", 0l );
+			logger.debug( "End node is " + e.getSourceNode() + " = " + id );
 		}
 	}
 	

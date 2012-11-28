@@ -6,7 +6,7 @@ import org.seventyeight.database.IndexValueType;
 import org.seventyeight.database.Query;
 import org.seventyeight.database.orientdb.impl.orientdb.OrientDefaultQuery;
 import org.seventyeight.database.query.IndexBuilder;
-import org.seventyeight.database.query.IndexType;
+import org.seventyeight.database.IndexType;
 
 /**
  * @author cwolfgang

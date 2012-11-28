@@ -1,5 +1,6 @@
 package org.seventyeight.database.query;
 
+import org.seventyeight.database.IndexType;
 import org.seventyeight.database.IndexValueType;
 import org.seventyeight.database.QueryBuilder;
 

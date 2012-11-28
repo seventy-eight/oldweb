@@ -56,7 +56,7 @@ public class OrientNode implements Node<OrientNode, OrientEdge> {
     public OrientEdge createEdge( OrientNode to, EdgeType type ) {
         logger.debug( "Creating edge(" + type + ") from " + doc.getClassName() + " to " + to.getDocument().getClassName() );
 
-        ODocument edge = db.getInternalDatabase().createEdge( doc, to.doc, type.toString() ).field( OGraphDatabase.LABEL, type.toString() ).save();
+        ODocument edge = db.getInternalDatabase().createEdge( doc, to.doc ).field( OGraphDatabase.LABEL, type.toString() ).save();
 
         return new OrientEdge( edge, this, to );
     }
@@ -183,6 +183,15 @@ public class OrientNode implements Node<OrientNode, OrientEdge> {
     @Override
     public <T> T get( String key ) {
         return doc.field( key );
+    }
+
+    @Override
+    public <T> T get( String key, T defaultValue ) {
+        if( doc.containsField( key ) ) {
+            return doc.field( key );
+        } else {
+            return defaultValue;
+        }
     }
 
     @Override
