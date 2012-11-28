@@ -14,12 +14,10 @@ import java.util.concurrent.ConcurrentMap;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
 import org.apache.log4j.Logger;
 import org.apache.velocity.util.introspection.ClassMap;
-import org.seventyeight.database.Database;
-import org.seventyeight.database.EdgeType;
+import org.seventyeight.database.*;
 import org.seventyeight.web.exceptions.CouldNotLoadObjectException;
 import org.seventyeight.web.exceptions.CouldNotLoadResourceException;
 import org.seventyeight.web.exceptions.NotFoundException;
-import org.seventyeight.web.graph.Edge;
 import org.seventyeight.web.handler.Renderer;
 import org.seventyeight.web.model.*;
 
@@ -33,12 +31,14 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 public class SeventyEight {
 	private static Logger logger = Logger.getLogger( SeventyEight.class );
 	private static SeventyEight instance;
+
+    public static final String INDEX_RESOURCES = "resources";
 	
 	public static final String defaultThemeName = "default";
 	
 	private org.seventyeight.loader.ClassLoader classLoader = null;
 
-	private ODocument systemNode = null;
+	private Node systemNode = null;
 
 	//private OGraphDatabase graphdb = null;
 		
@@ -92,39 +92,36 @@ public class SeventyEight {
 
     private ConcurrentMap<Class, DatabaseInquirer> dbinq = new ConcurrentHashMap<Class, DatabaseInquirer>();
 
-	public SeventyEight() {
+	public SeventyEight( Database db ) {
 		if( instance != null ) {
 			throw new IllegalStateException( "Instance already defined" );
 		}
 		instance = this;
-		initialize( new File( System.getProperty( "user.home" ), ".seventyeight" ) );
+		initialize( new File( System.getProperty( "user.home" ), ".seventyeight" ), db );
 	}
 
-	public SeventyEight( String path ) {
+	public SeventyEight( String path, Database db ) {
 		if( instance != null ) {
 			throw new IllegalStateException( "Instance already defined" );
 		}
 		instance = this;
-		initialize( new File( path ) );
+		initialize( new File( path ), db );
 	}
 	
-	public SeventyEight( File path ) {
+	public SeventyEight( File path, Database db ) {
 		if( instance != null ) {
 			throw new IllegalStateException( "Instance already defined" );
 		}
 		instance = this;
-		initialize( path );
+		initialize( path, db );
 	}
 
-	private SeventyEight initialize( File path ) {
+	private SeventyEight initialize( File path, Database db ) {
 		logger.debug( "Path: " + path.getAbsolutePath() );
 		
 		/* Prepare environment */
 		logger.info( "Creating paths" );
 		this.path = path;
-		path.mkdirs();
-		orientdbPath = new File( path, ".orientdb" );
-		orientdbPath.mkdir();
 		pluginsPath = new File( path, "plugins" );
 		pluginsPath.mkdir();
 		uploadPath = new File( path, "upload" );
@@ -133,26 +130,13 @@ public class SeventyEight {
 		/* Class loader */
 		classLoader = new org.seventyeight.loader.ClassLoader( Thread.currentThread().getContextClassLoader() );
 
-        /* Initialize database */
-        OGraphDatabase graphdb = null;
-		try {
-			graphdb = new OGraphDatabase( "local:" + orientdbPath.toString() ).open( "admin", "admin" );
-            graphdb.n
-		} catch( Exception e ) {
-			logger.info( "Installing OrientDB to " + orientdbPath );
-			graphdb = new OGraphDatabase( "local:" + orientdbPath.toString() );
-			logger.info( "GRAPHDB: " + graphdb );
-			graphdb.create();
-		}
-
-
 		/* Get the system node */
-		graphdb.getDictionary().containsKey( SYSTEM_NODE_TYPE );
-		if( graphdb.getDictionary().containsKey( SYSTEM_NODE_TYPE ) ) {
-			systemNode = graphdb.getDictionary().get( SYSTEM_NODE_TYPE );
+		db.containsKey( SYSTEM_NODE_TYPE );
+		if( db.containsKey( SYSTEM_NODE_TYPE ) ) {
+			systemNode = (Node) db.getValue( SYSTEM_NODE_TYPE );
 		} else {
 			logger.info( "System node not found, installing" );
-			install( graphdb );
+			install( db );
 		}
 		
 		/* Settings */
@@ -161,10 +145,6 @@ public class SeventyEight {
 		return this;
 	}
 
-    public static void getDB() {
-        ODatabaseDocumentPool.global().acquire( "local:" + orientdbPath.toString() "admin", "admin" );
-    }
-	
 	public static SeventyEight getInstance() {
 		return instance;
 	}
@@ -264,72 +244,14 @@ public class SeventyEight {
 	}
 	*/
 	
-	private void install( OGraphDatabase graphdb ) {
+	private void install( Database graphdb ) {
 		logger.info( "Installing system" );
-		
-		try {
-			graphdb.createVertexType( NodeType.item.name() );
-		} catch( Exception e ) {
-			/* No op */
-		}
-		
-		try {
-			graphdb.createVertexType( NodeType.widgit.name() );
-		} catch( Exception e ) {
-			/* No op */
-		}
-		
-		try {
-			graphdb.createVertexType( SYSTEM_NODE_TYPE );
-		} catch( Exception e ) {
-			/* No op */
-		}
-
-		
-		try {
-			graphdb.createEdgeType( ResourceEdgeType.owner.name() );
-		} catch( Exception e ) {
-			/* No op */
-		}
-		try {
-			graphdb.createEdgeType( ResourceEdgeType.contributor.name() );
-		} catch( Exception e ) {
-			/* No op */
-		}
-		try {
-			graphdb.createEdgeType( ResourceEdgeType.extension.name() );
-		} catch( Exception e ) {
-			/* No op */
-		}
-		try {
-			graphdb.createEdgeType( ResourceEdgeType.translation.name() );
-		} catch( Exception e ) {
-			/* No op */
-		}
-		
-		/* Access types */
-		try {
-			graphdb.createEdgeType( GroupEdgeType.readAccess.name() );
-		} catch( Exception e ) {
-			/* No op */
-		}
-		
-		try {
-			graphdb.createEdgeType( GroupEdgeType.writeAccess.name() );
-		} catch( Exception e ) {
-			/* No op */
-		}
-		try {
-			graphdb.createEdgeType( GroupEdgeType.reviewAccess.name() );
-		} catch( Exception e ) {
-			/* No op */
-		}
-		
-		/* TODO: Do a check on the system node */
-		
-		systemNode = graphdb.createVertex( SYSTEM_NODE_TYPE );
-		graphdb.getDictionary().put( SYSTEM_NODE_TYPE, systemNode );
+		systemNode = graphdb.createNode();
+        graphdb.storeKeyValue( SYSTEM_NODE_TYPE, systemNode );
 		systemNode.save();
+
+        /* Create index */
+        graphdb.createIndex( INDEX_RESOURCES, IndexType.UNIQUE, IndexValueType.LONG );
 	}
 
 	public ODocument createNode( OGraphDatabase graphdb, Class<?> clazz, NodeType type ) {
@@ -370,160 +292,6 @@ public class SeventyEight {
 			throw new CouldNotLoadObjectException( "Unable to get the class " + clazz, e );
 		}
 	}
-	
-	public List<ODocument> getEdges( OGraphDatabase graphdb, Item item, EdgeType type ) {
-		return getEdges( graphdb, item, type.toString() );
-	}
-	
-	public List<ODocument> getEdges( OGraphDatabase graphdb, Item item, String label ) {
-		Set<OIdentifiable> edges = graphdb.getOutEdges( item.getNode(), label );
-		List<ODocument> result = new LinkedList<ODocument>();
-
-		for( OIdentifiable e : edges ) {
-			ODocument edge = (ODocument) e;
-			if( edge.field( OGraphDatabase.LABEL ) != null && edge.field( OGraphDatabase.LABEL ).equals( label ) ) {
-				result.add( edge );
-			}
-		}
-		
-		return result;
-	}
-	
-	public List<ODocument> getNodes( OGraphDatabase graphdb, Item item, EdgeType type ) {
-		Set<OIdentifiable> edges = graphdb.getOutEdges( item.getNode(), type.toString() );
-		List<ODocument> nodes = new LinkedList<ODocument>();
-		
-		for( OIdentifiable e : edges ) {
-			nodes.add( graphdb.getOutVertex( e ) );
-		}
-		
-		return nodes;
-	}
-	
-	public List<Edge> getEdges( OGraphDatabase graphdb, Item from, Item to ) {
-		Set<ODocument> edges = graphdb.getEdgesBetweenVertexes( from.getNode(), to.getNode() );
-		List<Edge> es = new LinkedList<Edge>();
-		
-		for( OIdentifiable e : edges ) {
-			ODocument out = graphdb.getOutVertex( e );
-			es.add( new Edge( (ODocument) e, from.getNode(), out ) );
-		}
-		
-		return es;
-	}
-	
-	public List<Edge> getEdges2( OGraphDatabase graphdb, Item item, EdgeType type ) {
-		logger.debug( "Getting edges from " + item + " of type " + type );
-		Set<OIdentifiable> edges = graphdb.getOutEdges( item.getNode(), ( type != null ? type.toString() : null ) );
-		logger.debug( "EDGES: " + edges );
-		List<Edge> es = new LinkedList<Edge>();
-		
-		for( OIdentifiable e : edges ) {
-			ODocument out = graphdb.getInVertex( e );
-			
-			Edge edge = new Edge( (ODocument) e, item.getNode(), out );
-			es.add( edge );
-			logger.debug( "Edge: " + edge );
-		}
-		
-		return es;
-	}
-	
-	public Item setLabel( Item item, String label ) {
-		item.getNode().field( OGraphDatabase.LABEL, label );
-		
-		return item;
-	}
-	
-	/**
-	 * Create an edge between nodes
-	 * @param from
-	 * @param to
-	 * @param type
-	 * @return
-	 */
-	public ODocument createEdge( OGraphDatabase graphdb, Item from, Item to, EdgeType type ) {
-		logger.debug( "Creating edge(" + type + ") from " + from.getNode().getClassName() + " to " + to.getNode().getClassName() );
-		return graphdb.createEdge( from.getNode(), to.getNode(), type.toString() ).field( OGraphDatabase.LABEL, type.toString() ).save();
-	}
-	
-	public ODocument getOutNode( OGraphDatabase graphdb, ODocument edge ) throws IllegalStateException {
-        graphdb.getOutEdges()
-		ODocument node = graphdb.getOutVertex( edge );
-		if( node == null ) {
-			throw new IllegalStateException( "End node for " + edge + " not found" );
-		} else {
-			return node;
-		}
-	}
-	
-	public void removeOutEdges( OGraphDatabase graphdb, Item item, EdgeType type ) {
-		logger.debug( "Removing out edges " + type + " from " + item );
-		Set<OIdentifiable> edges = graphdb.getOutEdges( item.getNode(), type.toString() );
-		for( OIdentifiable edge : edges ) {
-			graphdb.removeEdge( (ODocument) edge );
-		}
-	}
-	
-	public void removeEdges( OGraphDatabase graphdb, Item from, Item to, EdgeType type ) {
-		logger.debug( "Removing relations " + type + " from " + from + " to " + to );
-		List<Edge> edges = getEdges2( graphdb, from, type );
-				
-		for( Edge edge : edges ) {
-			if( edge.getOutNode().equals( to.getNode() ) ) {
-				logger.debug( "Removing the edge " + edge );
-				graphdb.removeEdge( edge.getEdge() );
-			}
-		}
-	}
-	
-	public void removeEdge( OGraphDatabase graphdb, ODocument edge ) {
-		graphdb.removeEdge( edge );
-	}
-	
-	
-	/**
-	 * Add an edge
-	 * @param from
-	 * @param to
-	 * @param type
-	 * @param replace
-	 */
-	public void addNodeRelation( OGraphDatabase graphdb, Item from, Item to, EdgeType type, boolean replace ) {
-		logger.debug( "Adding " + type + " to " + from );
-		
-		if( replace ) {
-			removeEdges( graphdb, from, to, type );
-		}
-		
-		createEdge( graphdb, from, to, type );
-	}
-	
-	/**
-		if( key != null ) {
-			for( ODocument i : edges ) {
-				if( i.field( key ) != null && i.field( key ).equals( value ) ) {
-					items.add( new AbstractItem )
-					//items.add( e )
-				}
-			}
-		}
-		
-		while( it.hasNext() ) {
-			Relationship r = it.next();
-			if( key == null ) {
-				list.add( r.getEndNode() );
-			} else {
-				Object o = r.getProperty( key, null );
-				if( o != null && o.equals( value ) ) {
-					list.add( r.getEndNode() );
-				}
-			}
-		}
-		
-		return list;
-	}
-	*/
 
     public <T extends DatabaseInquirer> T getDatabaseInquirer( Class c ) throws NotFoundException {
         if( dbinq.containsKey( c ) ){
@@ -543,13 +311,14 @@ public class SeventyEight {
     public List<AbstractExtension> getExtensions( OGraphDatabase graphdb, AbstractItem item, Class<?> oftype ) {
         logger.debug( "Getting extensions for " + item + " of type " + oftype );
         //Iterator<Relationship> it = item.getNode().getRelationships( ExtensionRelations.EXTENSION, Direction.OUTGOING ).iterator();
-        List<Edge> edges = getEdges2( graphdb, item, ResourceEdgeType.extension );
+        //List<Edge> edges = getEdges2( graphdb, item, ResourceEdgeType.extension );
+        List<Edge> edges = item.getNode().getEdges( ResourceEdgeType.extension, Direction.OUTBOUND );
 
         List<AbstractExtension> extensions = new ArrayList<AbstractExtension>();
 
         for( Edge edge : edges  ) {
-            ODocument node = edge.getInNode();
-            String c = (String) node.field( "class" );
+            Node node = edge.getTargetNode();
+            String c = (String) node.get( "class" );
 
             if( c != null && ( ( oftype == null ) || ( oftype != null && c.equals( oftype.getName() ) ) ) ) {
                 logger.debug( "Adding " + c );

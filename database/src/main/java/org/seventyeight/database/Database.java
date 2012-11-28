@@ -10,6 +10,7 @@ package org.seventyeight.database;
 public interface Database<IDB, NT extends Node> {
 
     public void storeKeyValue( String key, Object value );
+    public boolean containsKey( String key );
     public <T> T getValue( String key );
     public <T> T getValue( String key, T defaultValue );
 
@@ -24,4 +25,20 @@ public interface Database<IDB, NT extends Node> {
      * @return
      */
     public NT createNode();
+
+    /**
+     * Create an index with given value types
+     * @param indexName
+     * @param type
+     * @param valueTypes
+     */
+    public void createIndex( String indexName, IndexType type, IndexValueType ... valueTypes );
+
+    /**
+     * Put an element to the given index
+     * @param indexName
+     * @param node
+     * @param keys
+     */
+    public void putToIndex( String indexName, NT node, Object ... keys );
 }

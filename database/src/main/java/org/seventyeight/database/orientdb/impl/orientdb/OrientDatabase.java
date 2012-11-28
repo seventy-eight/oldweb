@@ -106,6 +106,9 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
             case INTEGER:
                 return OType.INTEGER;
 
+            case LONG:
+                return OType.LONG;
+
             case DATE:
                 return OType.DATE;
 
@@ -114,7 +117,7 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
         }
     }
 
-    public void putIndex( String name, OrientNode node, Object ... keys ) {
+    public void putToIndex( String name, OrientNode node, Object ... keys ) {
         //new OrientPutIndexBuilder( node, name ).setKey( key ).build().execute();
 
         //db.getMetadata().getIndexManager().getIndex( name ).create()

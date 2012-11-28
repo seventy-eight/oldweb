@@ -10,7 +10,7 @@ public interface Parameterized<R> {
      * Get a property from the {@link Node}
      * @param key
      * @param <T>
-     * @return
+     * @return The property or null if non-existent
      */
     public <T> T get( String key );
 

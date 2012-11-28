@@ -8,6 +8,7 @@ package org.seventyeight.database;
 public enum IndexValueType {
     STRING( "string" ),
     INTEGER( "integer" ),
+    LONG( "long" ),
     DOUBLE( "double" ),
     DATE( "date" );
 
