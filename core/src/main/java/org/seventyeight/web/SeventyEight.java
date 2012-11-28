@@ -4,20 +4,17 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
 import org.apache.log4j.Logger;
-import org.apache.velocity.util.introspection.ClassMap;
 import org.seventyeight.database.*;
 import org.seventyeight.web.exceptions.CouldNotLoadObjectException;
 import org.seventyeight.web.exceptions.CouldNotLoadResourceException;
 import org.seventyeight.web.exceptions.NotFoundException;
+import org.seventyeight.web.exceptions.TooManyException;
 import org.seventyeight.web.handler.Renderer;
 import org.seventyeight.web.model.*;
 
@@ -25,7 +22,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
-import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 
 public class SeventyEight {
@@ -154,32 +150,27 @@ public class SeventyEight {
         System.out.println( "Shutting down" );
 	}
 	
-	public AbstractResource getResource( Long id ) throws CouldNotLoadResourceException {
-		ODocument node = getNodeByIndex();
-		
-		if( node != null ) {
-			try {
-				return (AbstractResource) getItem( node );
-			} catch( CouldNotLoadObjectException e ) {
-				logger.warn( "Unable to load resource object " + id );
-				throw new CouldNotLoadResourceException( "Unable to get resource", e );
-			}
-		} else {
-			throw new CouldNotLoadResourceException( id + "" );
-		}
-	}
-	
-	public ODocument getNodeByIndex() {
-		return null;
-	}
-	
-	public AbstractResource getResource( ODocument node ) throws CouldNotLoadObjectException {
-		try {
-			long id = (Long) node.field( "identifier" );
-			return getResource( id );
-		} catch( Exception e ) {
-			throw new CouldNotLoadObjectException( node + " does not have identifier property", e );
-		}
+	public AbstractResource getResource( Database db, Long id ) throws NotFoundException, TooManyException, CouldNotLoadResourceException {
+        List<Node> nodes = db.getFromIndex( INDEX_RESOURCES, id );
+
+        if( nodes.size() < 1 ) {
+            throw new NotFoundException( "Resource with id " + id + " not found" );
+        } else if( nodes.size() > 1 ) {
+            throw new TooManyException( "Too many resources with id " + id + " found" );
+        } else {
+            Node node = nodes.get( 0 );
+
+            if( node != null ) {
+                try {
+                    return (AbstractResource) getDatabaseItem( node );
+                } catch( CouldNotLoadObjectException e ) {
+                    logger.warn( "Unable to load resource object " + id );
+                    throw new CouldNotLoadResourceException( "Unable to get resource", e );
+                }
+            } else {
+                throw new CouldNotLoadResourceException( id + "" );
+            }
+        }
 	}
 
     public AbstractResource setIdentifier( AbstractResource resource ) {
@@ -271,21 +262,26 @@ public class SeventyEight {
     public Item getItem( long id ) {
          return null;
     }
-	
-	public Item getItem( ODocument node ) throws CouldNotLoadObjectException {
-		String clazz = null;
-		try {
-			clazz = (String) node.field( "class" );
-			logger.debug( "Resource class: " + clazz );
-		} catch( Exception e ) {
-			logger.warn( "Null occured: " + e.getMessage() );
-			throw new CouldNotLoadObjectException( "Unable to get the class " + clazz );
+
+    /**
+     * Return a {@link DatabaseItem} given a node
+     * @param node
+     * @return
+     * @throws CouldNotLoadObjectException
+     */
+	public DatabaseItem getDatabaseItem( Node node ) throws CouldNotLoadObjectException {
+		String clazz = (String) node.get( "class" );
+
+		if( clazz == null ) {
+			logger.warn( "Class property not found" );
+			throw new CouldNotLoadObjectException( "Class property not found: " + node );
 		}
+        logger.debug( "Item class: " + clazz );
 		
 		try {
-			Class<Item> eclass = (Class<Item>) Class.forName(clazz, true, classLoader);
+			Class<Item> eclass = (Class<Item>) Class.forName(clazz, true, classLoader );
 			Constructor<?> c = eclass.getConstructor( ODocument.class );
-			Item instance = (Item) c.newInstance( node );
+            DatabaseItem instance = (DatabaseItem) c.newInstance( node );
 			return instance;
 		} catch( Exception e ) {
 			logger.error( "Unable to get the class " + clazz );

@@ -56,6 +56,11 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
         }
     }
 
+    @Override
+    public boolean containsKey( String key ) {
+        return db.getDictionary().containsKey( key );
+    }
+
     public OClass createClass( String className, String superClass, boolean abstractClass ) {
 
         if( superClass != null ) {

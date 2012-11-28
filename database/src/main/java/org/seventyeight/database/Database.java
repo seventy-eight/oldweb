@@ -1,5 +1,7 @@
 package org.seventyeight.database;
 
+import java.util.List;
+
 /**
  * A generic database wrapper
  *
@@ -41,4 +43,7 @@ public interface Database<IDB, NT extends Node> {
      * @param keys
      */
     public void putToIndex( String indexName, NT node, Object ... keys );
+
+
+    public List<NT> getFromIndex( String name, Object ... keys );
 }
