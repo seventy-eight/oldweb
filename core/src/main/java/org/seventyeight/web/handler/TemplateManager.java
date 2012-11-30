@@ -2,9 +2,9 @@ package org.seventyeight.web.handler;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 
@@ -18,13 +18,14 @@ import org.seventyeight.web.exceptions.DictionaryDoesNotExistException;
 import org.seventyeight.web.exceptions.TemplateDoesNotExistException;
 import org.seventyeight.web.model.AbstractTheme;
 import org.seventyeight.web.model.Locale;
+import org.seventyeight.web.model.Request;
 
 
-public class Renderer {
+public class TemplateManager {
 
-	private static Logger logger = Logger.getLogger( Renderer.class );
+	private static Logger logger = Logger.getLogger( TemplateManager.class );
 	
-	private VelocityEngine renderer = new VelocityEngine();
+	private VelocityEngine engine = new VelocityEngine();
 	private Properties velocityProperties = new Properties();
 	
 	private String paths = "";
@@ -35,7 +36,7 @@ public class Renderer {
 	public Template getTemplate( AbstractTheme theme, String template ) throws TemplateDoesNotExistException {
 		
 		try {
-		Template t = renderer.getTemplate( theme.getName() + "/" + template );
+		Template t = engine.getTemplate( theme.getName() + "/" + template );
 		
 		return t;
 		} catch( ResourceNotFoundException e ) {
@@ -120,38 +121,65 @@ public class Renderer {
 				                                       + "org.seventyeight.velocity.org.seventyeight.velocity.html.html.FileInputDirective" );
 		
 		/* Initialize velocity */
-		renderer.init( velocityProperties );
+		engine.init( velocityProperties );
 	}
 	
-	public VelocityEngine getRenderer() {
-		return renderer;
+	public VelocityEngine getEngine() {
+		return engine;
 	}
 	
-	public Render getRender( Writer writer ) {
-		return new Render( writer );
+	public Renderer getRenderer() {
+		return new Renderer();
 	}
+
+    public Renderer getRenderer( Request request ) {
+        return new Renderer( request );
+    }
 	
-	public class Render {
+	public class Renderer {
 		private Writer writer;
 		private AbstractTheme theme;
 		private Locale locale;
+        private VelocityContext context;
+
+        public Renderer() {}
+        public Renderer( Request request ) {
+            this.theme = request.getTheme();
+            //this.locale = request.getLocale();
+            this.context = request.getContext();
+        }
+
+        public Renderer setContext( VelocityContext context ) {
+            this.context = context;
+            return this;
+        }
 		
-		public Render( Writer writer ) {
-			this( writer, SeventyEight.getInstance().getDefaultTheme(), SeventyEight.getInstance().getDefaultLocale() );
-		}
-		
-		public Render( Writer writer, AbstractTheme theme, Locale locale ) {
+		public Renderer setWriter( Writer writer ) {
 			this.writer = writer;
-			this.theme = theme;
-			this.locale = locale;
+            return this;
 		}
-		
-		public String render() {
+
+        public Renderer setTheme( AbstractTheme theme ) {
+            this.theme = theme;
+            return this;
+        }
+
+        public Renderer setLocale( Locale locale ) {
+            this.locale = locale;
+            return this;
+        }
+
+		public String get() {
 			return writer.toString();
 		}
 		
 
-		public Render render( String template, VelocityContext context ) throws TemplateDoesNotExistException {
+		public Renderer render( String template ) throws TemplateDoesNotExistException {
+            /* Check fields */
+            if( writer == null ) {
+                writer = new StringWriter();
+            }
+
 			/* Resolve template */
 			Template t = null;
 			logger.debug( "Rendering " + template );
@@ -171,29 +199,56 @@ public class Renderer {
 			
 			return this;
 		}
-		
-		public Render render( Object object, String template, VelocityContext context ) throws TemplateDoesNotExistException {
+
+        /**
+         * Render a specific object, given as "item" in the context. Given a concrete template
+         * @param object
+         * @param template An exact template
+         * @return
+         * @throws TemplateDoesNotExistException
+         */
+		public Renderer render( Object object, String template ) throws TemplateDoesNotExistException {
 			context.put( "item", object );
-			return render( template, context );
-		}
-		
-		public Render renderObject( Class<?> clazz, Object object, String method, VelocityContext context ) throws TemplateDoesNotExistException {
-			/* Resolve template */
-			String template = getUrlFromClass( clazz.getCanonicalName(), method );
-			context.put( "item", object );
-			try {
-				context.put( "i18n", SeventyEight.getInstance().getI18N().getDictionary( clazz ) );
-			} catch( DictionaryDoesNotExistException e ) {
-				context.put( "i18n", null );
-			}
-			
-			return render( template, context );
+			return render( template );
 		}
 
+        /**
+         * Render a specific object, given as "item" in the context
+         * @param object
+         * @param method
+         * @return
+         * @throws TemplateDoesNotExistException
+         */
+		public Renderer renderObject( Object object, String method ) throws TemplateDoesNotExistException {
+			String template = getUrlFromClass( object.getClass().getCanonicalName(), method );
+			context.put( "item", object );
+			return render( template );
+		}
+
+        /**
+         * Render a specific object given the class, given as "item" in the context
+         * @param clazz
+         * @param object
+         * @param method
+         * @return
+         * @throws TemplateDoesNotExistException
+         */
+        public Renderer renderObject( Class<?> clazz, Object object, String method ) throws TemplateDoesNotExistException {
+            String template = getUrlFromClass( clazz.getCanonicalName(), method );
+            context.put( "item", object );
+            return render( template );
+        }
+
 	}
-		
-	
-	public List<String> getTemplateFile( Object object, String method, int depth ) {
+
+    /**
+     * Given a class, get the corresponding list of templates
+     * @param object
+     * @param method
+     * @param depth
+     * @return
+     */
+	public static List<String> getTemplateFile( Object object, String method, int depth ) {
 		/* Resolve template */
 		List<String> list = new ArrayList<String>();
 		Class<?> clazz = object.getClass();
@@ -206,8 +261,15 @@ public class Renderer {
 		
 		return list;
 	}
-	
-	public List<String> getTemplateFile( Class<?> clazz, String method, int depth ) {
+
+    /**
+     * Given a class, get the corresponding list of templates
+     * @param clazz
+     * @param method
+     * @param depth
+     * @return
+     */
+	public static List<String> getTemplateFile( Class<?> clazz, String method, int depth ) {
 		/* Resolve template */
 		List<String> list = new ArrayList<String>();
 		int cnt = 0;
@@ -226,7 +288,7 @@ public class Renderer {
 	 * @param method - A velocity method, view.vm or configure.vm
 	 * @return A relative path to the velocity file
 	 */
-	public String getUrlFromClass( Object object, String method ) {
+	public static String getUrlFromObject( Object object, String method ) {
 		return getUrlFromClass( object.getClass().getCanonicalName(), method );
 	}
 	
@@ -236,7 +298,7 @@ public class Renderer {
 	 * @param method - A velocity method, view.vm or configure.vm
 	 * @return A relative path to the velocity file
 	 */
-	public String getUrlFromClass( String clazz, String method ) {
+	public static String getUrlFromClass( String clazz, String method ) {
 		return clazz.replace( '.', '/' ).replace( '$', '/' ) + "/" + method;
 	}
 

@@ -220,7 +220,7 @@ public abstract class AbstractItem implements Item, DatabaseItem<AbstractItem> {
 		
 		StringBuilder sb = new StringBuilder();
 		
-		Render render = SeventyEight.getInstance().getRenderer().getRender( new StringWriter() );
+		Renderer render = SeventyEight.getInstance().getTemplateManager().getRenderer( new StringWriter() );
 		
 		for( Class<Extension> ext : list ) {
 			logger.debug( "CLASS: " + ext.getCanonicalName() );
@@ -241,7 +241,7 @@ public abstract class AbstractItem implements Item, DatabaseItem<AbstractItem> {
 				for( ODocument n : ns ) {
 					
 					try {
-						//sb.append( SeventyEight.getInstance().getRenderer().renderObject( new StringWriter(), ext, c.newInstance( n ), "configure.vm", SeventyEight.getInstance().getDefaultTheme(), new VelocityContext(), SeventyEight.getInstance().getDefaultLocale() ).toString() );
+						//sb.append( SeventyEight.getInstance().getTemplateManager().renderObject( new StringWriter(), ext, c.newInstance( n ), "configure.vm", SeventyEight.getInstance().getDefaultTheme(), new VelocityContext(), SeventyEight.getInstance().getDefaultLocale() ).toString() );
 						render.renderObject( ext, c.newInstance( n ), "configure.vm", new VelocityContext() );
 					} catch( Exception e1 ) {
 						logger.warn( "Unable to append " + ext + "-node(" + n + "): " + e1.getMessage() );

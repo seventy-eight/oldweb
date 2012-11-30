@@ -11,6 +11,12 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.directive.Directive;
 import org.apache.velocity.runtime.parser.node.Node;
+import org.seventyeight.database.Database;
+import org.seventyeight.web.SeventyEight;
+import org.seventyeight.web.exceptions.CouldNotLoadResourceException;
+import org.seventyeight.web.exceptions.ThemeDoesNotExistException;
+import org.seventyeight.web.model.AbstractResource;
+import org.seventyeight.web.model.AbstractTheme;
 
 public class ThemeSelectInputDirective extends Directive {
 
@@ -31,6 +37,9 @@ public class ThemeSelectInputDirective extends Directive {
 
 		String name = "";
 		long id = -1;
+
+        /* Get the database in context */
+        Database db = (Database) context.get( "database" );
 		
 		try {
 			try {
@@ -63,8 +72,8 @@ public class ThemeSelectInputDirective extends Directive {
 		if( id > 0 ) {
 			AbstractResource r = null;
 			try {
-				r = GraphDragon.getInstance().getResource( id );
-			} catch( CouldNotLoadResourceException e ) {
+				r = SeventyEight.getInstance().getResource( db, id );
+			} catch( Exception e ) {
 				logger.error( "Unable to load resource " + id + ": " + e.getMessage() );
 			}
 			
@@ -75,7 +84,8 @@ public class ThemeSelectInputDirective extends Directive {
 			}
 		}
 		
-		List<AbstractTheme> themes = GraphDragon.getInstance().getAllThemes();
+		//List<AbstractTheme> themes = GraphDragon.getInstance().getAllThemes();
+        List<AbstractTheme> themes = null;
 		
 		writer.write( "<select name=\"" + name + "\">" );
 		

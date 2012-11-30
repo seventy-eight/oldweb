@@ -3,7 +3,6 @@ package org.seventyeight.velocity.html;
 import java.io.IOException;
 import java.io.Writer;
 
-import com.sun.xml.internal.ws.client.RequestContext;
 import org.apache.log4j.Logger;
 import org.apache.velocity.context.InternalContextAdapter;
 import org.apache.velocity.exception.MethodInvocationException;
@@ -46,11 +45,9 @@ public class ResourcePreviewDirective extends Directive {
 			} else {
 				throw new UnknownResourceIdentifierException( "Not a resource identifier" );
 			}
-			
-			Request request = (Request)context.get( "request" );
-			AbstractTheme theme = request.getTheme();
-			
-			SeventyEight.getInstance().renderObject( writer, r, "preview.vm", theme, request.getContext() );
+
+            Request request = (Request) context.get( "request" );
+            SeventyEight.getInstance().getTemplateManager().getRenderer( request ).setWriter( writer ).renderObject( r, "preview.vm" );
 			
 		} catch( Exception e ) {
 			logger.debug( e );
