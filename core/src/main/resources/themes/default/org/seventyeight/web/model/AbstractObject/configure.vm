@@ -1,0 +1,35 @@
+
+#set( $title = "" )
+#set( $title = $item.getTitle() )
+
+#set( $description = "" )
+#set( $description = $item.getDescription() )
+
+<tr>
+	<td>#i18n( "Title" )</td>
+	<td>#inputtext( "title", $title )</td>
+</tr>
+
+<tr>
+	<td>#i18n( "Description" )</td>
+	<td>#inputtext( "description", $description )</td>
+</tr>
+
+<tr>
+	<td>Groups</td>
+	<td>
+		<table>
+			<tr>
+				<td align="center">#i18n( "Access groups" )</td>
+				<td align="center">#i18n( "Review groups" )</td>
+				<td align="center">#i18n( "Editor groups" )</td>
+			</tr>
+			
+			<tr>
+				<td align="center">#groupsforresource($!item.getIdentifier(), "access-group", "GROUP_HAS_ACCESS")</td>
+				<td align="center">#groupsforresource($!item.getIdentifier(), "review-group", "GROUP_CAN_REVIEW")</td>
+				<td align="center">#groupsforresource($!item.getIdentifier(), "editor-group", "GROUP_CAN_EDIT")</td>
+			</tr>
+		</table>
+	</td>
+</tr>

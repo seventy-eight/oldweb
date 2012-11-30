@@ -1,0 +1,4 @@
+<tr>
+	<td>Title</td>
+	<td><input name="title" value="$title"></td>
+</tr>

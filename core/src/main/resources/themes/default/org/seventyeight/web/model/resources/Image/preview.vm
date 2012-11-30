@@ -1,0 +1,4 @@
+<div style="float:left;height:200px;width:200px;text-align:center;padding:10px">
+<b>$item.getDisplayName()</b><br />
+<img src="/resource-file/$item.getIdentifier()?view=thumb">
+</div>

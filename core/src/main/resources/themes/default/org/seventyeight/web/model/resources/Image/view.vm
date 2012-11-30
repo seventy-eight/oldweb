@@ -1,0 +1,4 @@
+<div align="center">
+$item.getDisplayName()<br>
+<img src="/resource-file/$item.getIdentifier()">
+</div>

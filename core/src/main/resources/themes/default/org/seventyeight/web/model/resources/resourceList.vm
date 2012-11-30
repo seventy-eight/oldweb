@@ -1,0 +1,11 @@
+<table>
+
+<tr>
+	<td>Title</td>
+</tr>
+
+#foreach( $element in $elements )
+
+#end
+
+</table>

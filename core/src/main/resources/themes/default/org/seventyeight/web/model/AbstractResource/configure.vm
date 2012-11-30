@@ -1,0 +1,8 @@
+
+#set( $theme = "" )
+#set( $theme = $item.getTheme() )
+
+<tr>
+	<td>Theme</td>
+	<td>#themeforresource($item.getIdentifier(), "theme")</td>
+</tr>

@@ -1,0 +1,13 @@
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF8">
+	<script language="javascript" type="text/javascript" src="/static/javascript/jquery-1.7.1.min.js"></script>
+	<script language="javascript" type="text/javascript" src="/static/javascript/utils.js"></script>
+	<title>$title</title>
+
+</head>
+
+<body>
+$content
+</html>

@@ -1,0 +1,13 @@
+<h3>Configure <b>$item</b></h3>
+
+#set( $title = "" )
+#set( $title = $item.getTitle() )
+
+<tr>
+	<td>Title</td>
+	<td>#inputtext( "title", $title )</td>
+</tr>
+
+
+
+

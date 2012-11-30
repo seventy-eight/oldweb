@@ -1,0 +1,25 @@
+#set( $username = "" )
+#set( $username = $item.getUsername() )
+
+HEJ=$item.getDescriptor() ---><br>
+ITEM=$item
+
+<tr>
+	<td>Username</td>
+	<td>#inputtext( "username", $username, 32 )</td>
+</tr>
+
+<tr>
+	<td>New password</td>
+	<td>#inputtext( "password" )</td>
+</tr>
+
+<tr>
+	<td>Repeat password</td>
+	<td>#inputtext( "password_again" )</td>
+</tr>
+
+
+#foreach( $c in $configurations )
+	$c
+#end

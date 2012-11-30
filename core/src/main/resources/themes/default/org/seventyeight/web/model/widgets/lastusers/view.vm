@@ -1,0 +1,7 @@
+<div>widget:$item.getDisplayName()</div>
+
+#foreach( $user in $item.getUsers() )
+
+	<b>$user.getDisplayName() $user.getSeenAsDate()</b><br>
+
+#end

@@ -1,0 +1,6 @@
+<h2>Error: $message</h2>
+<div align="left" style="">
+#foreach( $line in $stacktrace )
+    <br />$line
+#end
+</div>

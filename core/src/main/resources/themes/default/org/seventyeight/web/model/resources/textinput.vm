@@ -1,0 +1,5 @@
+#if( !$value )
+	#set( $value = "" ) 
+#end
+
+<input name="$name" value="$value">

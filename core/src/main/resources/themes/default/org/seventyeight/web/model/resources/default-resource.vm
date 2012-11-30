@@ -1,0 +1,8 @@
+
+#set( $title = "" )
+#set( $title = $item.getTitle() )
+
+<tr>
+	<td>Title</td>
+	<td>#inputtext( "title", $title )</td>
+</tr>

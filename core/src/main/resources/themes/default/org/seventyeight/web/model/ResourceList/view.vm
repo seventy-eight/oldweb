@@ -1,0 +1,23 @@
+<b>LIST</b><br />
+
+<script>
+function selectResource( r ) {
+	window.opener.document.${formName}.${formElement}.value = r;
+	window.opener.focus();
+	window.close();
+}
+</script>
+
+<table align="center" style="width:100%;border-collapse:collapse">
+<tr>
+<td>
+
+<div>
+#foreach( $it in $item )
+	<a href="#" onclick="selectResource($it.getIdentifier())">#preview( $it )</a>
+#end
+</div>
+
+</td>
+</tr>
+</table>

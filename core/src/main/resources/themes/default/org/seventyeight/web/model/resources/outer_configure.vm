@@ -1,0 +1,16 @@
+
+<h3>Configure <b>$item</b></h3>
+
+<form action="/$item.getIdentifier()" method="post" name="configure" enctype="application/x-www-form-urlencoded" accept-charset="UTF-8">
+
+<table>
+
+<!-- #parse("default/org/seventyeight/model/resources/combine.vm") -->
+$configurations
+
+<tr>
+	<td colspan="2" align="center"><input type="submit" value="OK"></td>
+</tr>
+
+</table>
+</form>

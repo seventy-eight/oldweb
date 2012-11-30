@@ -1,0 +1,7 @@
+<tr>
+	<td colspan="2" style="text-align:center;font-weight:bold">#i18n( "AVATAR" )</td>
+</tr>
+
+#foreach( $c in $configurations )
+	$c
+#end

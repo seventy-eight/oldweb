@@ -1,0 +1,4 @@
+<tr>
+	<td>#i18n( "Select decal" )</td>
+	<td>#resourceSelector( "decal", "decalId" )</td>
+</tr>

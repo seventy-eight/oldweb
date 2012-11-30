@@ -1,0 +1,55 @@
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF8">
+	<script language="javascript" type="text/javascript" src="/static/javascript/jquery-1.7.1.min.js"></script>
+	<script language="javascript" type="text/javascript" src="/static/javascript/utils.js"></script>
+	<title>$title</title>
+	
+	<script type="text/javascript">
+	
+/*
+$(function() {
+	//$("#test").hide("slow");
+	$.get('/widget/1', function(data) {
+		$("#test").append( data );
+	}, "html");
+	
+	$.get('/widget/3?url=$request.getRequestURI()', function(data) {
+		$("#login").append( data );
+	}, "html");
+});
+*/
+</script>
+
+</head>
+
+<body>
+
+<table style="border-style:solid;border-width:1px;border-color:#000000;width:100%">
+
+	<tr>
+		<td valign="top" style="border-style:solid;border-width:1px;border-color:#000000;width:180px">
+			Some menu-ish thingy<br>
+			<div id="test">hej</div>
+		</td>
+		
+		<td valign="top" rowspan="2" style="border-style:solid;border-width:1px;border-color:#000000">
+			<div align="center">$content</div>
+		</td>
+
+	</tr>
+
+	<tr>
+		<td valign="top" style="border-style:solid;border-width:1px;border-color:#000000;width:180px">
+			<div id="login"></div>
+		</td>
+
+	</tr>
+
+
+</table>
+
+</body>
+
+</html>

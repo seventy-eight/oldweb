@@ -1,0 +1,6 @@
+<div>$item.getTitle()</div>
+
+
+#foreach( $user in $item.getMembers() )
+	$user<br>
+#end

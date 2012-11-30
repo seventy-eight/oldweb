@@ -1,0 +1,5 @@
+
+#macro( textinput $value $length $readonly )
+<input type="text" value="$!value" maxlength="$length">
+#end
+

@@ -1,0 +1,21 @@
+<form action="/login" method="post" name="login">
+
+	<table>
+	
+		<tr>
+			<td>Username</td>
+			<td><td>#inputtext( "username" )</td></td>
+		</tr>
+		
+		<tr>
+			<td>Password</td>
+			<td><td>#inputtext( "password" )<input type="hidden" name="login-form" value=""><input type="hidden" name="url" value="$!url"></td></td>
+		</tr>
+		
+		<tr>
+			<td colspan="2" align="center"><input type="submit" value="OK"></td>
+		</tr>
+		
+	</table>
+
+</form>
