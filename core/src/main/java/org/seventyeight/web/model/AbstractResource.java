@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import org.apache.log4j.Logger;
+import org.seventyeight.database.Database;
 import org.seventyeight.database.Edge;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
@@ -75,7 +76,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 			if( ownerId != null ) {
 				logger.debug( "OwnerId is " + ownerId );
 				try {
-					AbstractResource o = SeventyEight.getInstance().getResource( ownerId );
+					AbstractResource o = SeventyEight.getInstance().getResource( getDB(), ownerId );
 					if( o instanceof User ) {
 						logger.debug( "Owner is " + ownerId );
 						AbstractResource.this.setOwner( (User)o );
@@ -83,7 +84,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 					} else {
 						logger.error( "Not a user: " + o );
 					}
-				} catch (CouldNotLoadResourceException e) {
+				} catch( Exception e ) {
 					logger.warn( "Unable to set owner: " + e.getMessage() );
 				}
 			} else {
@@ -193,7 +194,8 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 	}
 	
 	public AbstractTheme getTheme() throws ThemeDoesNotExistException {
-		return SeventyEight.getInstance().getTheme( getField( "theme", SeventyEight.defaultThemeName ) );
+		//return SeventyEight.getInstance().getTheme( getField( "theme", SeventyEight.defaultThemeName ) );
+        return null;
 	}
 	
 	public void setTheme( AbstractTheme theme ) {
@@ -220,31 +222,30 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 		return getTitle();
 	}
 
-	public static List<ODocument> getResources( String type ) {
-		List<ODocument> list = new ArrayList<ODocument>();
-		IndexHits<Node> nodes = GraphDragon.getInstance().getResourceIndex().get( "type", type );
+	public static List<Node> getResourcesNodes( Database db, String type ) {
+		List<Node> list = new ArrayList<Node>();
+		//IndexHits<Node> nodes = GraphDragon.getInstance().getResourceIndex().get( "type", type );
+        List<Edge> edges = db.getFromIndex( SeventyEight.INDEX_RESOURCE_TYPES, type );
 		
-		while( nodes.hasNext() ) {
-			list.add( nodes.next() );
-		}
+		for( Edge edge : edges ) {
+            list.add( edge.getTargetNode() );
+        }
 		
 		return list;
 	}
-	
-	/*
-	public void updateIndexes( Index<Node> idx ) {
-		super.updateIndexes( idx );
+
+	public void updateIndexes() {
+		super.updateIndexes();
 		
-		logger.debug( "Adding resource indexes for " + this + "/" + getNode() );
-		
-		idx.add( getNode(), "created", new ValueContext( getCreated() ).indexNumeric() );
-		if( getUpdated() != null ) {
-			idx.add( getNode(), "updated", new ValueContext( getUpdated() ).indexNumeric() );
-		}
-		logger.debug( "Type from descriptor: " + this.getDescriptor().getType() );
-		idx.add( getNode(), "type", this.getDescriptor().getType().toLowerCase() );
+		logger.debug( "Updating resource index for " + this + "/" + getNode() );
+
+        getDB().removeNodeFromIndex( SeventyEight.INDEX_RESOURCE_TYPES, node );
+
+        /* Update the type index */
+        getDB().putToIndex( SeventyEight.INDEX_RESOURCE_TYPES, node, getDescriptor().getType(), getCreated() );
+
+        getDB().putToIndex( SeventyEight.INDEX_RESOURCES, node, getIdentifier() );
 	}
-	*/
-	
+
 
 }

@@ -3,18 +3,17 @@ package org.seventyeight.web.model.resources;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import org.apache.log4j.Logger;
+import org.seventyeight.database.Database;
 import org.seventyeight.database.Node;
+import org.seventyeight.utils.Utils;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.model.extensions.UserAvatar;
 import org.seventyeight.web.util.Date;
-import org.seventyeight.web.util.Utils;
 
 import com.google.gson.JsonObject;
-import com.orientechnologies.orient.core.record.impl.ODocument;
 
 public class User extends AbstractResource {
 	
@@ -53,7 +52,7 @@ public class User extends AbstractResource {
 					throw new InconsistentParameterException( "The passwords does not match" );
 				}
 				try {
-					node.field( "password", Utils.md5( password1 ) );
+					node.set( "password", Utils.md5( password1 ) );
 				} catch( NoSuchAlgorithmException e ) {
 					logger.error( "Unable to hash password." );
 					throw new ErrorWhileSavingException( "Unable to hash password: " + e.getMessage() );
@@ -63,12 +62,12 @@ public class User extends AbstractResource {
 			String username = request.getValue( "username" );
 			logger.debug( "USERNAME: " + username );
 			if( username != null ) {
-				node.field( "username", username );
+				node.set( "username", username );
 			}
 			
 			String nickname = request.getValue( "nickname" );
 			if( nickname != null ) {
-				node.field( "nickname", nickname );
+				node.set( "nickname", nickname );
 			}
 		}
 		
@@ -82,7 +81,7 @@ public class User extends AbstractResource {
 	}
 	
 	public void setUsername( String username ) {
-		node.field( "username" );
+		node.set( "username", username );
 	}
 
 	public String getUsername() {
@@ -91,7 +90,7 @@ public class User extends AbstractResource {
 	
 	
 	public void setNickname( String nickname ) {
-		node.field( "nickname", nickname );
+		node.set( "nickname", nickname );
 	}
 
 	public String getNickname() {
@@ -100,12 +99,12 @@ public class User extends AbstractResource {
 	
 	
 	public void setPassword( String password ) {
-		node.field( "password", password );
+		node.set( "password", password );
 	}
 	
 	public void setUnEncryptedPassword( String password ) throws UnableToSavePasswordException {
 		try {
-			node.field( "password", Utils.md5( password ) );
+			node.set( "password", Utils.md5( password ) );
 		} catch( NoSuchAlgorithmException e ) {
 			logger.warn( "Could not set password: " + e.getMessage() );
 			throw new UnableToSavePasswordException( e.getMessage() );
@@ -129,7 +128,7 @@ public class User extends AbstractResource {
 	}
 	
 	public void setVisibility( boolean visible ) {
-		node.field( "visible", visible );
+		node.set( "visible", visible );
 	}
 	
 	public boolean isVisible() {
@@ -142,7 +141,7 @@ public class User extends AbstractResource {
 
 	public void setSeen() {
 		Long now = new Date().getTime();
-		node.field( "seen", now );
+		node.set( "seen", now );
 		logger.debug( "Setting seen to " + now );
 		/* Fast track index */
 		/*
@@ -217,8 +216,8 @@ public class User extends AbstractResource {
 		}
 
 		@Override
-		public User newInstance() throws UnableToInstantiateObjectException {
-			return super.newInstance();
+		public User newInstance( Database db ) throws UnableToInstantiateObjectException {
+			return super.newInstance( db );
 		}
 
 		/*
@@ -230,7 +229,7 @@ public class User extends AbstractResource {
 	}
 
 	public String getPortrait() {
-		List<AbstractExtension> list = SeventyEight.getInstance().getExtensions( db, this, UserAvatar.class );
+		List<AbstractExtension> list = SeventyEight.getInstance().getExtensions( this, UserAvatar.class );
 		
 		logger.debug( "I found " + list );
 		

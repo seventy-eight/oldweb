@@ -1,6 +1,7 @@
 package org.seventyeight.web;
 
 import java.io.File;
+import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,11 +11,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.apache.log4j.Logger;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
 import org.seventyeight.database.*;
-import org.seventyeight.web.exceptions.CouldNotLoadObjectException;
-import org.seventyeight.web.exceptions.CouldNotLoadResourceException;
-import org.seventyeight.web.exceptions.NotFoundException;
-import org.seventyeight.web.exceptions.TooManyException;
+import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.handler.Renderer;
 import org.seventyeight.web.model.*;
 
@@ -23,12 +23,21 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import org.seventyeight.web.util.Date;
 
 public class SeventyEight {
 	private static Logger logger = Logger.getLogger( SeventyEight.class );
 	private static SeventyEight instance;
 
-    public static final String INDEX_RESOURCES = "resources";
+    /**
+     * This index contains all the identifiers for resources
+     */
+    public static final String INDEX_RESOURCES = "resource-identifiers";
+
+    /**
+     * This index contains all the resource types, including the date created
+     */
+    public static final String INDEX_RESOURCE_TYPES = "resource-types";
 	
 	public static final String defaultThemeName = "default";
 	
@@ -36,8 +45,7 @@ public class SeventyEight {
 
 	private Node systemNode = null;
 
-	//private OGraphDatabase graphdb = null;
-		
+
 	public enum NodeType {
 		item,
 		/*resource,*/
@@ -137,6 +145,8 @@ public class SeventyEight {
 		
 		/* Settings */
 		defaultLocale = new Locale( "danish" );
+
+        /* Configure indexes for descriptors */
 		
 		return this;
 	}
@@ -149,6 +159,28 @@ public class SeventyEight {
 		//graphdb.close();
         System.out.println( "Shutting down" );
 	}
+
+    public Node<?, ?> createNode( Database db, Class clazz ) {
+        Node<?, ?> node = db.createNode();
+        node.set( "class", clazz.getName() ).save();
+
+        return node;
+    }
+
+    public AbstractResource createResource( Database db, String type ) throws UnableToInstantiateObjectException {
+        ResourceDescriptor f = resourceTypes.get( type );
+        logger.debug( "Creating new resource of type " + type );
+
+        Node node = createNode( db, f.getClazz() );
+        long id = getNextResourceIdentifier( db );
+
+        node.set( "identifier", id );
+        node.set( "created", new Date().getTime() );
+
+        AbstractResource instance = f.newInstance( db );
+
+        return instance;
+    }
 	
 	public AbstractResource getResource( Database db, Long id ) throws NotFoundException, TooManyException, CouldNotLoadResourceException {
         List<Node> nodes = db.getFromIndex( INDEX_RESOURCES, id );
@@ -187,6 +219,18 @@ public class SeventyEight {
         //mainNode.setProperty( "next-resource-id", ( next + 1 ) );
         db.storeKeyValue( "next-resource-id", ( next + 1 ) );
         return next;
+    }
+
+    /**
+     * Add a {@link Descriptor}. If it is a {@link ResourceDescriptor}, the type is added too.
+     * @param descriptor
+     */
+    public void addDescriptor( Descriptor<?> descriptor ) {
+        this.descriptors.put( descriptor.getClazz(), descriptor );
+
+        if( descriptor instanceof ResourceDescriptor ) {
+            this.resourceTypes.put( descriptor.getType(), (ResourceDescriptor<?>) descriptor );
+        }
     }
 	
 	public Descriptor<?> getDescriptor( Class<?> clazz ) {
@@ -243,6 +287,7 @@ public class SeventyEight {
 
         /* Create index */
         graphdb.createIndex( INDEX_RESOURCES, IndexType.UNIQUE, IndexValueType.LONG );
+        graphdb.createIndex( INDEX_RESOURCE_TYPES, IndexType.REGULAR, IndexValueType.STRING, IndexValueType.LONG );
 	}
 
 	public ODocument createNode( OGraphDatabase graphdb, Class<?> clazz, NodeType type ) {
@@ -304,7 +349,7 @@ public class SeventyEight {
      * @param oftype - The extensions must be of this class
      * @return A list of extensions
      */
-    public List<AbstractExtension> getExtensions( OGraphDatabase graphdb, AbstractItem item, Class<?> oftype ) {
+    public List<AbstractExtension> getExtensions( AbstractItem item, Class<?> oftype ) {
         logger.debug( "Getting extensions for " + item + " of type " + oftype );
         //Iterator<Relationship> it = item.getNode().getRelationships( ExtensionRelations.EXTENSION, Direction.OUTGOING ).iterator();
         //List<Edge> edges = getEdges2( graphdb, item, ResourceEdgeType.extension );
@@ -392,7 +437,103 @@ public class SeventyEight {
 	}
 	
 	
-	
+
+    /*******************************************************/
+    /* RENDER SPECIFICS                                    */
+    /*******************************************************/
 
 
+    /**
+     * Render a given template
+     * @param writer
+     * @param template - The template to be rendered
+     * @param theme - The theme to be used
+     * @param context - The velocity context
+     * @param locale - The locale
+     * @return The writer given
+     * @throws TemplateDoesNotExistException
+     */
+    public Writer render( Writer writer, String template, AbstractTheme theme, VelocityContext context, Locale locale ) throws TemplateDoesNotExistException {
+        /* Resolve template */
+        Template t = null;
+        logger.debug( "Rendering " + template );
+        try {
+            t = renderer.getTemplate( theme, template );
+        } catch( TemplateDoesNotExistException e ) {
+            /* If it goes wrong, try the default theme */
+            t = renderer.getTemplate( defaultTheme, template );
+        }
+
+        logger.debug( "Using the template file: " + t.getName() );
+
+        /* I18N */
+        context.put( "locale", locale );
+
+        t.merge( context, writer );
+
+        return writer;
+    }
+
+
+    /**
+     * Given an Object, get the corresponding list of templates
+     * @param object
+     * @param method
+     * @param depth
+     * @return
+     */
+    public List<String> getTemplateFile( Object object, String method, int depth ) {
+        /* Resolve template */
+        List<String> list = new ArrayList<String>();
+        Class<?> clazz = object.getClass();
+        int cnt = 0;
+        while( clazz != Object.class && clazz != null && cnt != depth ) {
+            list.add( getUrlFromClass( clazz.getCanonicalName(), method ) );
+            cnt++;
+            clazz = clazz.getSuperclass();
+        }
+
+        return list;
+    }
+
+    /**
+     * Given a class, get the corresponding list of templates
+     * @param clazz
+     * @param method
+     * @param depth
+     * @return
+     */
+    public List<String> getTemplateFile( Class<?> clazz, String method, int depth ) {
+        /* Resolve template */
+        List<String> list = new ArrayList<String>();
+        int cnt = 0;
+        while( clazz != Object.class && clazz != null && cnt != depth ) {
+            list.add( getUrlFromClass( clazz.getCanonicalName(), method ) );
+            cnt++;
+            clazz = clazz.getSuperclass();
+        }
+
+        return list;
+    }
+
+
+    /**
+     * Given an object and the velocity method, get the url of the file.
+     * @param object - Some object
+     * @param method - A velocity method, view.vm or configure.vm
+     * @return A relative path to the velocity file
+     */
+    public String getUrlFromClass( Object object, String method ) {
+        return getUrlFromClass( object.getClass().getCanonicalName(), method );
+    }
+
+    /**
+     * Given a string representation of a class and the velocity method, get the url of the file.
+     * @param clazz - A string representing a class
+     * @param method - A velocity method, view.vm or configure.vm
+     * @return A relative path to the velocity file
+     */
+    public String getUrlFromClass( String clazz, String method ) {
+        return clazz.replace( '.', '/' ).replace( '$', '/' ) + "/" + method;
+    }
 }

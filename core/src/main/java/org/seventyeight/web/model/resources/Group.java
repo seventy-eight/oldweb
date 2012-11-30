@@ -6,10 +6,7 @@ import java.util.List;
 
 import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import org.apache.log4j.Logger;
-import org.seventyeight.database.Direction;
-import org.seventyeight.database.Edge;
-import org.seventyeight.database.EdgeType;
-import org.seventyeight.database.Node;
+import org.seventyeight.database.*;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.ErrorWhileSavingException;
 import org.seventyeight.web.exceptions.InconsistentParameterException;
@@ -60,7 +57,7 @@ public class Group extends AbstractResource {
 					try {
 						logger.debug( "Adding " + user + " to group" );
 						Long id = new Long( user );
-						AbstractResource r = SeventyEight.getInstance().getResource( id );
+						AbstractResource r = SeventyEight.getInstance().getResource( getDB(), id );
 						//SeventyEight.getInstance().createEdge( db, resource, r, GroupMember.member );
                         //resource.getNode().createEdge( r.getNode(), GroupMember.member );
                         resource.createRelation( r, GroupMember.member );
@@ -77,9 +74,10 @@ public class Group extends AbstractResource {
 		logger.debug( "Adding user to group " + this );
 		List<User> users = new ArrayList<User>();
 		
-		List<ODocument> nodes = AbstractResource.getResources( User.__TYPENAME );
-		for( ODocument node : nodes ) {
-			User user = new User( node );
+		//List<Node> nodes = AbstractResource.getResources( User.__TYPENAME );
+        List<Edge> edges = this.getNode().getEdges( GroupMember.member, Direction.OUTBOUND );
+		for( Edge edge : edges ) {
+			User user = new User( edge.getTargetNode() );
 			logger.debug( "Adding " + user + " to group" );
 			users.add( user );
 		}
@@ -117,15 +115,14 @@ public class Group extends AbstractResource {
 	
 	public boolean isMember( User user ) {
 		logger.debug( "is " + user + " member of " + this );
-		List<Edge> edges = SeventyEight.getInstance().getEdges2( db, this, GroupMember.member );
+		//List<Edge> edges = SeventyEight.getInstance().getEdges2( db, this, GroupMember.member );
+        List<Edge> edges = node.getEdges( user.getNode(), GroupMember.member, Direction.OUTBOUND );
 		
-		for( Edge edge : edges ) {
-			if( edge.getOutNode().equals( user.getNode() ) ) {
-				return true;
-			}
-		}
-		
-		return false;
+		if( edges.size() > 0 ) {
+            return true;
+        } else {
+            return false;
+        }
 	}
 
 	public String getType() {
@@ -144,18 +141,17 @@ public class Group extends AbstractResource {
 		return selected;
 	}
 	
-	public static List<Group> getAllGroups() {
-		return getAllGroups( new ArrayList<Group>() );
+	public static List<Group> getAllGroups( Database db ) {
+		return getAllGroups( db, new ArrayList<Group>() );
 	}
 	
-	public static List<Group> getAllGroups( List<Group> selected ) {
+	public static List<Group> getAllGroups( Database db, List<Group> selected ) {
 		logger.debug( "Getting all groups" );
 		List<Group> groups = new ArrayList<Group>();
-		
-		Index<Node> idx = GraphDragon.getInstance().getResourceIndex();
-		IndexHits<Node> hits = idx.get( "class", Group.class );
-		for( Node node : hits ) {
-			Group grp = new Group( node );
+
+        List<Edge> edges = db.getFromIndex( SeventyEight.INDEX_RESOURCE_TYPES, "group" );
+		for( Edge edge : edges ) {
+			Group grp = new Group( edge.getTargetNode() );
 			logger.debug( "Adding " + grp + " to list" );
 			if( selected.contains( grp ) ) {
 				grp.selected = true;
@@ -168,7 +164,7 @@ public class Group extends AbstractResource {
 
 	public static class GroupDescriptor extends ResourceDescriptor<Group> {
 
-		@Override
+        @Override
 		public String getDisplayName() {
 			return "Group";
 		}
@@ -184,8 +180,8 @@ public class Group extends AbstractResource {
 		}
 
 		@Override
-		public Group newInstance() throws UnableToInstantiateObjectException {
-			return super.newInstance();
+		public Group newInstance( Database db ) throws UnableToInstantiateObjectException {
+			return super.newInstance( db );
 		}
 
 		/*

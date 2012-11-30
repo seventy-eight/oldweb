@@ -17,6 +17,7 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
 
 import com.google.gson.JsonObject;
+import org.seventyeight.database.Database;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
@@ -215,8 +216,8 @@ public class Image extends FileResource {
 		}
 
 		@Override
-		public Image newInstance() throws UnableToInstantiateObjectException {
-			return super.newInstance();
+		public Image newInstance( Database db ) throws UnableToInstantiateObjectException {
+			return super.newInstance( db );
 		}
 	}
 

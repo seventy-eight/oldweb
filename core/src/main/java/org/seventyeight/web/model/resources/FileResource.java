@@ -154,10 +154,6 @@ public class FileResource extends AbstractResource {
 
 	public static class FileDescriptor extends ResourceDescriptor<FileResource> {
 
-        public FileDescriptor( Database db ) {
-            super( db );
-        }
-
         @Override
 		public String getDisplayName() {
 			return "File";
@@ -174,8 +170,8 @@ public class FileResource extends AbstractResource {
 		}
 
 		@Override
-		public FileResource newInstance() throws UnableToInstantiateObjectException {
-			return super.newInstance();
+		public FileResource newInstance( Database db ) throws UnableToInstantiateObjectException {
+			return super.newInstance( db );
 		}
 	}
 

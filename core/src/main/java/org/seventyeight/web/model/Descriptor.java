@@ -12,18 +12,16 @@ public abstract class Descriptor<T extends Configurable> {
 	private static Logger logger = Logger.getLogger( Descriptor.class );
 	
 	protected Class<T> clazz;
-    protected Database db;
 	
-	protected Descriptor( Database db ) {
+	protected Descriptor() {
 		clazz = (Class<T>) getClass().getEnclosingClass();
 		logger.debug( "Descriptor class is " + clazz );
-        this.db = db;
 	}
 	
 	public abstract String getDisplayName();
 	public abstract String getType();
 
-	public T newInstance() throws UnableToInstantiateObjectException {
+	public T newInstance( Database db ) throws UnableToInstantiateObjectException {
 		logger.debug( "New instance for " + clazz );
 		//ODocument node = SeventyEight.getInstance().createNode( clazz, NodeType.item );
         Node node = db.createNode();
@@ -45,4 +43,11 @@ public abstract class Descriptor<T extends Configurable> {
 	public Class<? extends Configurable> getClazz() {
 		return clazz;
 	}
+
+    /**
+     * When instantiated the descriptor can configure an index
+     */
+    public void configureIndex() {
+        /* Default implementation is a no op */
+    }
 }

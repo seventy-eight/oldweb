@@ -22,8 +22,6 @@ import org.seventyeight.web.model.Locale;
 
 public class Renderer {
 
-	private static final long serialVersionUID = 7459581481528316339L;
-
 	private static Logger logger = Logger.getLogger( Renderer.class );
 	
 	private VelocityEngine renderer = new VelocityEngine();

@@ -3,7 +3,9 @@ package org.seventyeight.database.orientdb.impl.orientdb;
 import com.orientechnologies.common.collection.OCompositeKey;
 import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
+import com.orientechnologies.orient.core.index.OCompositeIndexDefinition;
 import com.orientechnologies.orient.core.index.OIndex;
+import com.orientechnologies.orient.core.index.OIndexDefinition;
 import com.orientechnologies.orient.core.index.OSimpleKeyIndexDefinition;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OType;
@@ -142,7 +144,7 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
             docs = db.getMetadata().getIndexManager().getIndex( name ).getValues( Collections.singleton( new OCompositeKey( keys ) ) );
         } else {
             //docs = db.getMetadata().getIndexManager().getIndex( name ).getValues( Collections.singleton( new OCompositeKey( keys[0] ) ) );
-            docs = db.getMetadata().getIndexManager().getIndex( name ).getValuesBetween( new OCompositeKey( keys[0] ), new OCompositeKey( keys[0] ) );
+            docs = db.getMetadata().getIndexManager().getIndex( name ).getValuesBetween( keys[0], keys[0] );
         }
 
         List<OrientNode> nodes = new LinkedList<OrientNode>();
@@ -153,4 +155,9 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
 
         return nodes;
     }
+
+    public void removeNodeFromIndex( String indexName, OrientNode node ) {
+        db.getMetadata().getIndexManager().getIndex( indexName ).remove( node.getDocument() );
+    }
+
 }

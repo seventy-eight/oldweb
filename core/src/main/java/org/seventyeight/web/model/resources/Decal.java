@@ -10,7 +10,10 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
 
 import com.google.gson.JsonObject;
+import org.seventyeight.database.Database;
+import org.seventyeight.database.Edge;
 import org.seventyeight.database.Node;
+import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.ErrorWhileSavingException;
 import org.seventyeight.web.exceptions.UnableToInstantiateObjectException;
 import org.seventyeight.web.model.AbstractResource;
@@ -45,15 +48,17 @@ public class Decal extends Image {
 		}
 	}
 
-	public static List<Decal> getDecals() {
+	public static List<Decal> getDecals( Database db ) {
 		
-		Index<Node> idx = GraphDragon.getInstance().getResourceIndex();
-		IndexHits<Node> nodes = idx.get( "type", Decal.__TYPE );
+		//Index<Node> idx = GraphDragon.getInstance().getResourceIndex();
+		//IndexHits<Node> nodes = idx.get( "type", Decal.__TYPE );
+
+        List<Edge> edges = db.getFromIndex( SeventyEight.INDEX_RESOURCE_TYPES, __TYPE );
 		
 		List<Decal> deals = new ArrayList<Decal>();
 		
-		while( nodes.hasNext() ) {
-			deals.add( new Decal( nodes.next() ) );
+		for( Edge edge : edges ) {
+			deals.add( new Decal( edge.getTargetNode() ) );
 		}
 		
 		return deals;
@@ -78,8 +83,8 @@ public class Decal extends Image {
 		}
 
 		@Override
-		public Decal newInstance() throws UnableToInstantiateObjectException {
-			return super.newInstance();
+		public Decal newInstance( Database db) throws UnableToInstantiateObjectException {
+			return super.newInstance( db );
 		}
 
 	}

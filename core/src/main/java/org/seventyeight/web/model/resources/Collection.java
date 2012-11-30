@@ -20,14 +20,11 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.seventyeight.database.Direction;
-import org.seventyeight.database.Edge;
-import org.seventyeight.database.EdgeType;
-import org.seventyeight.database.Node;
+import org.seventyeight.database.*;
+import org.seventyeight.utils.ExceptionUtils;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
-import org.seventyeight.web.model.AbstractResource;
-import org.seventyeight.web.model.ParameterRequest;
+import org.seventyeight.web.model.*;
 
 public class Collection extends AbstractResource {
 
@@ -51,8 +48,8 @@ public class Collection extends AbstractResource {
 		doSave( new ResourceSaveImpl( this, request, jsonData ) );
 	}
 
-	public void addResource( long identifier, long position ) throws CouldNotLoadResourceException {
-		AbstractResource r = SeventyEight.getInstance().getResource( identifier );
+	public void addResource( long identifier, long position ) throws CouldNotLoadResourceException, TooManyException, NotFoundException {
+		AbstractResource r = SeventyEight.getInstance().getResource( getDB(), identifier );
 
 		addResource( r, position );
 	}
@@ -73,20 +70,20 @@ public class Collection extends AbstractResource {
      * @param identifier
      * @throws CouldNotLoadResourceException
      */
-	public void removeResource( long identifier ) throws CouldNotLoadResourceException {
-		AbstractResource r = GraphDragon.getInstance().getResource( identifier );
+	public void removeResource( long identifier ) throws CouldNotLoadResourceException, TooManyException, NotFoundException {
+		AbstractResource r = SeventyEight.getInstance().getResource( getDB(), identifier );
 		removeResource( r );
 	}
 	
 	private List<AbstractResource> resourcesForView;
-	
-	@Override
-	public void prepareView( RequestContext request ) {
-		long offset = request.getKey( "offset", 0 );
-		long length = request.getKey( "length", 5 );
+
+	public void prepareView( Request request ) {
+		long offset = request.getValue( "offset", 0 );
+		long length = request.getValue( "length", 5 );
 		
 		logger.debug( "Prepare collection, " + offset + ", " + length );
-		
+
+        /*
 		OrderedExpander ox = new OrderedExpander( CollectionType.IN_COLLECTION, new OrderedExpander.Sorter( "order" ), (int)offset, (int)length );
 		Traverser t = org.neo4j.kernel.Traversal.description().evaluator( Evaluators.excludeStartPosition() ).
 															   evaluator( Evaluators.toDepth( 1 ) ).
@@ -104,6 +101,7 @@ public class Collection extends AbstractResource {
 				ExceptionUtils.print( e, System.out, false );
 			}
 		}
+		*/
 	}
 	
 	public List<AbstractResource> getResources() {
@@ -161,18 +159,18 @@ public class Collection extends AbstractResource {
 		return cached.contains( resource.getIdentifier() );
 	}
 	
-	public void doList( RequestContext request, Writer writer, JsonObject jsonData ) throws IOException {
+	public void doList( Request request, Writer writer, JsonObject jsonData ) throws IOException {
 		logger.debug( "-----> IN HERE <------" );
 		/* Determine query */
 		String query = null;
-		if( ( query = request.getKey( "query" ) ) != null ) {
+		if( ( query = request.getValue( "query" ) ) != null ) {
 			logger.debug( "Query is defined" );
 		} else {
 			logger.debug( "Query is NOT defined" );
 			query = "";
 			
 			/* Get type */
-			String type = request.getKey( "type", "*" );
+			String type = request.getValue( "type", "*" );
 			query += "type:" + type;
 		}
 		
@@ -194,7 +192,8 @@ public class Collection extends AbstractResource {
 		
 		/* COLLECTION */
 		print();
-		
+
+        /*
 		ResourceList resources = ResourceList.getResources( query, 3, 0, "title", false );
 		//resources.setIndexOrigin( idx );
 		
@@ -217,6 +216,7 @@ public class Collection extends AbstractResource {
 		} catch( TemplateDoesNotExistException e ) {
 			writer.write( "What? " + e.getMessage() );
 		}
+		*/
 	}
 		
 	public void update( JsonObject jsonData ) {
@@ -258,8 +258,8 @@ public class Collection extends AbstractResource {
 		}
 
 		@Override
-		public Collection newInstance() throws UnableToInstantiateObjectException {
-			return super.newInstance();
+		public Collection newInstance( Database db ) throws UnableToInstantiateObjectException {
+			return super.newInstance( db );
 		}
 	}
 

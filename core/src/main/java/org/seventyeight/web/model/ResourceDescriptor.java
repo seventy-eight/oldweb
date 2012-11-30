@@ -10,16 +10,18 @@ public abstract class ResourceDescriptor<T extends AbstractResource> extends Des
 
 	private static Logger logger = Logger.getLogger( ResourceDescriptor.class );
 
-    protected ResourceDescriptor( Database db ) {
-        super( db );
-    }
-
-	public T newInstance() throws UnableToInstantiateObjectException {
+	public T newInstance( Database db ) throws UnableToInstantiateObjectException {
 		logger.debug( "New instance of resource" );
-		T instance = super.newInstance();
+		T instance = super.newInstance( db );
 		//SeventyEight.getInstance().GetIdentifier( (AbstractResource) instance );
         SeventyEight.getInstance().setIdentifier( instance );
-		((AbstractResource) instance).setCreated( new Date() );
+		instance.setCreated( new Date() );
+        instance.getNode().set( "type", getType() );
+        instance.getNode().save();
+
+        /* Update index */
+        instance.updateIndexes();
+
 		return instance;
 	}
 }

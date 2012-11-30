@@ -11,6 +11,10 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.directive.Directive;
 import org.apache.velocity.runtime.parser.node.Node;
+import org.seventyeight.database.Database;
+import org.seventyeight.web.SeventyEight;
+import org.seventyeight.web.model.AbstractResource;
+import org.seventyeight.web.model.resources.Group;
 
 public class GroupSelectInputDirective extends Directive {
 
@@ -32,6 +36,9 @@ public class GroupSelectInputDirective extends Directive {
 		String name = "";
 		String namedRelation = "";
 		long id = -1;
+
+        /* Get the database in context */
+        Database db = (Database) context.get( "database" );
 		
 		try {
 			try {
@@ -77,15 +84,15 @@ public class GroupSelectInputDirective extends Directive {
 		if( id > 0 ) {
 			AbstractResource r = null;
 			try {
-				r = GraphDragon.getInstance().getResource( id );
-			} catch( CouldNotLoadResourceException e ) {
+				r = SeventyEight.getInstance().getResource( db, id );
+			} catch( Exception e ) {
 				logger.error( "Unable to load resource " + id + ": " + e.getMessage() );
 			}
 			
 			//List<Group> selected = Group.getAllGroups( r.getGroups( GroupRelation.GROUP_HAS_ACCESS ) );
-			selected = Group.getAllGroups( r.getGroups( namedRelation ) );
+			selected = Group.getAllGroups( db, r.getGroups( namedRelation ) );
 		} else {
-			selected = Group.getAllGroups();
+			selected = Group.getAllGroups( db );
 		}
 		
 		writer.write( "<select name=\"" + name + "\" multiple>" );

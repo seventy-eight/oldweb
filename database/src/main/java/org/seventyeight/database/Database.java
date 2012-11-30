@@ -46,4 +46,11 @@ public interface Database<IDB, NT extends Node> {
 
 
     public List<NT> getFromIndex( String name, Object ... keys );
+
+    /**
+     * Remove a {@link Node} from the named index
+     * @param indexName
+     * @param node
+     */
+    public void removeNodeFromIndex( String indexName, NT node );
 }

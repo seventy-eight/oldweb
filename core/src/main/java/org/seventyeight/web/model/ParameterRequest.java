@@ -8,4 +8,5 @@ public interface ParameterRequest {
 	public String getParameter( String key );
 	public String[] getParameterValues( String key );
 	public <T> T getValue( String key );
+    public <T> T getValue( String key, T defaultValue );
 }

@@ -6,10 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.seventyeight.database.Direction;
-import org.seventyeight.database.Edge;
-import org.seventyeight.database.EdgeType;
-import org.seventyeight.database.Node;
+import org.seventyeight.database.*;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.SeventyEight.ResourceEdgeType;
 import org.seventyeight.web.exceptions.ErrorWhileSavingException;
@@ -113,7 +110,7 @@ public abstract class AbstractItem implements Item, DatabaseItem<AbstractItem> {
 							//}
 						} else {
 							logger.debug( "There were NO extensions defined" );
-							Configurable e = d.newInstance();
+							Configurable e = d.newInstance( getDB() );
 							logger.debug( "Saving configurable " + e );
 							e.save( request, o );
 							logger.debug( "Configurable saved" );
@@ -314,5 +311,10 @@ public abstract class AbstractItem implements Item, DatabaseItem<AbstractItem> {
     @Override
     public String getItemClass() {
         return this.getClass().getSimpleName();
+    }
+
+    @Override
+    public Database getDB() {
+        return node.getDB();
     }
 }

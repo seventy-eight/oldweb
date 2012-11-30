@@ -233,7 +233,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 		for( String agid : accessGroupIds ) {
 			try {
 				long id = new Long( agid );
-				Group grp = (Group) SeventyEight.getInstance().getResource( id );
+				Group grp = (Group) SeventyEight.getInstance().getResource( this.getDB(), id );
 				addGroup( grp, type );
 			} catch( Exception e ) {
 				logger.warn( "Unable to add group: " + e.getMessage() );

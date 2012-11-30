@@ -10,6 +10,8 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.directive.Directive;
 import org.apache.velocity.runtime.parser.node.Node;
+import org.seventyeight.database.Database;
+import org.seventyeight.web.model.AbstractDictionary;
 import org.seventyeight.web.model.Locale;
 
 public class I18NDirective extends Directive {

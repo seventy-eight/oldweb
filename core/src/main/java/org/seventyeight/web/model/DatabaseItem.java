@@ -1,5 +1,6 @@
 package org.seventyeight.web.model;
 
+import org.seventyeight.database.Database;
 import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
 
@@ -12,4 +13,5 @@ public interface DatabaseItem<T> {
     public Node getNode();
     public T createRelation( Item other, EdgeType type );
     public String getItemClass();
+    public Database getDB();
 }
