@@ -3,25 +3,11 @@ package org.seventyeight.web;
 import java.io.File;
 import java.io.IOException;
 
-import javax.management.openmbean.InvalidOpenTypeException;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import org.seventyeight.database.Database;
 import org.seventyeight.database.orientdb.impl.orientdb.OrientDBManager;
-import org.seventyeight.web.exceptions.ErrorWhileSavingException;
-import org.seventyeight.web.exceptions.InconsistentParameterException;
-import org.seventyeight.web.exceptions.IncorrectTypeException;
-import org.seventyeight.web.exceptions.ParameterDoesNotExistException;
-import org.seventyeight.web.exceptions.ResourceDoesNotExistException;
-import org.seventyeight.web.model.AbstractItem;
-import org.seventyeight.web.model.ParameterRequest;
-
-import com.google.gson.JsonObject;
-import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
-import com.orientechnologies.orient.core.record.impl.ODocument;
 
 public class EnvRule implements TestRule {
 	
@@ -29,6 +15,7 @@ public class EnvRule implements TestRule {
 	protected File path;
     protected String type = "local";
     protected File odbPath;
+    protected Database db;
 	
 	protected void before( File path ) {
         odbPath = new File( path, "odb" );
@@ -37,8 +24,17 @@ public class EnvRule implements TestRule {
         System.out.println( "ODBPATH: " + odbPath );
 
         new OrientDBManager( type, odbPath.getAbsolutePath() );
-		new SeventyEight( path, OrientDBManager.getInstance().getDatabase() );
+        db = OrientDBManager.getInstance().getDatabase();
+		new SeventyEight( path, db );
 	}
+
+    public Database getDB() {
+        return db;
+    }
+
+    public Database getAnotherDB() {
+        return OrientDBManager.getInstance().getDatabase();
+    }
 	
 	protected void after() throws IOException {
 		SeventyEight.getInstance().shutdown();

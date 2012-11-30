@@ -3,8 +3,6 @@ package org.seventyeight.web.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.resource.spi.IllegalStateException;
-
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Direction;
 import org.seventyeight.database.Edge;

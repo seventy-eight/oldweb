@@ -2,6 +2,7 @@ package org.seventyeight.web.model.extensions;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
+import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.NoSuchObjectException;
 import org.seventyeight.web.exceptions.UnableToInstantiateObjectException;
@@ -11,7 +12,7 @@ public class UserAvatar extends AbstractExtension implements UserExtension, Conf
 	
 	private static Logger logger = Logger.getLogger( UserAvatar.class );
 
-	public UserAvatar( ODocument node ) {
+	public UserAvatar( Node node ) {
 		super( node );
 	}
 	
@@ -39,19 +40,6 @@ public class UserAvatar extends AbstractExtension implements UserExtension, Conf
 		public Class<? extends Extension> getExtensionClass() {
 			return UserAvatarExtension.class;
 		}
-
-		@Override
-		public UserAvatar newInstance() throws UnableToInstantiateObjectException {
-			return super.newInstance();
-		}
-
-		/*
-		@Override
-		public UserAvatar get( Node node ) {
-			logger.debug( "Creating UserAvatar" );
-			return new UserAvatar( node );
-		}
-		*/
 	}
 
 	@Override

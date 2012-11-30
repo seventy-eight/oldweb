@@ -58,7 +58,7 @@ public class FileResource extends AbstractResource {
 
 			logger.debug( "Setting file relation to " + nodeid );
 			if( nodeid != null ) {
-				Item item = SeventyEight.getInstance().getItem( nodeid );
+				DatabaseItem item = SeventyEight.getInstance().getDatabaseItem( nodeid );
 				setFileRelation( item );
 			}
 			
@@ -89,7 +89,7 @@ public class FileResource extends AbstractResource {
      * Set the file relation for this {@link FileResource}. Any existing file relations are removed.
      * @param item
      */
-	public void setFileRelation( Item item ) {
+	public void setFileRelation( DatabaseItem item ) {
 		removeFileRelations();
 		//this.node.createRelationshipTo( node, Relationships.FILE );
         //SeventyEight.getInstance().createEdge( db, this, item, FileResourceEdgeType.file );

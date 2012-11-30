@@ -1,19 +1,12 @@
 package org.seventyeight.web.model.extensions;
 
 import org.apache.log4j.Logger;
-import org.neo4j.graphdb.Node;
-import org.seventyeight.GraphDragon;
-import org.seventyeight.annotations.ExtensionType;
-import org.seventyeight.exceptions.UnableToInstantiateObjectException;
-import org.seventyeight.model.AbstractExtension;
-import org.seventyeight.model.Configurable;
-import org.seventyeight.model.Descriptor;
-import org.seventyeight.model.AbstractObject;
-import org.seventyeight.model.Extension;
-import org.seventyeight.model.Portrait;
-import org.seventyeight.model.RequestContext;
+import org.seventyeight.database.Database;
+import org.seventyeight.database.Node;
+import org.seventyeight.web.exceptions.UnableToInstantiateObjectException;
+import org.seventyeight.web.model.*;
 
-@ExtensionType
+//@ExtensionType
 public class UserDecal extends AbstractExtension implements Portrait, Configurable, UserAvatarExtension {
 
 	private static Logger logger = Logger.getLogger( UserDecal.class );
@@ -22,20 +15,20 @@ public class UserDecal extends AbstractExtension implements Portrait, Configurab
 		super( node );
 	}
 	
-	public void save( RequestContext request ) {
+	public void save( Request request ) {
 		logger.debug( "Saving user decal!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" );
-		String id = request.getKey( "decalId" );
+		String id = request.getValue( "decalId" );
 		if( id != null ) {
 			setDecalId( Long.parseLong( id ) );
 		}
 	}
 	
 	public void setDecalId( long id ) {
-		node.setProperty( "decalId", id );
+		node.set( "decalId", id );
 	}
 	
 	public Long getDecalId() {
-		return (Long)node.getProperty( "decalId", null );
+		return (Long)node.get( "decalId", null );
 	}
 	
 	public static class UserDecalDescriptor extends Descriptor<UserDecal> {
@@ -54,18 +47,6 @@ public class UserDecal extends AbstractExtension implements Portrait, Configurab
 		public Class<? extends Extension> getExtensionClass() {
 			return null;
 		}
-
-		@Override
-		public UserDecal newInstance() throws UnableToInstantiateObjectException {
-			return super.newInstance();
-		}
-
-		/*
-		@Override
-		public UserDecal get( Node node ) {
-			return new UserDecal( node );
-		}
-		*/
 	}
 
 	@Override

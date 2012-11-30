@@ -41,18 +41,18 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
 
     @Override
     public void storeKeyValue( String key, Object value ) {
-        db.getDictionary().put( key, value );
+        db.setProperty( key, value );
     }
 
     @Override
     public <T> T getValue( String key ) {
-        return (T) db.getDictionary().get( key );
+        return (T) db.getProperty( key );
     }
 
     @Override
     public <T> T getValue( String key, T defaultValue ) {
         if( db.getDictionary().containsKey( key ) ) {
-            return (T) db.getDictionary().get( key );
+            return (T) db.getProperty( key );
         } else {
             return defaultValue;
         }

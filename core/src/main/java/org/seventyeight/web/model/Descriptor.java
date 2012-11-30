@@ -33,6 +33,8 @@ public abstract class Descriptor<T extends Configurable> {
 		} catch( Exception e ) {
 			throw new UnableToInstantiateObjectException( "Unable to instantiate " + clazz, e );
 		}
+
+        node.set( "class", getClazz().getName() );
 		
 		return instance;
 	}

@@ -3,10 +3,7 @@ package org.seventyeight.web;
 import java.io.File;
 import java.io.Writer;
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -17,6 +14,8 @@ import org.seventyeight.database.*;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.handler.TemplateManager;
 import org.seventyeight.web.model.*;
+import org.seventyeight.web.model.Locale;
+import org.seventyeight.web.model.resources.*;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -121,7 +120,7 @@ public class SeventyEight {
 		/* Class loader */
 		classLoader = new org.seventyeight.loader.ClassLoader( Thread.currentThread().getContextClassLoader() );
 
-		/* Get the system node */
+        /* Get the system node */
 		db.containsKey( SYSTEM_NODE_TYPE );
 		if( db.containsKey( SYSTEM_NODE_TYPE ) ) {
 			systemNode = (Node) db.getValue( SYSTEM_NODE_TYPE );
@@ -139,7 +138,8 @@ public class SeventyEight {
         addDescriptor( new Article.ArticleDescriptor() );
 
         /* Configure indexes for descriptors */
-		
+
+
 		return this;
 	}
 
@@ -207,9 +207,9 @@ public class SeventyEight {
 
     private synchronized long getNextResourceIdentifier( Database db ) {
         //Integer next = (Integer) mainNode.getProperty( "next-resource-id", 1 );
-        Long next = (Long) db.getValue( "next-resource-id", 1 );
+        Long next = (Long) db.getValue( "next-resource-id", 1l );
         //mainNode.setProperty( "next-resource-id", ( next + 1 ) );
-        db.storeKeyValue( "next-resource-id", ( next + 1 ) );
+         db.storeKeyValue( "next-resource-id", ( next + 1 ) );
         return next;
     }
 
@@ -273,31 +273,17 @@ public class SeventyEight {
 	
 	private void install( Database graphdb ) {
 		logger.info( "Installing system" );
-		systemNode = graphdb.createNode();
-        graphdb.storeKeyValue( SYSTEM_NODE_TYPE, systemNode );
-		systemNode.save();
+		//systemNode = graphdb.createNode();
+        //graphdb.storeKeyValue( SYSTEM_NODE_TYPE, systemNode );
+		//systemNode.save();
 
         /* Create index */
         graphdb.createIndex( INDEX_RESOURCES, IndexType.UNIQUE, IndexValueType.LONG );
         graphdb.createIndex( INDEX_RESOURCE_TYPES, IndexType.REGULAR, IndexValueType.STRING, IndexValueType.LONG );
 	}
 
-	public ODocument createNode( OGraphDatabase graphdb, Class<?> clazz, NodeType type ) {
-		logger.debug( "Creating a vertex of type " + type + ", " + clazz.getName() );
-		ODocument node = graphdb.createVertex( type.name() ).field( "class", clazz.getName() ).save();
-
-		//mainNode.createRelationshipTo( node, TestRel.RELATION );
-
-		return node;
-	}
-
-    /**
-     * TODO: Implement
-     * @param id
-     * @return
-     */
-    public Item getItem( long id ) {
-         return null;
+    public DatabaseItem getDatabaseItem( long id ) {
+        return null;
     }
 
     /**
@@ -311,13 +297,13 @@ public class SeventyEight {
 
 		if( clazz == null ) {
 			logger.warn( "Class property not found" );
-			throw new CouldNotLoadObjectException( "Class property not found: " + node );
+			throw new CouldNotLoadObjectException( "\"class\" property not found for " + node );
 		}
         logger.debug( "Item class: " + clazz );
-		
+
 		try {
 			Class<Item> eclass = (Class<Item>) Class.forName(clazz, true, classLoader );
-			Constructor<?> c = eclass.getConstructor( ODocument.class );
+			Constructor<?> c = eclass.getConstructor( Node.class );
             DatabaseItem instance = (DatabaseItem) c.newInstance( node );
 			return instance;
 		} catch( Exception e ) {

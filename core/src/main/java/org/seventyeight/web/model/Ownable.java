@@ -1,7 +1,5 @@
 package org.seventyeight.web.model;
 
-import javax.resource.spi.IllegalStateException;
-
 import org.seventyeight.web.model.resources.User;
 
 public interface Ownable {
