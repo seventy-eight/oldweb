@@ -1,6 +1,6 @@
 package org.seventyeight.web.model;
 
-import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
+import org.seventyeight.database.Database;
 
 /**
  * User: cwolfgang
@@ -8,5 +8,5 @@ import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
  * Time: 21:42
  */
 public interface DatabaseRequest {
-    public OGraphDatabase getDB();
+    public Database getDB();
 }

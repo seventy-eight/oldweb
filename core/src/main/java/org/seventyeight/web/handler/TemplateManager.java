@@ -13,6 +13,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.seventyeight.database.Database;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.DictionaryDoesNotExistException;
 import org.seventyeight.web.exceptions.TemplateDoesNotExistException;
@@ -141,12 +142,14 @@ public class TemplateManager {
 		private AbstractTheme theme;
 		private Locale locale;
         private VelocityContext context;
+        private Database db;
 
         public Renderer() {}
         public Renderer( Request request ) {
             this.theme = request.getTheme();
             //this.locale = request.getLocale();
             this.context = request.getContext();
+            this.db = request.getDB();
         }
 
         public Renderer setContext( VelocityContext context ) {

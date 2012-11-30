@@ -1,8 +1,7 @@
 package org.seventyeight.web.model;
 
-import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import org.apache.velocity.VelocityContext;
-import org.seventyeight.velocity.html.ThemeSelectInputDirective;
+import org.seventyeight.database.Database;
 import org.seventyeight.web.model.resources.User;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +14,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
  */
 public class Request extends HttpServletRequestWrapper implements ParameterRequest, DatabaseRequest {
 
-    private OGraphDatabase db;
+    private Database db;
     private RequestMethod method = RequestMethod.GET;
     private AbstractTheme theme = null;
     private VelocityContext context;
@@ -32,7 +31,7 @@ public class Request extends HttpServletRequestWrapper implements ParameterReque
         setRequestMethod( httpServletRequest.getMethod() );
     }
 
-    public void setDB( OGraphDatabase db ) {
+    public void setDB( Database db ) {
         this.db = db;
     }
 
@@ -57,7 +56,7 @@ public class Request extends HttpServletRequestWrapper implements ParameterReque
     }
 
     @Override
-    public OGraphDatabase getDB() {
+    public Database getDB() {
         return db;
     }
 
