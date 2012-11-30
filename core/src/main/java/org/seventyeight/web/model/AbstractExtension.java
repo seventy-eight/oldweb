@@ -10,19 +10,22 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.seventyeight.database.Direction;
+import org.seventyeight.database.Edge;
+import org.seventyeight.database.EdgeType;
+import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
-import org.seventyeight.web.graph.Edge;
 
 public abstract class AbstractExtension extends AbstractItem implements Extension, Savable {
 	
 	private static Logger logger = Logger.getLogger( AbstractExtension.class );
 	
-	public AbstractExtension( ODocument node ) {
+	public AbstractExtension( Node node ) {
 		super( node );
 	}
 	
-	public ODocument getNode() {
+	public Node getNode() {
 		return node;
 	}
 
@@ -63,17 +66,18 @@ public abstract class AbstractExtension extends AbstractItem implements Extensio
 	 * @throws UnableToInstantiateObjectException
 	 * @throws NoSuchObjectException
 	 */
-	public <T> T getObject( SeventyEight.EdgeType rel ) throws UnableToInstantiateObjectException, NoSuchObjectException {
+	public <T> T getObject( EdgeType rel ) throws UnableToInstantiateObjectException, NoSuchObjectException {
 
-        List<Edge> edges = SeventyEight.getInstance().getEdges2( this, rel );
+        //List<Edge> edges = SeventyEight.getInstance().getEdges2( this, rel );
+        List<Edge> edges = node.getEdges( rel, Direction.OUTBOUND );
 		
 		T a = null;
 		
 		/* Just get the first */
 		if( edges.size() > 0 ) {
-			ODocument n = edges.get( 0 ).getInNode();
+			Node n = edges.get( 0 ).getTargetNode();
 			try {
-				Class<? extends T> clazz = (Class<? extends T>) Class.forName( (String) n.field( "class" ) );
+				Class<? extends T> clazz = (Class<? extends T>) Class.forName( (String) n.get( "class" ) );
 				Constructor<? extends T> c = clazz.getConstructor( ODocument.class );
 				a = c.newInstance( n );
 			} catch( Exception e ) {

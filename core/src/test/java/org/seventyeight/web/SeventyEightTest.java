@@ -27,44 +27,7 @@ public class SeventyEightTest {
 	@Test
 	public void getInstance() {
 		SeventyEight se = SeventyEight.getInstance();
+        assertNotNull( se );
 	}
-	
-	@Test
-	public void createNode() {
-		SeventyEight se = SeventyEight.getInstance();
-		ODocument node = se.createNode( getClass(), NodeType.item );
-		assertThat( (String)node.field( "class" ), is( getClass().getName() ) );
-	}
-	
-	@Test
-	public void getItem() throws CouldNotLoadObjectException {
-		SeventyEight se = SeventyEight.getInstance();
-		ODocument node1 = se.createNode( DummyItem.class, NodeType.item );
-		assertThat( (String)node1.field( "class" ), is( DummyItem.class.getName() ) );
-		
-		Item item1 = se.getItem( node1 );
-		
-		assertThat( item1.getNode(), is( node1  ) );
-	}
-	
-	@Test
-	public void createEdge() throws CouldNotLoadObjectException {
-		SeventyEight se = SeventyEight.getInstance();
-		ODocument node1 = se.createNode( DummyItem.class, NodeType.item ).field( "name", "manse" ); // The out node
-		ODocument node2 = se.createNode( DummyItem.class, NodeType.item ).field( "name", "svenne" ); // The in node
-		assertThat( (String)node1.field( "class" ), is( DummyItem.class.getName() ) );
-		assertThat( (String)node2.field( "class" ), is( DummyItem.class.getName() ) );
-		
-		Item item1 = se.getItem( node1 );
-		Item item2 = se.getItem( node2 );
-		
-		ODocument edge = se.createEdge( item1, item2, ResourceEdgeType.owner );
-		System.out.println( "Edge: " + edge );
-		assertThat( edge, not( nullValue()) );
-		List<Edge> edges = se.getEdges2( item1, ResourceEdgeType.owner );
-		assertThat( edges.size(), is( 1 ) );
-		
-		assertThat( edges.get( 0 ).getOutNode(), is( node1 ) );
-		assertThat( edges.get( 0 ).getInNode(), is( node2 ) );
-	}
+
 }

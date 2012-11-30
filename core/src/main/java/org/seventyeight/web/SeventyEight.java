@@ -23,6 +23,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import org.seventyeight.web.model.resources.Article;
+import org.seventyeight.web.model.resources.Group;
+import org.seventyeight.web.model.resources.User;
 import org.seventyeight.web.util.Date;
 
 public class SeventyEight {
@@ -96,22 +99,6 @@ public class SeventyEight {
 
     private ConcurrentMap<Class, DatabaseInquirer> dbinq = new ConcurrentHashMap<Class, DatabaseInquirer>();
 
-	public SeventyEight( Database db ) {
-		if( instance != null ) {
-			throw new IllegalStateException( "Instance already defined" );
-		}
-		instance = this;
-		initialize( new File( System.getProperty( "user.home" ), ".seventyeight" ), db );
-	}
-
-	public SeventyEight( String path, Database db ) {
-		if( instance != null ) {
-			throw new IllegalStateException( "Instance already defined" );
-		}
-		instance = this;
-		initialize( new File( path ), db );
-	}
-	
 	public SeventyEight( File path, Database db ) {
 		if( instance != null ) {
 			throw new IllegalStateException( "Instance already defined" );
@@ -145,6 +132,11 @@ public class SeventyEight {
 		
 		/* Settings */
 		defaultLocale = new Locale( "danish" );
+
+        /* Add core types */
+        addDescriptor( new User.UserDescriptor() );
+        addDescriptor( new Group.GroupDescriptor() );
+        addDescriptor( new Article.ArticleDescriptor() );
 
         /* Configure indexes for descriptors */
 		
@@ -351,8 +343,6 @@ public class SeventyEight {
      */
     public List<AbstractExtension> getExtensions( AbstractItem item, Class<?> oftype ) {
         logger.debug( "Getting extensions for " + item + " of type " + oftype );
-        //Iterator<Relationship> it = item.getNode().getRelationships( ExtensionRelations.EXTENSION, Direction.OUTGOING ).iterator();
-        //List<Edge> edges = getEdges2( graphdb, item, ResourceEdgeType.extension );
         List<Edge> edges = item.getNode().getEdges( ResourceEdgeType.extension, Direction.OUTBOUND );
 
         List<AbstractExtension> extensions = new ArrayList<AbstractExtension>();

@@ -10,6 +10,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import org.seventyeight.database.orientdb.impl.orientdb.OrientDBManager;
 import org.seventyeight.web.exceptions.ErrorWhileSavingException;
 import org.seventyeight.web.exceptions.InconsistentParameterException;
 import org.seventyeight.web.exceptions.IncorrectTypeException;
@@ -26,9 +27,17 @@ public class EnvRule implements TestRule {
 	
 	protected Description testDescription;
 	protected File path;
+    protected String type = "local";
+    protected File odbPath;
 	
-	protected void before() {
-		new SeventyEight( path );
+	protected void before( File path ) {
+        odbPath = new File( path, "odb" );
+
+        System.out.println( "PATH: " + path );
+        System.out.println( "ODBPATH: " + odbPath );
+
+        new OrientDBManager( type, odbPath.getAbsolutePath() );
+		new SeventyEight( path, OrientDBManager.getInstance().getDatabase() );
 	}
 	
 	protected void after() throws IOException {
@@ -36,48 +45,25 @@ public class EnvRule implements TestRule {
 		//FileUtils.deleteDirectory( path );
 	}
 	
-	public static class DummyItem extends AbstractItem {
-		protected String name;
-		public DummyItem( ODocument node ) {
-			super( node );
-		}
-		
-		public String getName() {
-			return getField( "name" );
-		}
-
-		@Override
-		public String getDisplayName() {
-			return "Dummy item:" + name;
-		}
-
-		@Override
-		public void save( ParameterRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
-		}
-		
-		public String toString() {
-			return "" + name;
-		}
-	}
 
 
 	@Override
 	public Statement apply( final Statement base, final Description description ) {
-		
-		try {
-			path = File.createTempFile( "SEVENTYEIGHT", "web" );
-			
-			if( !path.delete() ) {
-				System.out.println("DAMN NOT DELTED!");
-			}
-			
-			if( !path.mkdir() ) {
-				System.out.println("DAMN!");
-			}
-			System.out.println( "Path: " + path );
-		} catch( IOException e ) {
-			System.out.println( "Unable to create temporary path" );
-		}
+
+        try {
+            path = File.createTempFile( "SEVENTYEIGHT", "web" );
+
+            if( !path.delete() ) {
+                System.out.println( path + " could not be deleted" );
+            }
+
+            if( !path.mkdir() ) {
+                System.out.println( "DAMN!" );
+            }
+            System.out.println( "Path: " + path );
+        } catch( IOException e ) {
+            System.out.println( "Unable to create temporary path" );
+        }
 		
 		return new Statement() {
 						
@@ -90,7 +76,7 @@ public class EnvRule implements TestRule {
 				System.out.println( " ===== Setting up Seventy Eight Web Environment =====" );
 				
 				try {
-					before();
+					before( path );
 					System.out.println( " ===== Running test: " + testDescription.getDisplayName() + " =====" );
 					base.evaluate();
 				} catch( Exception e ) {
