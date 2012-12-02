@@ -11,7 +11,7 @@ import org.seventyeight.database.Node;
  */
 public interface DatabaseItem<T> {
     public Node getNode();
-    public T createRelation( Item other, EdgeType type );
+    public T createRelation( DatabaseItem<T> other, EdgeType type );
     public String getItemClass();
     public Database getDB();
 }

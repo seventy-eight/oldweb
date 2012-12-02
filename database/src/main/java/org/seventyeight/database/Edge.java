@@ -10,8 +10,8 @@ package org.seventyeight.database;
  * Date: 19-11-12
  * Time: 08:49
  */
-public interface Edge<NODE extends Node<NODE, EDGE>, EDGE extends Edge<NODE, EDGE>> extends Parameterized<EDGE> {
-    public NODE getSourceNode();
-    public NODE getTargetNode();
+public interface Edge extends Parameterized<Edge> {
+    public Node getSourceNode();
+    public Node getTargetNode();
     public void delete();
 }

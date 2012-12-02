@@ -12,7 +12,7 @@ import org.seventyeight.database.EdgeType;
  * Date: 18-11-12
  * Time: 22:37
  */
-public class OrientEdge implements Edge<OrientNode, OrientEdge> {
+public class OrientEdge implements Edge {
 
     private static Logger logger = Logger.getLogger( OrientEdge.class );
 

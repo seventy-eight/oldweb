@@ -13,6 +13,5 @@ import com.google.gson.JsonObject;
 
 
 public interface Savable {
-	public Node getNode();
 	public void save( ParameterRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException;
 }

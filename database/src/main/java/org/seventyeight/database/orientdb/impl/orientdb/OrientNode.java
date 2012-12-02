@@ -26,7 +26,7 @@ import java.util.Set;
  * Date: 18-11-12
  * Time: 22:28
  */
-public class OrientNode implements Node<OrientNode, OrientEdge> {
+public class OrientNode implements Node {
 
     private static Logger logger = Logger.getLogger( OrientNode.class );
 
@@ -53,16 +53,16 @@ public class OrientNode implements Node<OrientNode, OrientEdge> {
     }
 
     @Override
-    public OrientEdge createEdge( OrientNode to, EdgeType type ) {
-        logger.debug( "Creating edge(" + type + ") from " + doc.getClassName() + " to " + to.getDocument().getClassName() );
+    public OrientEdge createEdge( Node to, EdgeType type ) {
+        logger.debug( "Creating edge(" + type + ") from " + doc.getClassName() + " to " + ((OrientNode)to).getDocument().getClassName() );
 
-        ODocument edge = db.getInternalDatabase().createEdge( doc, to.doc ).field( OGraphDatabase.LABEL, type.toString() ).save();
+        ODocument edge = db.getInternalDatabase().createEdge( doc, ((OrientNode)to).doc ).field( OGraphDatabase.LABEL, type.toString() ).save();
 
-        return new OrientEdge( edge, this, to );
+        return new OrientEdge( edge, this, (OrientNode)to );
     }
 
     @Override
-    public List<OrientEdge> getEdges( EdgeType type, Direction direction ) {
+    public List<Edge> getEdges( EdgeType type, Direction direction ) {
         logger.debug( "Getting " + direction + " edges for " + this + " of type " + type );
 
         Set<OIdentifiable> in = null;
@@ -82,7 +82,7 @@ public class OrientNode implements Node<OrientNode, OrientEdge> {
                 in = db.getInternalDatabase().getInEdges( doc, ( type != null ? type.toString() : null ) );
         }
 
-        List<OrientEdge> es = new LinkedList<OrientEdge>();
+        List<Edge> es = new LinkedList<Edge>();
         if( in != null ) {
             for( OIdentifiable e : in ) {
                 ODocument other = db.getInternalDatabase().getOutVertex( e );
@@ -105,7 +105,7 @@ public class OrientNode implements Node<OrientNode, OrientEdge> {
     }
 
     @Override
-    public List<OrientEdge> getEdges( OrientNode other, EdgeType type ) {
+    public List<Edge> getEdges( Node other, EdgeType type ) {
         logger.debug( "Getting edges between " + this + " and " + other + " of type " + type );
 
         OrientNode n = (OrientNode) other;
@@ -113,11 +113,11 @@ public class OrientNode implements Node<OrientNode, OrientEdge> {
         Set<OIdentifiable> ois = db.getInternalDatabase().getEdgesBetweenVertexes( doc, n.doc, ( type != null ? new String[]{ type.toString() } : null ) );
 
         logger.debug( "EDGES: " + ois );
-        List<OrientEdge> es = new LinkedList<OrientEdge>();
+        List<Edge> es = new LinkedList<Edge>();
 
         for( OIdentifiable e : ois ) {
 
-            OrientEdge edge = new OrientEdge( e, this, other );
+            OrientEdge edge = new OrientEdge( e, this, (OrientNode)other );
             es.add( edge );
             logger.debug( "Edge2: " + edge );
         }
@@ -126,17 +126,17 @@ public class OrientNode implements Node<OrientNode, OrientEdge> {
     }
 
     @Override
-    public List<OrientEdge> getEdgesTo( OrientNode to, EdgeType type ) {
+    public List<Edge> getEdgesTo( Node to, EdgeType type ) {
         logger.debug( "Getting edges from " + this + " to " + to + " of type " + type );
 
-        Set<OIdentifiable> ois = db.getInternalDatabase().getEdgesBetweenVertexes( doc, to.doc, ( type != null ? new String[]{ type.toString() } : null ) );
+        Set<OIdentifiable> ois = db.getInternalDatabase().getEdgesBetweenVertexes( doc, ((OrientNode)to).doc, ( type != null ? new String[]{ type.toString() } : null ) );
 
         logger.debug( "EDGES: " + ois );
-        List<OrientEdge> es = new LinkedList<OrientEdge>();
+        List<Edge> es = new LinkedList<Edge>();
 
         for( OIdentifiable e : ois ) {
             if( db.getInternalDatabase().getOutVertex( e ).equals( doc )) {
-                OrientEdge edge = new OrientEdge( e, this, to );
+                OrientEdge edge = new OrientEdge( e, this, (OrientNode)to );
                 es.add( edge );
                 logger.debug( "Edge2: " + edge );
             }
@@ -146,12 +146,12 @@ public class OrientNode implements Node<OrientNode, OrientEdge> {
     }
 
     @Override
-    public List<OrientEdge> getEdges( OrientNode other, EdgeType type, Direction direction ) {
+    public List<Edge> getEdges( Node other, EdgeType type, Direction direction ) {
         logger.debug( "Getting edges between " + this + " and " + other + " of type " + type + " " + direction );
 
-        Set<OIdentifiable> ois = db.getInternalDatabase().getEdgesBetweenVertexes( doc, other.doc, ( type != null ? new String[]{ type.toString() } : null ) );
+        Set<OIdentifiable> ois = db.getInternalDatabase().getEdgesBetweenVertexes( doc, ((OrientNode)other).doc, ( type != null ? new String[]{ type.toString() } : null ) );
 
-        List<OrientEdge> es = new LinkedList<OrientEdge>();
+        List<Edge> es = new LinkedList<Edge>();
         System.out.println( "ES: " + ois );
 
         for( OIdentifiable e : ois ) {
@@ -159,20 +159,20 @@ public class OrientNode implements Node<OrientNode, OrientEdge> {
             switch( direction ) {
                 case OUTBOUND:
                     if( db.getInternalDatabase().getOutVertex( e ).equals( doc )) {
-                        edge = new OrientEdge( e, this, other );
+                        edge = new OrientEdge( e, this, (OrientNode)other );
                         es.add( edge );
                     }
                     break;
 
                 case INBOUND:
                     if( db.getInternalDatabase().getInVertex( e ).equals( doc )) {
-                        edge = new OrientEdge( e, this, other );
+                        edge = new OrientEdge( e, this, (OrientNode)other );
                         es.add( edge );
                     }
                     break;
 
                 default:
-                    edge = new OrientEdge( e, this, other );
+                    edge = new OrientEdge( e, this, (OrientNode)other );
                     es.add( edge );
             }
         }

@@ -18,7 +18,6 @@ import org.seventyeight.web.model.resources.User;
 
 
 import com.google.gson.JsonObject;
-import com.orientechnologies.orient.core.record.impl.ODocument;
 
 
 public abstract class AbstractObject extends AbstractItem implements Ownable, Configurable {
@@ -156,9 +155,9 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 	public Node getTextNode( String language, String property ) {
 		//List<ODocument> edges = SeventyEight.getInstance().getEdges( db, this, ResourceEdgeType.translation );
         List<Edge> edges = node.getEdges( ResourceEdgeType.translation, Direction.OUTBOUND );
-		Node<?, ?> d = null;
+		Node d = null;
 
-		for( Edge<?, ?> e : edges ) {
+		for( Edge e : edges ) {
 
 			String prop = e.get( "property" );
 			if( prop != null && prop.equals( property ) ) {

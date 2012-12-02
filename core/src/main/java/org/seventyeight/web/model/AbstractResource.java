@@ -21,7 +21,6 @@ import org.seventyeight.web.model.resources.User;
 import org.seventyeight.web.util.Date;
 
 import com.google.gson.JsonObject;
-import com.orientechnologies.orient.core.record.impl.ODocument;
 
 
 public abstract class AbstractResource extends AbstractObject implements Portraitable {

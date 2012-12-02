@@ -17,7 +17,6 @@ import org.seventyeight.web.exceptions.ParameterDoesNotExistException;
 import org.seventyeight.web.exceptions.ResourceDoesNotExistException;
 
 import com.google.gson.JsonObject;
-import com.orientechnologies.orient.core.record.impl.ODocument;
 
 
 public abstract class AbstractItem implements Item, DatabaseItem<AbstractItem> {
@@ -302,7 +301,7 @@ public abstract class AbstractItem implements Item, DatabaseItem<AbstractItem> {
 	*/
 
     @Override
-    public AbstractItem createRelation( Item other, EdgeType type ) {
+    public AbstractItem createRelation( DatabaseItem<AbstractItem> other, EdgeType type ) {
         node.createEdge( other.getNode(), type );
 
         return this;
