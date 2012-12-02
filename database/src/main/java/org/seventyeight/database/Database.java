@@ -16,6 +16,12 @@ public interface Database<IDB, NT extends Node> {
     public <T> T getValue( String key );
     public <T> T getValue( String key, T defaultValue );
 
+    /* Transactions */
+
+    public void beginTransation();
+    public void commitTransaction();
+    public void rollbackTransaction();
+
     /**
      * Get the internal database behind this wrapper
      * @return

@@ -10,6 +10,7 @@ import com.orientechnologies.orient.core.index.OSimpleKeyIndexDefinition;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.tx.OTransaction;
 import org.seventyeight.database.Database;
 import org.seventyeight.database.IndexValueType;
 import org.seventyeight.database.orientdb.impl.orientdb.query.OrientIndexBuilder;
@@ -32,6 +33,22 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
 
     public OGraphDatabase getInternalDatabase() {
         return db;
+    }
+
+
+    @Override
+    public void beginTransation() {
+        db.begin( OTransaction.TXTYPE.OPTIMISTIC );
+    }
+
+    @Override
+    public void commitTransaction() {
+        db.commit();
+    }
+
+    @Override
+    public void rollbackTransaction() {
+        db.rollback();
     }
 
     @Override
