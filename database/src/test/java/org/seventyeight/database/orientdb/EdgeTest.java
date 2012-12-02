@@ -4,6 +4,7 @@ import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.seventyeight.database.Direction;
+import org.seventyeight.database.Edge;
 import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.orientdb.impl.orientdb.OrientDBEnv;
 import org.seventyeight.database.orientdb.impl.orientdb.OrientEdge;
@@ -88,7 +89,7 @@ public class EdgeTest {
         System.out.println( "SIZE: " + list.size() );
 
         sw.start( "Getting friends" );
-        List<OrientEdge> edges = node.getEdges( TestEdgeType.FRIEND, Direction.OUTBOUND );
+        List<Edge> edges = node.getEdges( TestEdgeType.FRIEND, Direction.OUTBOUND );
         sw.stop();
 
         System.out.println( sw.print( 1000 ) );
