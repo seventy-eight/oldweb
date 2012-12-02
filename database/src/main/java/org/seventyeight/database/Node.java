@@ -7,7 +7,7 @@ import java.util.List;
  * Date: 17-11-12
  * Time: 22:44
  */
-public interface Node extends Parameterized<Node> {
+public interface Node<NODE extends Node<NODE, EDGE>, EDGE extends Edge<NODE, EDGE>> extends Parameterized<NODE> {
 
     /**
      * Get the {@link Database} attached to this {@link Node}
@@ -21,21 +21,21 @@ public interface Node extends Parameterized<Node> {
      * @param type
      * @return
      */
-    public Edge createEdge( Node to, EdgeType type );
+    public EDGE createEdge( NODE to, EdgeType type );
 
     /**
      * Get the {@link Edge}'s with a certain {@link EdgeType} in a given {@link Direction}
      * @param type
      * @return
      */
-    public List<Edge> getEdges( EdgeType type, Direction direction );
+    public List<EDGE> getEdges( EdgeType type, Direction direction );
 
     /**
      * Get the {@link Edge}'s between this and the other {@link Node} with a certain {@link EdgeType}
      * @param type
      * @return
      */
-    public List<Edge> getEdges( Node other, EdgeType type );
+    public List<EDGE> getEdges( NODE other, EdgeType type );
 
     /**
      * Get the {@link Edge}'s between this and the other {@link Node} with a certain {@link EdgeType} in a given {@link Direction}
@@ -44,7 +44,7 @@ public interface Node extends Parameterized<Node> {
      * @param direction
      * @return
      */
-    public List<Edge> getEdges( Node other, EdgeType type, Direction direction );
+    public List<EDGE> getEdges( NODE other, EdgeType type, Direction direction );
 
 
     /**
@@ -53,7 +53,7 @@ public interface Node extends Parameterized<Node> {
      * @param type
      * @return
      */
-    public List<Edge> getEdgesTo( Node to, EdgeType type );
+    public List<EDGE> getEdgesTo( NODE to, EdgeType type );
 
     /**
      * Remove {@link Edge}'s of a certain type in the {@link Direction}
@@ -63,5 +63,5 @@ public interface Node extends Parameterized<Node> {
      */
     public Node removeEdges( EdgeType type, Direction direction );
 
-    public Node save();
+    public NODE save();
 }
