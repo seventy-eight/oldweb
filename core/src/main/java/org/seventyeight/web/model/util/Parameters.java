@@ -13,9 +13,16 @@ import java.util.Map;
  */
 public class Parameters extends HashMap<String, String> implements ParameterRequest {
 
+    private User user;
+
     @Override
     public User getUser() {
-        return null;
+        return user;
+    }
+
+    @Override
+    public void setUser( User user ) {
+        this.user = user;
     }
 
     @Override

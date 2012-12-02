@@ -28,14 +28,14 @@ public interface Node extends Parameterized<Node> {
      * @param type
      * @return
      */
-    public <T> List<T> getEdges( EdgeType type, Direction direction );
+    public <E extends Edge> List<E> getEdges( EdgeType type, Direction direction );
 
     /**
      * Get the {@link Edge}'s between this and the other {@link Node} with a certain {@link EdgeType}
      * @param type
      * @return
      */
-    public <T> List<T> getEdges( Node other, EdgeType type );
+    public <E extends Edge, N extends Node> List<E> getEdges( N other, EdgeType type );
 
     /**
      * Get the {@link Edge}'s between this and the other {@link Node} with a certain {@link EdgeType} in a given {@link Direction}
@@ -44,7 +44,7 @@ public interface Node extends Parameterized<Node> {
      * @param direction
      * @return
      */
-    public List<Edge> getEdges( Node other, EdgeType type, Direction direction );
+    public <E extends Edge> List<E> getEdges( Node other, EdgeType type, Direction direction );
 
 
     /**
@@ -53,7 +53,7 @@ public interface Node extends Parameterized<Node> {
      * @param type
      * @return
      */
-    public <T extends Edge> List<T> getEdgesTo( Node to, EdgeType type );
+    public <E extends Edge> List<E> getEdgesTo( Node to, EdgeType type );
 
     /**
      * Remove {@link Edge}'s of a certain type in the {@link Direction}
