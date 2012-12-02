@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.seventyeight.database.Direction;
 import org.seventyeight.database.Edge;
 import org.seventyeight.database.EdgeType;
-import org.seventyeight.database.Node;
 import org.seventyeight.database.orientdb.impl.orientdb.OrientEdge;
 import org.seventyeight.database.orientdb.impl.orientdb.OrientNode;
 
@@ -75,7 +74,7 @@ public class OrientEdgeTest {
         OrientEdge e2 = new OrientEdge( n1, n4, TestType.TEST2 );
         OrientEdge e4 = new OrientEdge( n3, n1, TestType.TEST2 );
 
-        List<Edge> edges = n1.getEdges( TestType.TEST2, Direction.OUTBOUND );
+        List<OrientEdge> edges = n1.getEdges( TestType.TEST2, Direction.OUTBOUND );
         assertThat( edges.size(), is( 1 ) );
         assertThat( (OrientEdge) edges.get( 0 ), is( e2 ) );
         assertThat( e2.getTargetNode(), is( n4 ) );
@@ -83,38 +82,38 @@ public class OrientEdgeTest {
 
     @Test
     public void testGetEdges() {
-        Node n1 = new OrientNode( orule.getDB() );
+        OrientNode n1 = new OrientNode( orule.getDB() );
         n1.set( "field", "a" );
         n1.save();
 
-        Node n2 = new OrientNode( orule.getDB() );
+        OrientNode n2 = new OrientNode( orule.getDB() );
         n2.set( "field", "b" );
         n2.save();
 
-        Node n3 = new OrientNode( orule.getDB() );
+        OrientNode n3 = new OrientNode( orule.getDB() );
         n3.set( "field", "c" );
         n3.save();
 
-        Node n4 = new OrientNode( orule.getDB() );
+        OrientNode n4 = new OrientNode( orule.getDB() );
         n4.set( "field", "d" );
         n4.save();
 
-        Edge e1 = new OrientEdge( n1, n2, TestType.TEST );
-        Edge e2 = new OrientEdge( n1, n3, TestType.TEST );
-        Edge e3 = new OrientEdge( n1, n4, TestType.TEST );
-        Edge e4 = new OrientEdge( n3, n1, TestType.TEST );
+        OrientEdge e1 = new OrientEdge( n1, n2, TestType.TEST );
+        OrientEdge e2 = new OrientEdge( n1, n3, TestType.TEST );
+        OrientEdge e3 = new OrientEdge( n1, n4, TestType.TEST );
+        OrientEdge e4 = new OrientEdge( n3, n1, TestType.TEST );
 
-        List<Edge> inedges = n1.getEdges( TestType.TEST, Direction.INBOUND );
+        List<OrientEdge> inedges = n1.getEdges( TestType.TEST, Direction.INBOUND );
         assertThat( inedges.size(), is( 1 ) );
         assertThat( inedges.get( 0 ), is( e4 ) );
-        assertThat( inedges.get( 0 ).getSourceNode(), is( n3 ) );
+        assertThat( (OrientNode) inedges.get( 0 ).getSourceNode(), is( n3 ) );
 
-        List<Edge> outedges = n1.getEdges( TestType.TEST, Direction.OUTBOUND );
+        List<OrientEdge> outedges = n1.getEdges( TestType.TEST, Direction.OUTBOUND );
         assertThat( outedges.size(), is( 3 ) );
         assertThat( outedges.get( 0 ), is( e1 ) );
-        assertThat( outedges.get( 0 ).getTargetNode(), is( n2 ) );
+        assertThat( (OrientNode) outedges.get( 0 ).getTargetNode(), is( n2 ) );
 
-        List<Edge> edges = n1.getEdges( TestType.TEST, Direction.BOTH );
+        List<OrientEdge> edges = n1.getEdges( TestType.TEST, Direction.BOTH );
         assertThat( edges.size(), is( 4 ) );
 
         assertThat( edges.get( 1 ), is( e1 ) );

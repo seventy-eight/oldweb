@@ -62,7 +62,7 @@ public class OrientNode implements Node {
     }
 
     @Override
-    public List<Edge> getEdges( EdgeType type, Direction direction ) {
+    public List<OrientEdge> getEdges( EdgeType type, Direction direction ) {
         logger.debug( "Getting " + direction + " edges for " + this + " of type " + type );
 
         Set<OIdentifiable> in = null;
@@ -82,7 +82,7 @@ public class OrientNode implements Node {
                 in = db.getInternalDatabase().getInEdges( doc, ( type != null ? type.toString() : null ) );
         }
 
-        List<Edge> es = new LinkedList<Edge>();
+        List<OrientEdge> es = new LinkedList<OrientEdge>();
         if( in != null ) {
             for( OIdentifiable e : in ) {
                 ODocument other = db.getInternalDatabase().getOutVertex( e );
@@ -105,7 +105,7 @@ public class OrientNode implements Node {
     }
 
     @Override
-    public List<Edge> getEdges( Node other, EdgeType type ) {
+    public List<OrientEdge> getEdges( Node other, EdgeType type ) {
         logger.debug( "Getting edges between " + this + " and " + other + " of type " + type );
 
         OrientNode n = (OrientNode) other;
@@ -113,7 +113,7 @@ public class OrientNode implements Node {
         Set<OIdentifiable> ois = db.getInternalDatabase().getEdgesBetweenVertexes( doc, n.doc, ( type != null ? new String[]{ type.toString() } : null ) );
 
         logger.debug( "EDGES: " + ois );
-        List<Edge> es = new LinkedList<Edge>();
+        List<OrientEdge> es = new LinkedList<OrientEdge>();
 
         for( OIdentifiable e : ois ) {
 
@@ -126,13 +126,13 @@ public class OrientNode implements Node {
     }
 
     @Override
-    public List<Edge> getEdgesTo( Node to, EdgeType type ) {
+    public List<OrientEdge> getEdgesTo( Node to, EdgeType type ) {
         logger.debug( "Getting edges from " + this + " to " + to + " of type " + type );
 
         Set<OIdentifiable> ois = db.getInternalDatabase().getEdgesBetweenVertexes( doc, ((OrientNode)to).doc, ( type != null ? new String[]{ type.toString() } : null ) );
 
         logger.debug( "EDGES: " + ois );
-        List<Edge> es = new LinkedList<Edge>();
+        List<OrientEdge> es = new LinkedList<OrientEdge>();
 
         for( OIdentifiable e : ois ) {
             if( db.getInternalDatabase().getOutVertex( e ).equals( doc )) {

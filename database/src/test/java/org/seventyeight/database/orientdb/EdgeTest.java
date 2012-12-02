@@ -89,7 +89,7 @@ public class EdgeTest {
         System.out.println( "SIZE: " + list.size() );
 
         sw.start( "Getting friends" );
-        List<Edge> edges = node.getEdges( TestEdgeType.FRIEND, Direction.OUTBOUND );
+        List<OrientEdge> edges = node.getEdges( TestEdgeType.FRIEND, Direction.OUTBOUND );
         sw.stop();
 
         System.out.println( sw.print( 1000 ) );
