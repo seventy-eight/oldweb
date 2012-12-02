@@ -1,16 +1,20 @@
 package org.seventyeight.web;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.seventyeight.database.*;
+import org.seventyeight.loader.Loader;
+import org.seventyeight.utils.FileUtilities;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.handler.TemplateManager;
 import org.seventyeight.web.model.*;
@@ -40,15 +44,19 @@ public class SeventyEight {
      * This index contains all the resource types, including the date created
      */
     public static final String INDEX_RESOURCE_TYPES = "resource-types";
+
+    public static final String INDEX_SYSTEM_USERS = "system-users";
 	
 	public static final String defaultThemeName = "default";
 	
 	private org.seventyeight.loader.ClassLoader classLoader = null;
+    private Loader pluginLoader;
 
 	private Node systemNode = null;
+    private User anonymous;
 
 
-	public enum NodeType {
+    public enum NodeType {
 		item,
 		/*resource,*/
 		widgit,
@@ -119,6 +127,7 @@ public class SeventyEight {
 
 		/* Class loader */
 		classLoader = new org.seventyeight.loader.ClassLoader( Thread.currentThread().getContextClassLoader() );
+        this.pluginLoader = new Loader( classLoader );
 
         /* Get the system node */
 		db.containsKey( SYSTEM_NODE_TYPE );
@@ -128,6 +137,14 @@ public class SeventyEight {
 			logger.info( "System node not found, installing" );
 			install( db );
 		}
+
+        /**/
+        logger.debug( "Setting anonymous user" );
+        List<Node> nodes = db.getFromIndex( INDEX_SYSTEM_USERS, "anonymous" );
+        if( nodes.size() != 1 ) {
+            throw new IllegalStateException( "Not one anonymous user found; " + nodes.size() );
+        }
+        anonymous = new User( nodes.get( 0 ) );
 		
 		/* Settings */
 		defaultLocale = new Locale( "danish" );
@@ -151,6 +168,49 @@ public class SeventyEight {
 		//graphdb.close();
         System.out.println( "Shutting down" );
 	}
+
+    /**
+     * From the given path, get all jars and extract them to their directories
+     * @param path
+     * @return
+     * @throws IOException
+     */
+    public static List<File> extractPlugins( File path ) throws IOException {
+        logger.debug( "Extracting plugins to " + path );
+
+        File[] files = path.listFiles( FileUtilities.getExtension( "jar" ) );
+
+        List<File> plugins = new ArrayList<File>();
+        for( File f : files ) {
+            String p = f.getName();
+            p = p.substring( 0, ( p.length() - 4 ) );
+            logger.debug( "f: " + f );
+            logger.debug( "f: " + p );
+            File op = new File( path, p );
+            FileUtils.deleteDirectory( op );
+
+            FileUtilities.extractArchive( f, op );
+            plugins.add( op );
+        }
+
+        return plugins;
+    }
+
+    public org.seventyeight.loader.ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    public void getPlugins( List<File> plugins ) {
+        for( File p : plugins ) {
+            logger.debug( "Plugin " + p );
+            try {
+                pluginLoader.load( p, "" );
+            } catch( Exception e ) {
+                logger.error( "Unable to load " + p );
+                logger.error( e );
+            }
+        }
+    }
 
     public Node createNode( Database db, Class clazz ) {
         Node node = db.createNode();
@@ -377,6 +437,14 @@ public class SeventyEight {
 
     public File getPath() {
         return path;
+    }
+
+    public File getPluginsPath() {
+        return pluginsPath;
+    }
+
+    public User getAnonymousUser() {
+        return anonymous;
     }
 	
 	/* 

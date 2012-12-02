@@ -2,6 +2,8 @@ package org.seventyeight.web.util;
 
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Database;
+import org.seventyeight.database.IndexType;
+import org.seventyeight.database.IndexValueType;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.resources.Group;
@@ -27,11 +29,17 @@ public class Installer {
 
     public void install() throws ParameterDoesNotExistException, ErrorWhileSavingException, UnableToInstantiateObjectException, IncorrectTypeException, ResourceDoesNotExistException, InconsistentParameterException {
 
-        logger.debug( "Installing users" );
-        User admin = installUser( "wolle", true );
-        installUser( "anonymous", false );
+        logger.info( "Installing indexes" );
+        db.createIndex( SeventyEight.INDEX_RESOURCES, IndexType.UNIQUE, IndexValueType.LONG );
+        db.createIndex( SeventyEight.INDEX_RESOURCE_TYPES, IndexType.REGULAR, IndexValueType.STRING, IndexValueType.LONG );
+        db.createIndex( SeventyEight.INDEX_SYSTEM_USERS, IndexType.UNIQUE, IndexValueType.STRING );
 
-        logger.debug( "Installing groups" );
+        logger.info( "Installing users" );
+        User admin = installUser( "wolle", true );
+        User anonymous = installUser( "anonymous", false );
+        db.putToIndex( SeventyEight.INDEX_SYSTEM_USERS, anonymous.getNode(), "anonymous" );
+
+        logger.info( "Installing groups" );
         Group admins = installGroup( "Admins", admin );
         admins.addMember( admin );
 

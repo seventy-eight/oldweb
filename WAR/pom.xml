@@ -164,7 +164,7 @@
 
         <dependency>
             <groupId>org.seventyeight</groupId>
-            <artifactId>seventyeight-web-core</artifactId>
+            <artifactId>web-core</artifactId>
             <version>${project.version}</version>
         </dependency>
 

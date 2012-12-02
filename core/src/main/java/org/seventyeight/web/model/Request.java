@@ -19,6 +19,10 @@ public class Request extends HttpServletRequestWrapper implements ParameterReque
     private AbstractTheme theme = null;
     private VelocityContext context;
 
+    private User user;
+
+    private String[] requestParts;
+
     public enum RequestMethod {
         GET,
         POST,
@@ -43,6 +47,14 @@ public class Request extends HttpServletRequestWrapper implements ParameterReque
         return method.equals( RequestMethod.GET );
     }
 
+    public String[] getRequestParts() {
+        return requestParts;
+    }
+
+    public void setRequestParts( String[] parts ) {
+        this.requestParts = parts;
+    }
+
     public AbstractTheme getTheme() {
         return theme;
     }
@@ -62,7 +74,12 @@ public class Request extends HttpServletRequestWrapper implements ParameterReque
 
     @Override
     public User getUser() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return user;
+    }
+
+    @Override
+    public void setUser( User user ) {
+        this.user = user;
     }
 
     @Override
