@@ -2,12 +2,13 @@ package org.seventyeight.web.model;
 
 import org.seventyeight.database.Database;
 import org.seventyeight.database.Edge;
+import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight.ResourceEdgeType;
 
 import com.google.gson.JsonObject;
 
-public class Text implements Item {
+public class Text implements Item, DatabaseItem<Item> {
 	Node node;
 	
 	public Text( Node node ) {
@@ -23,7 +24,7 @@ public class Text implements Item {
 		return (String) node.get( "text" );
 	}
 	
-	public static Text create( Database db, Item item, String property, String language ) {
+	public static Text create( Database db, DatabaseItem item, String property, String language ) {
 		//ODocument node = SeventyEight.getInstance().createNode( Text.class, NodeType.text );
 		Text t = new Text( db.createNode() );
 		//List<Edge> edges = t.getNode().getEdges( ResourceEdgeType.translation );
@@ -56,5 +57,20 @@ public class Text implements Item {
     @Override
     public Node getNode() {
         return node;
+    }
+
+    @Override
+    public Item createRelation( DatabaseItem<Item> other, EdgeType type ) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public String getItemClass() {
+        return getClass().getSimpleName();
+    }
+
+    @Override
+    public Database getDB() {
+        return node.getDB();
     }
 }

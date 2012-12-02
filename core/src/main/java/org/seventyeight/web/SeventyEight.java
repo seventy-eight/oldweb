@@ -152,8 +152,8 @@ public class SeventyEight {
         System.out.println( "Shutting down" );
 	}
 
-    public Node<?, ?> createNode( Database db, Class clazz ) {
-        Node<?, ?> node = db.createNode();
+    public Node createNode( Database db, Class clazz ) {
+        Node node = db.createNode();
         node.set( "class", clazz.getName() ).save();
 
         return node;
