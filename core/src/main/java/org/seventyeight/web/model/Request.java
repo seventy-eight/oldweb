@@ -2,10 +2,14 @@ package org.seventyeight.web.model;
 
 import org.apache.velocity.VelocityContext;
 import org.seventyeight.database.Database;
+import org.seventyeight.database.EdgeType;
+import org.seventyeight.web.SeventyEight;
+import org.seventyeight.web.model.resources.Group;
 import org.seventyeight.web.model.resources.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import java.util.List;
 
 /**
  * User: cwolfgang
@@ -18,6 +22,8 @@ public class Request extends HttpServletRequestWrapper implements ParameterReque
     private RequestMethod method = RequestMethod.GET;
     private AbstractTheme theme = null;
     private VelocityContext context;
+
+    private boolean transactional = false;
 
     private User user;
 
@@ -53,6 +59,26 @@ public class Request extends HttpServletRequestWrapper implements ParameterReque
 
     public void setRequestParts( String[] parts ) {
         this.requestParts = parts;
+    }
+
+    public void setTransactional( boolean t ) {
+        this.transactional = t;
+    }
+
+    public boolean hasTransaction() {
+        return transactional;
+    }
+
+    private boolean isAllowed( AbstractResource resource, SeventyEight.GroupEdgeType groupType ) {
+        List<Group> groups = resource.getGroups( groupType );
+
+        for( Group group : groups ) {
+            if( group.isMember( user ) ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public AbstractTheme getTheme() {

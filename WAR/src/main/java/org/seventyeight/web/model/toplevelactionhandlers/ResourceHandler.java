@@ -95,7 +95,8 @@ public class ResourceHandler extends AbstractTopLevelActionHandler {
 				}
 				
 				/* Initialize transaction for saving resource */
-				request.initializeTransaction();
+				//request.initializeTransaction();
+                request.setTransactional( true );
 				
 				method.invoke( r, request, writer, jo );
 				
@@ -107,7 +108,7 @@ public class ResourceHandler extends AbstractTopLevelActionHandler {
 
 		} else {
 			request.failTransaction();
-			
+
 			/* This is a call to the resource type and should be a static method */
 			Method method = null;
 			try {
