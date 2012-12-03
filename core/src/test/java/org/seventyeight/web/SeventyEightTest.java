@@ -1,7 +1,5 @@
 package org.seventyeight.web;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.junit.Rule;
 import org.junit.Test;
@@ -55,7 +53,7 @@ public class SeventyEightTest {
         parms.put( "password", "p" );
         parms.put( "password_again", "p" );
 
-        user.save( parms, null );
+        user.doSave( parms, null );
 
         assertThat( user.getUsername(), is( "wolle" ) );
 

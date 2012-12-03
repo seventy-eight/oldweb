@@ -27,8 +27,8 @@ public class User extends AbstractResource {
 		super( node );
 	}
 
-	public void save( ParameterRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
-		doSave( new UserSaveImpl( this, request, jsonData ) );
+	public void doSave( ParameterRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+		save( new UserSaveImpl( this, request, jsonData ) );
 	}
 	
 	public class UserSaveImpl extends ResourceSaveImpl {

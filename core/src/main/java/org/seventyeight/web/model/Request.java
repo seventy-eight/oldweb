@@ -1,9 +1,12 @@
 package org.seventyeight.web.model;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.spi.LoggingEvent;
 import org.apache.velocity.VelocityContext;
 import org.seventyeight.database.Database;
 import org.seventyeight.database.EdgeType;
 import org.seventyeight.web.SeventyEight;
+import org.seventyeight.web.authentication.Authentication;
 import org.seventyeight.web.model.resources.Group;
 import org.seventyeight.web.model.resources.User;
 
@@ -18,14 +21,19 @@ import java.util.List;
  */
 public class Request extends HttpServletRequestWrapper implements ParameterRequest, DatabaseRequest {
 
+    private static Logger logger = Logger.getLogger( Request.class );
+
     private Database db;
     private RequestMethod method = RequestMethod.GET;
     private AbstractTheme theme = null;
     private VelocityContext context;
 
+    private AbstractResource resource;
+
     private boolean transactional = false;
 
     private User user;
+    private Authentication authentication;
 
     private String[] requestParts;
 
@@ -61,6 +69,14 @@ public class Request extends HttpServletRequestWrapper implements ParameterReque
         this.requestParts = parts;
     }
 
+    public void setResource( AbstractResource resource ) {
+        this.resource = resource;
+    }
+
+    public AbstractResource getResource() {
+        return resource;
+    }
+
     public void setTransactional( boolean t ) {
         this.transactional = t;
     }
@@ -69,7 +85,26 @@ public class Request extends HttpServletRequestWrapper implements ParameterReque
         return transactional;
     }
 
+    /**
+     * Determine if the current {@link User} can edit/write the resource
+     * @param resource
+     * @return
+     */
+    public boolean canEdit( AbstractResource resource ) {
+        return isAllowed( resource, SeventyEight.GroupEdgeType.writeAccess );
+    }
+
+    /**
+     * Determine if the current {@link User} can access the resource
+     * @param resource
+     * @return
+     */
+    public boolean hasAccess( AbstractResource resource ) {
+        return isAllowed( resource, SeventyEight.GroupEdgeType.readAccess );
+    }
+
     private boolean isAllowed( AbstractResource resource, SeventyEight.GroupEdgeType groupType ) {
+        logger.debug( resource + " allowed in " + groupType );
         List<Group> groups = resource.getGroups( groupType );
 
         for( Group group : groups ) {
@@ -79,6 +114,15 @@ public class Request extends HttpServletRequestWrapper implements ParameterReque
         }
 
         return false;
+    }
+
+
+    public boolean isAuthenticated() {
+        return authentication.isAuthenticated();
+    }
+
+    public void setAuthentication( Authentication authentication ) {
+        this.authentication = authentication;
     }
 
     public AbstractTheme getTheme() {

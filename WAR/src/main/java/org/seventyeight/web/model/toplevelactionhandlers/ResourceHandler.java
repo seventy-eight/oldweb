@@ -1,30 +1,18 @@
 package org.seventyeight.web.model.toplevelactionhandlers;
 
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 import java.lang.reflect.Method;
-import java.net.URLDecoder;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.annotations.VisibleAction;
-import org.seventyeight.web.exceptions.ActionHandlerException;
-import org.seventyeight.web.exceptions.CouldNotLoadResourceException;
-import org.seventyeight.web.model.AbstractResource;
-import org.seventyeight.web.model.AbstractTopLevelActionHandler;
+import org.seventyeight.web.exceptions.*;
+import org.seventyeight.web.model.*;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import org.seventyeight.web.model.Request;
-import org.seventyeight.web.model.TopLevelAction;
 import org.seventyeight.web.util.ResourceHelper;
 
 @TopLevelActionHandlerType
@@ -61,6 +49,64 @@ public class ResourceHandler extends AbstractTopLevelActionHandler {
 	public String getName() {
 		return "resource";
 	}
+
+    public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
+        String[] parts = request.getRequestParts();
+        logger.debug( "Handling resource: " + Arrays.asList( parts ) );
+
+        Method method = null;
+        String requestMethod = parts[3];
+
+        AbstractResource r = null;
+        try {
+            r = helper.getResource( request, response );
+        } catch( Exception e ) {
+            throw new ActionHandlerException( e );
+        }
+
+        /* Try implementation of method */
+        if( parts.length == 4 ) {
+            try {
+                method = getRequestMethod( r, requestMethod, request.isRequestPost() );
+                if( request.isRequestPost() ) {
+                    method.invoke( method, request, null );
+                } else {
+                    method.invoke( method, request, response );
+                }
+
+                return;
+            } catch( Exception e ) {
+                /* Try next solution */
+            }
+        } else {
+            requestMethod = "";
+            throw new ActionHandlerException( "NOT IMPLEMENTED YET!" );
+        }
+
+        /* Try view */
+        if( method == null ) {
+            logger.debug( "Locating template" );
+            try {
+                request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( r, requestMethod + ".vm" ).get() );
+                response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate(), GraphDragon.getInstance().getDefaultTheme(), request.getContext() ) );
+            } catch( TemplateDoesNotExistException e ) {
+                /* This solution does not work */
+                logger.warn( e );
+            }
+        }
+
+        throw new ActionHandlerException( "Could not execute " + requestMethod );
+    }
+
+    private Method getRequestMethod( AbstractResource resource, String method, boolean post ) throws NoSuchMethodException {
+        String m = "do" + method.substring( 0, 1 ).toUpperCase() + method.substring( 1, method.length() );
+        logger.debug( "Method: " + method + " = " + m );
+        if( post ) {
+            return resource.getClass().getDeclaredMethod( m, ParameterRequest.class, JsonObject.class );
+        } else {
+            return resource.getClass().getDeclaredMethod( m, Request.class, HttpServletResponse.class );
+        }
+    }
 
 
 	@VisibleAction
@@ -147,7 +193,7 @@ public class ResourceHandler extends AbstractTopLevelActionHandler {
 					}
 	
 					/* Save before view */
-					r.save( request, jo );
+					r.doSave( request, jo );
 				} else {
 					logger.warn( request.getUser() + " is trying to edit " + r );
 					if( request.isAuthenticated() ) {

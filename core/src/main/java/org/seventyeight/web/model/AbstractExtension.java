@@ -1,14 +1,10 @@
 package org.seventyeight.web.model;
 
 import java.lang.reflect.Constructor;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.seventyeight.database.Direction;
 import org.seventyeight.database.Edge;
@@ -29,8 +25,8 @@ public abstract class AbstractExtension extends AbstractItem implements Extensio
 		return node;
 	}
 
-	public void save( ParameterRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
-		doSave( new ExtensionSave( this, request, jsonData ) );
+	public void doSave( ParameterRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+		save( new ExtensionSave( this, request, jsonData ) );
 	}
 	
 	public class ExtensionSave extends Save {

@@ -335,7 +335,7 @@ public class SeventyEight {
 		logger.info( "Installing system" );
 		//systemNode = graphdb.createNode();
         //graphdb.storeKeyValue( SYSTEM_NODE_TYPE, systemNode );
-		//systemNode.save();
+		//systemNode.doSave();
 
         /* Create index */
         graphdb.createIndex( INDEX_RESOURCES, IndexType.UNIQUE, IndexValueType.LONG );

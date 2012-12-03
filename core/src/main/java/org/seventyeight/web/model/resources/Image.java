@@ -12,8 +12,6 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 
-import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
-import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
 
 import com.google.gson.JsonObject;
@@ -25,7 +23,6 @@ import org.seventyeight.web.model.AbstractResource;
 import org.seventyeight.web.model.Extension;
 import org.seventyeight.web.model.ParameterRequest;
 import org.seventyeight.web.model.ResourceDescriptor;
-import org.seventyeight.web.model.resources.FileResource;
 
 public class Image extends FileResource {
 
@@ -39,8 +36,8 @@ public class Image extends FileResource {
 		jpeg, png, gif
 	}
 
-	public void save( ParameterRequest request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
-		doSave( new ImageSaveImpl( this, request, jsonData ) );
+	public void doSave( ParameterRequest request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+		save( new ImageSaveImpl( this, request, jsonData ) );
 	}
 
 	public class ImageSaveImpl extends FileSaveImpl {
@@ -74,7 +71,7 @@ public class Image extends FileResource {
 			try {
 				Image.doit( imageFile, thumbFile, 80, 80, true, 0.75f );
 			} catch( Exception e ) {
-				logger.debug( "Unable to save file: " + e.getMessage() );
+				logger.debug( "Unable to doSave file: " + e.getMessage() );
 				throw new ErrorWhileSavingException( e );
 			}
 		}
@@ -90,7 +87,7 @@ public class Image extends FileResource {
 			try {
 				Image.doit( imageFile, thumbFile, 40, 40, true, 0.6f );
 			} catch( Exception e ) {
-				logger.debug( "Unable to save file: " + e.getMessage() );
+				logger.debug( "Unable to doSave file: " + e.getMessage() );
 				throw new ErrorWhileSavingException( e );
 			}
 		}

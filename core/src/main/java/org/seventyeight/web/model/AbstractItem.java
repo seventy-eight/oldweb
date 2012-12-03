@@ -39,7 +39,7 @@ public abstract class AbstractItem implements Item, DatabaseItem<AbstractItem> {
 		//this.identifier = (Long) node.getProperty( "identifier" );
 	}
 	
-	protected final void doSave( Save save ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+	protected final void save( Save save ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
 		logger.debug( "Begin saving" );
 		
 		save.before();
@@ -111,7 +111,7 @@ public abstract class AbstractItem implements Item, DatabaseItem<AbstractItem> {
 							logger.debug( "There were NO extensions defined" );
 							Configurable e = d.newInstance( getDB() );
 							logger.debug( "Saving configurable " + e );
-							e.save( request, o );
+							e.doSave( request, o );
 							logger.debug( "Configurable saved" );
 							//SeventyEight.getInstance().addNodeRelation( db, item, e, ResourceEdgeType.extension, false );
                             node.createEdge( e.getNode(), ResourceEdgeType.extension );

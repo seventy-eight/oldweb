@@ -45,7 +45,7 @@ public class Text implements Item, DatabaseItem<Item> {
 	}
 
 	@Override
-	public void save( ParameterRequest request, JsonObject jsonData ) {
+	public void doSave( ParameterRequest request, JsonObject jsonData ) {
 		// TODO Auto-generated method stub
 	}
 

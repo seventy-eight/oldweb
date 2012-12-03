@@ -3,20 +3,15 @@ package org.seventyeight.web.util;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
-import org.neo4j.graphdb.Node;
 import org.seventyeight.GraphDragon;
 import org.seventyeight.exceptions.ActionHandlerException;
 import org.seventyeight.exceptions.CouldNotLoadResourceException;
@@ -46,6 +41,12 @@ import org.seventyeight.web.Request;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.seventyeight.web.SeventyEight;
+import org.seventyeight.web.exceptions.CouldNotLoadResourceException;
+import org.seventyeight.web.exceptions.NotFoundException;
+import org.seventyeight.web.exceptions.TooManyException;
+import org.seventyeight.web.model.AbstractResource;
+import org.seventyeight.web.model.Request;
 
 public class ResourceHelper {
 	
@@ -123,7 +124,7 @@ public class ResourceHelper {
 			logger.warn( e.getMessage() );
 			throw new ParameterDoesNotExistException( "The configuration did not contain a valid json object", e );
 		}
-		resource.save( request, jo );
+		resource.doSave( request, jo );
 		
 		/* Save extensions */
 		//List<Class<Extension>> list = GraphDragon.getInstance().getExtensions( resource.getc );
@@ -186,7 +187,7 @@ public class ResourceHelper {
 
 			logger.debug( "r: " + r.getIdentifier() );
 
-			r.save( request, jo );
+			r.doSave( request, jo );
 			request.succeedTransaction();
 			
 			return r;
@@ -307,20 +308,20 @@ public class ResourceHelper {
 		response.getWriter().print( GraphDragon.getInstance().render( request.getTemplate(), GraphDragon.getInstance().getDefaultTheme(), request.getContext() ) );
 	}
 	
-	public AbstractResource getResource( Request request, HttpServletResponse response ) throws CouldNotLoadResourceException {
+	public AbstractResource getResource( Request request, HttpServletResponse response ) throws CouldNotLoadResourceException, TooManyException, NotFoundException {
 		Long id = null;
 		AbstractResource r = null;
 		try {
-			id = new Long( request.getURIParts()[2] );
-			r = GraphDragon.getInstance().getResource( id );
+			id = new Long( request.getRequestParts()[2] );
+			r = SeventyEight.getInstance().getResource( request.getDB(), id );
 
 		} catch( NumberFormatException e ) {
 			/* This is an identifier, let's try the title */
 			String s = "";
 			try {
-				s = URLDecoder.decode( request.getURIParts()[4], "UTF-8" );
+				s = URLDecoder.decode( request.getRequestParts()[4], "UTF-8" );
 				logger.debug( "Finding " + s );
-				r = GraphDragon.getInstance().getResourceByTitle( s );
+				//r = SeventyEight.getInstance().getResourceByTitle( s );
 			} catch( UnsupportedEncodingException e1 ) {
 				logger.warn( s + " not found" );
 				throw new CouldNotLoadResourceException( "Unable to find resource[" + s + "]: " + e1.getMessage());

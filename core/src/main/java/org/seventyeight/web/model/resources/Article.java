@@ -4,15 +4,8 @@ import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Database;
 import org.seventyeight.database.Node;
-import org.seventyeight.utils.Utils;
-import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
-import org.seventyeight.web.model.extensions.UserAvatar;
-import org.seventyeight.web.util.Date;
-
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
 
 public class Article extends AbstractResource {
 
@@ -24,8 +17,8 @@ public class Article extends AbstractResource {
 		super( node );
 	}
 
-	public void save( ParameterRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
-		doSave( new ArticleSaveImpl( this, request, jsonData ) );
+	public void doSave( ParameterRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+		save( new ArticleSaveImpl( this, request, jsonData ) );
 	}
 	
 	public class ArticleSaveImpl extends ResourceSaveImpl {

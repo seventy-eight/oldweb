@@ -57,7 +57,7 @@ public class Installer {
             user.setVisibility( true );
         }
 
-        user.save( p, null );
+        user.doSave( p, null );
 
         return user;
     }
@@ -69,7 +69,7 @@ public class Installer {
         p.put( "title", name );
         p.setUser( owner );
 
-        group.save( p, null );
+        group.doSave( p, null );
 
         return group;
     }

@@ -1,10 +1,8 @@
 package org.seventyeight.web.model.resources;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import org.apache.log4j.Logger;
 import org.seventyeight.database.*;
 import org.seventyeight.web.SeventyEight;
@@ -20,7 +18,6 @@ import org.seventyeight.web.model.ParameterRequest;
 import org.seventyeight.web.model.ResourceDescriptor;
 
 import com.google.gson.JsonObject;
-import com.orientechnologies.orient.core.record.impl.ODocument;
 
 
 public class Group extends AbstractResource {
@@ -37,8 +34,8 @@ public class Group extends AbstractResource {
 		super( node );
 	}
 
-	public void save( ParameterRequest request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
-		doSave( new GroupSaveImpl( this, request, jsonData ) );
+	public void doSave( ParameterRequest request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+		save( new GroupSaveImpl( this, request, jsonData ) );
 	}
 	
 	public class GroupSaveImpl extends ResourceSaveImpl {
