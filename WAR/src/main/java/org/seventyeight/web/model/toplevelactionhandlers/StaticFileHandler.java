@@ -9,41 +9,26 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.seventyeight.GraphDragon;
-import org.seventyeight.annotations.TopLevelActionHandlerType;
-import org.seventyeight.annotations.VisibleAction;
-import org.seventyeight.exceptions.ActionHandlerException;
-import org.seventyeight.model.TopLevelActionHandler;
-import org.seventyeight.web.Request;
-import org.seventyeight.web.model.AbstractTopLevelActionHandler;
-import org.seventyeight.web.util.FileHelper;
-import org.seventyeight.web.util.GetFile;
+import org.seventyeight.web.exceptions.ActionHandlerException;
+import org.seventyeight.web.model.Request;
+import org.seventyeight.web.model.TopLevelAction;
 
 
-@TopLevelActionHandlerType
-public class StaticFileHandler extends AbstractTopLevelActionHandler {
+//@TopLevelActionHandlerType
+public class StaticFileHandler implements TopLevelAction {
 	
 	private static Logger logger = Logger.getLogger( StaticFileHandler.class );
-	
-	@Override
-	public Method getMethod( String[] parts, Class<? extends TopLevelActionHandler> clazz ) throws NoSuchMethodException {
-		return clazz.getDeclaredMethod( "get", Request.class, HttpServletResponse.class );
-	}
 
-	public String getName() {
+    @Override
+    public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public String getName() {
 		return "static";
 	}
 	
-	@VisibleAction
-	public void get( Request request, HttpServletResponse response ) throws ActionHandlerException {
-		FileHelper fh = new FileHelper();
-		try {
-			fh.getFile( request, response, new S(), true );
-		} catch( IOException e ) {
-			throw new ActionHandlerException( e );
-		}
-	}
-	
+	/*
 	private class S implements GetFile {
 
 		public File getFile( HttpServletRequest request, HttpServletResponse response ) throws IOException {
@@ -69,4 +54,5 @@ public class StaticFileHandler extends AbstractTopLevelActionHandler {
 		}
 		
 	}
+	*/
 }

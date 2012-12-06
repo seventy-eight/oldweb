@@ -17,6 +17,30 @@
         <plugins>
 
             <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.5</version>
+                <executions>
+                    <execution>
+                        <id>copy-war</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/classes/</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>${project.parent.basedir}/WAR/target/</directory>
+                                    <include>seventyeight-war.war</include>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
 
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.3</version>
@@ -31,7 +55,7 @@
 
                     <archive>
                         <manifest>
-                            <mainClass>org.seventyeight.Main</mainClass>
+                            <mainClass>org.seventyeight.web.Main</mainClass>
                         </manifest>
                     </archive>
 
@@ -94,6 +118,12 @@
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-annotations</artifactId>
             <version>8.1.8.v20121106</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.seventyeight</groupId>
+            <artifactId>utilities</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>

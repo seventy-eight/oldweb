@@ -17,8 +17,11 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.webapp.WebInfConfiguration;
 import org.eclipse.jetty.webapp.WebXmlConfiguration;
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
+import org.seventyeight.utils.FileUtilities;
 
 public class Main {
+
+    public static final String WARFILE = "seventyeight-war.war";
 
     private static int port = 8080;
     private static Logger logger = Logger.getLogger( Main.class );
@@ -54,7 +57,8 @@ public class Main {
 
         path.mkdirs();
 
-        File warfile = new File( path, "seventyeight.war" );
+        File warfile = new File( path, WARFILE );
+        logger.debug( "WAR FILE: " + warfile );
 
         extractWar( path );
         FileUtilities.extractArchive( warfile, path );
@@ -95,7 +99,7 @@ public class Main {
         File jar = new File( Main.class.getProtectionDomain().getCodeSource().getLocation().getPath() );
         logger.debug( "Jar location: " + jar );
 
-        FileUtilities.extractFile( jar, path, "seventyeight.war" );
+        FileUtilities.extractFile( jar, path, WARFILE );
     }
 
     private static File getHome() {

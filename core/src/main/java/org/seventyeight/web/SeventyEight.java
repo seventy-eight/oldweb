@@ -130,6 +130,12 @@ public class SeventyEight {
 		classLoader = new org.seventyeight.loader.ClassLoader( Thread.currentThread().getContextClassLoader() );
         this.pluginLoader = new Loader( classLoader );
 
+        /* Add core types */
+        addDescriptor( new User.UserDescriptor() );
+        addDescriptor( new Group.GroupDescriptor() );
+        addDescriptor( new Article.ArticleDescriptor() );
+
+
         /* Get the system node */
 		db.containsKey( SYSTEM_NODE_TYPE );
 		if( db.containsKey( SYSTEM_NODE_TYPE ) ) {
@@ -155,11 +161,6 @@ public class SeventyEight {
 		
 		/* Settings */
 		defaultLocale = new Locale( "danish" );
-
-        /* Add core types */
-        addDescriptor( new User.UserDescriptor() );
-        addDescriptor( new Group.GroupDescriptor() );
-        addDescriptor( new Article.ArticleDescriptor() );
 
         /* Configure indexes for descriptors */
 

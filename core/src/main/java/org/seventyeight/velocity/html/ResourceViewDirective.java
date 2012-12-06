@@ -3,7 +3,6 @@ package org.seventyeight.velocity.html;
 import java.io.IOException;
 import java.io.Writer;
 
-import com.sun.xml.internal.ws.client.RequestContext;
 import org.apache.log4j.Logger;
 import org.apache.velocity.context.InternalContextAdapter;
 import org.apache.velocity.exception.MethodInvocationException;
