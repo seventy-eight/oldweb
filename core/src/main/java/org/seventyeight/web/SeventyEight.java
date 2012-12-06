@@ -2,7 +2,6 @@ package org.seventyeight.web;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,8 +9,6 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
 import org.seventyeight.database.*;
 import org.seventyeight.loader.Loader;
 import org.seventyeight.utils.FileUtilities;
@@ -19,17 +16,16 @@ import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.handler.TemplateManager;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.model.Locale;
-import org.seventyeight.web.model.resources.*;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.seventyeight.web.model.resources.Article;
 import org.seventyeight.web.model.resources.Group;
 import org.seventyeight.web.model.resources.User;
 import org.seventyeight.web.util.Date;
+import org.seventyeight.web.util.Installer;
 
 public class SeventyEight {
 	private static Logger logger = Logger.getLogger( SeventyEight.class );
@@ -106,6 +102,11 @@ public class SeventyEight {
 
     private ConcurrentMap<Class, DatabaseInquirer> dbinq = new ConcurrentHashMap<Class, DatabaseInquirer>();
 
+    /**
+     * A {@link Map} of top level actions, given by its name
+     */
+    private ConcurrentMap<String, TopLevelAction> topLevelActions = new ConcurrentHashMap<String, TopLevelAction>();
+
 	public SeventyEight( File path, Database db ) {
 		if( instance != null ) {
 			throw new IllegalStateException( "Instance already defined" );
@@ -135,8 +136,14 @@ public class SeventyEight {
 			systemNode = (Node) db.getValue( SYSTEM_NODE_TYPE );
 		} else {
 			logger.info( "System node not found, installing" );
-			install( db );
-		}
+			//install( db );
+            Installer installer = new Installer( db );
+            try {
+                installer.install();
+            } catch( Exception e ) {
+                throw new IllegalStateException( "Unable to install", e );
+            }
+        }
 
         /**/
         logger.debug( "Setting anonymous user" );
@@ -331,16 +338,6 @@ public class SeventyEight {
 	}
 	*/
 	
-	private void install( Database graphdb ) {
-		logger.info( "Installing system" );
-		//systemNode = graphdb.createNode();
-        //graphdb.storeKeyValue( SYSTEM_NODE_TYPE, systemNode );
-		//systemNode.doSave();
-
-        /* Create index */
-        graphdb.createIndex( INDEX_RESOURCES, IndexType.UNIQUE, IndexValueType.LONG );
-        graphdb.createIndex( INDEX_RESOURCE_TYPES, IndexType.REGULAR, IndexValueType.STRING, IndexValueType.LONG );
-	}
 
     public DatabaseItem getDatabaseItem( long id ) {
         return null;
@@ -414,10 +411,24 @@ public class SeventyEight {
         return extensions;
     }
 
-	
-	/*
-	 * Basic getters
-	 */
+
+    public void addTopLevelAction( String name, TopLevelAction handler ) {
+        logger.debug( "Adding " + name + " to action handlers" );
+        topLevelActions.put( name, handler );
+    }
+
+    public TopLevelAction getTopLevelAction( String name ) throws ActionHandlerDoesNotExistException {
+        if( topLevelActions.containsKey( name ) ) {
+            return topLevelActions.get( name );
+        } else {
+            throw new ActionHandlerDoesNotExistException( "The action handler " + name + " does not exist" );
+        }
+    }
+
+
+    /*
+      * Basic getters
+      */
 	
 	public Locale getDefaultLocale() {
 		return defaultLocale;
