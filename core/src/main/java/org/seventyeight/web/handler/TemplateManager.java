@@ -37,9 +37,9 @@ public class TemplateManager {
 	public Template getTemplate( AbstractTheme theme, String template ) throws TemplateDoesNotExistException {
 		
 		try {
-		Template t = engine.getTemplate( theme.getName() + "/" + template );
+		    Template t = engine.getTemplate( theme.getName() + "/" + template );
 		
-		return t;
+		    return t;
 		} catch( ResourceNotFoundException e ) {
 			throw new TemplateDoesNotExistException( "The template " + template + " for " + theme.getName() + " does not exist" );
 		}
@@ -110,16 +110,16 @@ public class TemplateManager {
 		//velocityProperties.setProperty( "file.resource.loader.modificationCheckInterval", "2" );
 		
 		/* Custom directives */
-		velocityProperties.setProperty( "userdirective", "org.seventyeight.velocity.org.seventyeight.velocity.html.html.TextInputDirective,"
-				                                       + "org.seventyeight.velocity.org.seventyeight.velocity.html.html.AdvancedFileInputDirective,"
-				                                       + "org.seventyeight.velocity.org.seventyeight.velocity.html.html.WidgetDirective,"
-				                                       + "org.seventyeight.velocity.org.seventyeight.velocity.html.html.GroupSelectInputDirective,"
-				                                       + "org.seventyeight.velocity.org.seventyeight.velocity.html.html.ThemeSelectInputDirective,"
-				                                       + "org.seventyeight.velocity.org.seventyeight.velocity.html.html.I18NDirective,"
-				                                       + "org.seventyeight.velocity.org.seventyeight.velocity.html.html.ResourceViewDirective,"
-				                                       + "org.seventyeight.velocity.org.seventyeight.velocity.html.html.ResourcePreviewDirective,"
-				                                       + "org.seventyeight.velocity.org.seventyeight.velocity.html.html.ResourceSelectorDirective,"
-				                                       + "org.seventyeight.velocity.org.seventyeight.velocity.html.html.FileInputDirective" );
+		velocityProperties.setProperty( "userdirective", "org.seventyeight.web.velocity.html.TextInputDirective,"
+				                                       + "org.seventyeight.web.velocity.html.AdvancedFileInputDirective,"
+				                                       + "org.seventyeight.web.velocity.html.WidgetDirective,"
+				                                       + "org.seventyeight.web.velocity.html.GroupSelectInputDirective,"
+				                                       + "org.seventyeight.web.velocity.html.ThemeSelectInputDirective,"
+				                                       + "org.seventyeight.web.velocity.html.I18NDirective,"
+				                                       + "org.seventyeight.web.velocity.html.ResourceViewDirective,"
+				                                       + "org.seventyeight.web.velocity.html.ResourcePreviewDirective,"
+				                                       + "org.seventyeight.web.velocity.html.ResourceSelectorDirective,"
+				                                       + "org.seventyeight.web.velocity.html.FileInputDirective" );
 		
 		/* Initialize velocity */
 		engine.init( velocityProperties );
@@ -177,16 +177,20 @@ public class TemplateManager {
 		}
 
 		public Renderer render( String template ) throws TemplateDoesNotExistException {
-
+            if( theme == null ) {
+                theme  = SeventyEight.getInstance().getDefaultTheme();
+            }
 			/* Resolve template */
 			Template t = null;
-			logger.debug( "Rendering " + template );
+			logger.debug( "Rendering " + template + " - " + theme );
 			try {
 				t = getTemplate( theme, template );
 			} catch( TemplateDoesNotExistException e ) {
 				/* If it goes wrong, try the default theme */
 				t = getTemplate( SeventyEight.getInstance().getDefaultTheme(), template );
-			}
+			} catch( Exception e ) {
+                logger.error( e );
+            }
 
 			logger.debug( "Using the template file: " + t.getName() );
 			

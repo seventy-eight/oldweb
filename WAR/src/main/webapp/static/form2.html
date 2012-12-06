@@ -1,0 +1,66 @@
+<html>
+	<head>
+		<script language="javascript" type="text/javascript" src="/static/javascript/jquery-1.7.1.min.js"></script>
+		<script language="javascript" type="text/javascript" src="/static/javascript/utils.js"></script>
+		
+		
+	<script type="text/javascript">
+	
+/*	
+function blaha() {
+	$("#target").change(function() {
+		$("#myform").submit();
+		$("#myform").hide("slow");
+		
+		//$("#upload").on("ready", function(){alert("HEY");});
+		alert( "-->" + $("#upload").contents().find("uploaddiv") );
+	});
+}
+*/
+
+
+
+$(function() {
+	//$("#test").hide("slow");
+	//$("#upload").load( function() {
+
+	//}).appendTo('body');
+
+	
+	//blaha();
+});
+
+/*
+function hideme() {
+	$("#upload").hide("slow");
+}
+
+
+function startupload( nodeid ) {
+	$.getJSON('/upload?nodeid=' + nodeid, function(data) {
+		if( data.ratio < 1.0 ) {
+			
+			//$("#status").html(data.ratio);
+			$("#status").width( Math.floor( data.ratio * 100 ) + "%" );
+			setTimeout( function() { startupload( nodeid ); }, 1000 );
+		} else {
+			//$("#status").html("done");
+			$("#status").width( "100%" );
+		}
+	});
+}
+*/
+
+
+	</script>
+
+	</head>
+	
+	
+	<body>
+		<div style="float: left"><iframe id="uploadframe" src="fileupload.html" style="display:inline;border-style:solid; width:250px;height:50px"></iframe></div>
+		<div style="float: left;border-style:solid;width:250px;height:25px"><div style="background-color:#345676;width:0px;height:25px" id="status"></div></div>
+		<input type="text" id="nodeid" readonly>
+	
+	</body>
+</html>

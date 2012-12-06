@@ -12,6 +12,9 @@
     <artifactId>seventyeight-war</artifactId>
     <packaging>war</packaging>
 
+    <properties>
+        <war.bundle>true</war.bundle>
+    </properties>
 
 
     <profiles>
@@ -104,7 +107,6 @@
                 </configuration>
             </plugin>
 
-            <!--
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.5</version>
@@ -116,19 +118,18 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/target/seventyeight/plugins</outputDirectory>
+                            <outputDirectory>${basedir}/target/seventyeight-war/plugins</outputDirectory>
                             <overwrite>true</overwrite>
                             <resources>
                                 <resource>
-                                    <directory>${project.parent.basedir}/core/target/</directory>
-                                    <include>seventy-eight-system.jar</include>
+                                    <directory>${project.parent.basedir}/system/target/</directory>
+                                    <include>seventyeight-system.jar</include>
                                 </resource>
                             </resources>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-            -->
 
         </plugins>
     </build>

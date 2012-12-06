@@ -24,6 +24,7 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.seventyeight.web.model.resources.Article;
 import org.seventyeight.web.model.resources.Group;
 import org.seventyeight.web.model.resources.User;
+import org.seventyeight.web.model.themes.Default;
 import org.seventyeight.web.util.Date;
 import org.seventyeight.web.util.Installer;
 
@@ -87,7 +88,7 @@ public class SeventyEight {
 	private Locale defaultLocale;
 	
 	private TemplateManager templateManager = new TemplateManager();
-	private AbstractTheme defaultTheme;
+	private AbstractTheme defaultTheme = new Default();
 	private I18N i18n;
 	
 	/**
@@ -134,6 +135,8 @@ public class SeventyEight {
         addDescriptor( new User.UserDescriptor() );
         addDescriptor( new Group.GroupDescriptor() );
         addDescriptor( new Article.ArticleDescriptor() );
+
+        defaultLocale = new Locale( "english" );
 
 
         /* Get the system node */
@@ -277,7 +280,7 @@ public class SeventyEight {
         //Integer next = (Integer) mainNode.getProperty( "next-resource-id", 1 );
         Long next = (Long) db.getValue( "next-resource-id", 1l );
         //mainNode.setProperty( "next-resource-id", ( next + 1 ) );
-         db.storeKeyValue( "next-resource-id", ( next + 1 ) );
+        db.storeKeyValue( "next-resource-id", ( next + 1 ) );
         return next;
     }
 

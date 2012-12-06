@@ -18,6 +18,7 @@
         <module>utilities</module>
         <module>database</module>
 		<module>core</module>
+        <module>system</module>
         <module>WAR</module>
         <module>JAR</module>
     </modules>

@@ -1,0 +1,27 @@
+<html>
+	<head>
+		<script language="javascript" type="text/javascript" src="javascript/jquery-1.7.1.min.js"></script>
+		
+		
+	<script type="text/javascript">
+	
+
+$(function() {
+	$("#target").change(function() {
+		$("#myform").submit();
+		top.Utils.hideme( "uploadframe" + $('input[name="append"]').val() );
+	});
+});
+
+
+	</script>
+	
+	</head>
+	
+
+<body>
+<form id="myform" action="/upload" enctype="multipart/form-data" method="POST">
+	<input id="target" type="file" name="filename"><input id="" type="hidden" name="append" value="">
+</form>
+</body>
+</html>

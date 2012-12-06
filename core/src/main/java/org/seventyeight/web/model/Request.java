@@ -30,7 +30,7 @@ public class Request extends HttpServletRequestWrapper implements ParameterReque
 
     private AbstractResource resource;
 
-    private String template = "org/seventyeight/main.vm";
+    private String template = "org/seventyeight/web/main.vm";
 
     private boolean transactional = false;
 
@@ -60,7 +60,7 @@ public class Request extends HttpServletRequestWrapper implements ParameterReque
     }
 
     public boolean isRequestPost() {
-        return method.equals( RequestMethod.GET );
+        return method.equals( RequestMethod.POST );
     }
 
     public String[] getRequestParts() {

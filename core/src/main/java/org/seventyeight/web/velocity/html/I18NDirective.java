@@ -1,4 +1,4 @@
-package org.seventyeight.velocity.html;
+package org.seventyeight.web.velocity.html;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -10,14 +10,17 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.directive.Directive;
 import org.apache.velocity.runtime.parser.node.Node;
+import org.seventyeight.database.Database;
+import org.seventyeight.web.model.AbstractDictionary;
+import org.seventyeight.web.model.Locale;
 
-public class WidgetDirective extends Directive {
+public class I18NDirective extends Directive {
 
-	private Logger logger = Logger.getLogger( WidgetDirective.class );
+	private Logger logger = Logger.getLogger( I18NDirective.class );
 	
 	@Override
 	public String getName() {
-		return "widget";
+		return "i18n";
 	}
 
 	@Override
@@ -28,24 +31,24 @@ public class WidgetDirective extends Directive {
 	@Override
 	public boolean render( InternalContextAdapter context, Writer writer, Node node ) throws IOException, ResourceNotFoundException, ParseErrorException, MethodInvocationException {
 
-		String name = "";
+		String text = "";
+		Locale locale = (Locale) context.get( "locale" );
+		AbstractDictionary dictionary = (AbstractDictionary)context.get( "i18n" );
 		
 		try {
 			if( node.jjtGetChild( 0 ) != null ) {
-				logger.debug( "NODE[0]=" + node.jjtGetChild( 0 ) + "/" + node.jjtGetChild( 0 ).value( context ) );
-				name = String.valueOf( node.jjtGetChild( 0 ).value( context ) );
-			} else {
-				throw new IOException( "The name is mandatory" );
+				text = String.valueOf( node.jjtGetChild( 0 ).value( context ) );
 			}
 			
 		} catch( Exception e ) {
-			if( name.length() == 0 ) {
-				throw new IOException( "The name is mandatory" );
-			}
 			/* ... And we're done */
 		}
 		
-		//writer.write( "<input type=\"text\" name=\"" + name + "\" value=\"" + value + "\" " + ( maxLength > 0 ? "maxlength=\"" + maxLength + "\"" : "" ) + " onclick=\"" + onClick + "\"" + ( readonly ? " readonly" : "" ) + ">" );
+		if( dictionary != null ) {
+			writer.write( dictionary.get( locale.getLanguage(), text ) );
+		} else {
+			writer.write( text );
+		}
 
 		return true;
 	}

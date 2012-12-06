@@ -35,6 +35,19 @@ public class ResourceHandler implements TopLevelAction {
 	}
 
     @Override
+    public void prepare( Request request ) {
+        /*  */
+        if( request.getRequestParts().length == 3 ) {
+            String[] parts2 = new String[4];
+            parts2[0] = request.getRequestParts()[0];
+            parts2[1] = request.getRequestParts()[1];
+            parts2[2] = request.getRequestParts()[2];
+            parts2[3] = "view";
+            request.setRequestParts( parts2 );
+        }
+    }
+
+    @Override
     public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
         String[] parts = request.getRequestParts();
         logger.debug( "Handling resource: " + Arrays.asList( parts ) );

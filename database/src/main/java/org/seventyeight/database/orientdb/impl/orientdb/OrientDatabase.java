@@ -59,6 +59,7 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
     @Override
     public void storeKeyValue( String key, Object value ) {
         db.setProperty( key, value );
+        db.getUnderlying();
     }
 
     @Override
@@ -68,7 +69,7 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
 
     @Override
     public <T> T getValue( String key, T defaultValue ) {
-        if( db.getDictionary().containsKey( key ) ) {
+        if( db.getProperty( key ) != null ) {
             return (T) db.getProperty( key );
         } else {
             return defaultValue;

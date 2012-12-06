@@ -1,4 +1,4 @@
-package org.seventyeight.velocity.html;
+package org.seventyeight.web.velocity.html;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -10,6 +10,7 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.directive.Directive;
 import org.apache.velocity.runtime.parser.node.Node;
+import org.seventyeight.web.velocity.html.AbstractInputDirective;
 
 public class FileInputDirective extends AbstractInputDirective {
 

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
  *         Time: 16:00
  */
 public interface TopLevelAction extends Action {
+    public void prepare( Request request );
     public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException;
     public String getName();
 }

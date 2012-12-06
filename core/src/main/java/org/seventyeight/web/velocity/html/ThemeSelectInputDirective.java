@@ -1,4 +1,4 @@
-package org.seventyeight.velocity.html;
+package org.seventyeight.web.velocity.html;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -13,16 +13,18 @@ import org.apache.velocity.runtime.directive.Directive;
 import org.apache.velocity.runtime.parser.node.Node;
 import org.seventyeight.database.Database;
 import org.seventyeight.web.SeventyEight;
+import org.seventyeight.web.exceptions.CouldNotLoadResourceException;
+import org.seventyeight.web.exceptions.ThemeDoesNotExistException;
 import org.seventyeight.web.model.AbstractResource;
-import org.seventyeight.web.model.resources.Group;
+import org.seventyeight.web.model.AbstractTheme;
 
-public class GroupSelectInputDirective extends Directive {
+public class ThemeSelectInputDirective extends Directive {
 
-	private Logger logger = Logger.getLogger( GroupSelectInputDirective.class );
+	private Logger logger = Logger.getLogger( ThemeSelectInputDirective.class );
 	
 	@Override
 	public String getName() {
-		return "groupsforresource";
+		return "themeforresource";
 	}
 
 	@Override
@@ -34,7 +36,6 @@ public class GroupSelectInputDirective extends Directive {
 	public boolean render( InternalContextAdapter context, Writer writer, Node node ) throws IOException, ResourceNotFoundException, ParseErrorException, MethodInvocationException {
 
 		String name = "";
-		String namedRelation = "";
 		long id = -1;
 
         /* Get the database in context */
@@ -45,10 +46,8 @@ public class GroupSelectInputDirective extends Directive {
 				if( node.jjtGetChild( 0 ) != null ) {
 					id = (Long) node.jjtGetChild( 0 ).value( context );
 					//logger.debug( "Resource id: " + id );
-				} else {
-					//logger.debug( "Id is not set" );
 				}
-			} catch( Exception e) {
+			} catch( Exception e ) {
 				//logger.debug( "Id will not be set" );
 			}
 			
@@ -57,22 +56,11 @@ public class GroupSelectInputDirective extends Directive {
 			} else {
 				throw new IOException( "The name is mandatory" );
 			}
-			
-			if( node.jjtGetChild( 2 ) != null ) {
-				namedRelation = String.valueOf( node.jjtGetChild( 2 ).value( context ) );
-			} else {
-				throw new IOException( "The group relation is mandatory" );
-			}
 
 			
 		} catch( Exception e ) {
-			
 			if( name.length() == 0 ) {
 				throw new IOException( "The name is mandatory" );
-			}
-			
-			if( namedRelation.length() == 0 ) {
-				throw new IOException( "The group relation is mandatory" );
 			}
 
 			/* ... And we're done */
@@ -80,7 +68,7 @@ public class GroupSelectInputDirective extends Directive {
 		
 		//logger.debug( "---- " + id + " ----" );
 		
-		List<Group> selected = null;
+		AbstractTheme userTheme = null;
 		if( id > 0 ) {
 			AbstractResource r = null;
 			try {
@@ -89,20 +77,28 @@ public class GroupSelectInputDirective extends Directive {
 				logger.error( "Unable to load resource " + id + ": " + e.getMessage() );
 			}
 			
-			//List<Group> selected = Group.getAllGroups( r.getGroups( GroupRelation.GROUP_HAS_ACCESS ) );
-			selected = Group.getAllGroups( db, r.getGroups( namedRelation ) );
-		} else {
-			selected = Group.getAllGroups( db );
+			try {
+				userTheme = r.getTheme();
+			} catch( ThemeDoesNotExistException e ) {
+				logger.warn( "Unable to set theme for " + id );
+			}
 		}
 		
-		writer.write( "<select name=\"" + name + "\" multiple>" );
+		//List<AbstractTheme> themes = GraphDragon.getInstance().getAllThemes();
+        List<AbstractTheme> themes = null;
 		
-		for( Group g : selected ) {
-			if( g.isSelected() ) {
-				writer.write( "<option value=\"" + g.getIdentifier() + "\" selected>" + g + "</option>\n" );
+		writer.write( "<select name=\"" + name + "\">" );
+		
+		//writer.write( "<option value=\"" + t.getName() + "\" selected>" + t.getName() + "</option>\n" );
+		
+		for( AbstractTheme t : themes ) {
+
+			if( t.equals( userTheme ) ) {
+				writer.write( "<option value=\"" + t.getName() + "\" selected>" + t.getName() + "</option>\n" );
 			} else {
-				writer.write( "<option value=\"" + g.getIdentifier() + "\">" + g + "</option>\n" );
+				writer.write( "<option value=\"" + t.getName() + "\">" + t.getName() + "</option>\n" );
 			}
+
 		}
 		
 		writer.write( "</select>\n" );

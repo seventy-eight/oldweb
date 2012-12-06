@@ -27,32 +27,37 @@ public class StaticFileHandler implements TopLevelAction {
     public String getName() {
 		return "static";
 	}
-	
-	/*
-	private class S implements GetFile {
 
-		public File getFile( HttpServletRequest request, HttpServletResponse response ) throws IOException {
-			// Get requested file by path info.
-			String requestedFile = request.getPathInfo();
-			
-			requestedFile = requestedFile.replaceFirst( "^/?.*?/", "" );
-			
-			logger.debug( "--------------------> " + requestedFile + " <------------------------" );
+    @Override
+    public void prepare( Request request ) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 
-			// Check if file is actually supplied to the request URL.
-			if( requestedFile == null ) {
-				// Do your thing if the file is not supplied to the request URL.
-				// Throw an exception, or send 404, or show default/warning page, or
-				// just ignore it.
-				response.sendError( HttpServletResponse.SC_NOT_FOUND );
-				return null;
-			}
-			
-			String filename = URLDecoder.decode( requestedFile, "UTF-8" );
-			logger.debug( "HERE!!!!" );
-			return GraphDragon.getInstance().getRenderer().getStaticFile( filename );
-		}
-		
-	}
-	*/
+    /*
+     private class S implements GetFile {
+
+         public File getFile( HttpServletRequest request, HttpServletResponse response ) throws IOException {
+             // Get requested file by path info.
+             String requestedFile = request.getPathInfo();
+
+             requestedFile = requestedFile.replaceFirst( "^/?.*?/", "" );
+
+             logger.debug( "--------------------> " + requestedFile + " <------------------------" );
+
+             // Check if file is actually supplied to the request URL.
+             if( requestedFile == null ) {
+                 // Do your thing if the file is not supplied to the request URL.
+                 // Throw an exception, or send 404, or show default/warning page, or
+                 // just ignore it.
+                 response.sendError( HttpServletResponse.SC_NOT_FOUND );
+                 return null;
+             }
+
+             String filename = URLDecoder.decode( requestedFile, "UTF-8" );
+             logger.debug( "HERE!!!!" );
+             return GraphDragon.getInstance().getRenderer().getStaticFile( filename );
+         }
+
+     }
+     */
 }

@@ -1,4 +1,4 @@
-package org.seventyeight.velocity.html;
+package org.seventyeight.web.velocity.html;
 
 import java.io.IOException;
 import java.io.Writer;
