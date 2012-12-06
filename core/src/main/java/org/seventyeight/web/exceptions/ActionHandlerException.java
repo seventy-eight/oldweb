@@ -22,6 +22,10 @@ public class ActionHandlerException extends SeventyEightException {
         this.cancelTransaction = cancelTransaction;
     }
 
+    public ActionHandlerException( String s, Exception e ) {
+        super( s, e );
+    }
+
     public ActionHandlerException( String s, Exception e, boolean cancelTransaction ) {
         super( s, e );
         this.cancelTransaction = cancelTransaction;

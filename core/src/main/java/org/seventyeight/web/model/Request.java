@@ -30,6 +30,8 @@ public class Request extends HttpServletRequestWrapper implements ParameterReque
 
     private AbstractResource resource;
 
+    private String template = "org/seventyeight/main.vm";
+
     private boolean transactional = false;
 
     private User user;
@@ -123,6 +125,14 @@ public class Request extends HttpServletRequestWrapper implements ParameterReque
 
     public void setAuthentication( Authentication authentication ) {
         this.authentication = authentication;
+    }
+
+    public String getTemplate() {
+        return template;
+    }
+
+    public void setTemplate( String template ) {
+        this.template = template;
     }
 
     public AbstractTheme getTheme() {

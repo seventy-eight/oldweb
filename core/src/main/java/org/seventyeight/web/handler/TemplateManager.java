@@ -138,7 +138,7 @@ public class TemplateManager {
     }
 	
 	public class Renderer {
-		private Writer writer;
+		//private Writer writer;
 		private AbstractTheme theme;
 		private Locale locale;
         private VelocityContext context;
@@ -156,11 +156,13 @@ public class TemplateManager {
             this.context = context;
             return this;
         }
-		
+
+        /*
 		public Renderer setWriter( Writer writer ) {
 			this.writer = writer;
             return this;
 		}
+		*/
 
         public Renderer setTheme( AbstractTheme theme ) {
             this.theme = theme;
@@ -172,16 +174,15 @@ public class TemplateManager {
             return this;
         }
 
+        /*
 		public String get() {
 			return writer.toString();
 		}
-		
+		*/
 
-		public Renderer render( String template ) throws TemplateDoesNotExistException {
+		public String render( String template ) throws TemplateDoesNotExistException {
             /* Check fields */
-            if( writer == null ) {
-                writer = new StringWriter();
-            }
+            StringWriter writer = new StringWriter();
 
 			/* Resolve template */
 			Template t = null;
@@ -200,7 +201,7 @@ public class TemplateManager {
 			
 			t.merge( context, writer );
 			
-			return this;
+			return writer.toString();
 		}
 
         /**
@@ -210,10 +211,42 @@ public class TemplateManager {
          * @return
          * @throws TemplateDoesNotExistException
          */
-		public Renderer render( Object object, String template ) throws TemplateDoesNotExistException {
+		public String render( Object object, String template ) throws TemplateDoesNotExistException {
 			context.put( "item", object );
 			return render( template );
 		}
+
+        /**
+         * Render a specific object, given as "item" in the context. <br/>
+         * This will render each existing view for this class.
+         * @param object
+         * @param method
+         * @return
+         * @throws TemplateDoesNotExistException
+         */
+        public String renderObject( Object object, String method ) throws TemplateDoesNotExistException {
+            List<String> list = getTemplateFile( object, method, -1 );
+
+            context.put( "item", object );
+
+            int c = 0;
+            for( String t : list ) {
+                try {
+                    context.put( "content", render( t ) );
+                } catch( TemplateDoesNotExistException e ) {
+                    /* No op, we just bail */
+                    break;
+                }
+
+                c++;
+            }
+
+            if( c == 0 ) {
+                throw new TemplateDoesNotExistException( "No \"" + method + "\" template found for " + object.getClass() );
+            }
+
+            return context.get( "content" ).toString();
+        }
 
         /**
          * Render a specific object, given as "item" in the context
@@ -222,7 +255,7 @@ public class TemplateManager {
          * @return
          * @throws TemplateDoesNotExistException
          */
-		public Renderer renderObject( Object object, String method ) throws TemplateDoesNotExistException {
+		public String renderObjectNoRecursive( Object object, String method ) throws TemplateDoesNotExistException {
 			String template = getUrlFromClass( object.getClass().getCanonicalName(), method );
 			context.put( "item", object );
 			return render( template );
@@ -236,7 +269,7 @@ public class TemplateManager {
          * @return
          * @throws TemplateDoesNotExistException
          */
-        public Renderer renderObject( Class<?> clazz, Object object, String method ) throws TemplateDoesNotExistException {
+        public String renderObject( Class<?> clazz, Object object, String method ) throws TemplateDoesNotExistException {
             String template = getUrlFromClass( clazz.getCanonicalName(), method );
             context.put( "item", object );
             return render( template );
