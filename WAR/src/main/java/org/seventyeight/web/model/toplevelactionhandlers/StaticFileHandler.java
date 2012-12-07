@@ -9,9 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.ActionHandlerException;
 import org.seventyeight.web.model.Request;
 import org.seventyeight.web.model.TopLevelAction;
+import org.seventyeight.web.util.FileHelper;
+import org.seventyeight.web.util.GetFile;
 
 
 //@TopLevelActionHandlerType
@@ -21,7 +24,12 @@ public class StaticFileHandler implements TopLevelAction {
 
     @Override
     public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
-        //To change body of implemented methods use File | Settings | File Templates.
+        FileHelper fh = new FileHelper();
+        try {
+            fh.getFile( request, response, new S(), true );
+        } catch( IOException e ) {
+            throw new ActionHandlerException( e );
+        }
     }
 
     public String getName() {
@@ -33,7 +41,7 @@ public class StaticFileHandler implements TopLevelAction {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    /*
+
      private class S implements GetFile {
 
          public File getFile( HttpServletRequest request, HttpServletResponse response ) throws IOException {
@@ -55,9 +63,10 @@ public class StaticFileHandler implements TopLevelAction {
 
              String filename = URLDecoder.decode( requestedFile, "UTF-8" );
              logger.debug( "HERE!!!!" );
-             return GraphDragon.getInstance().getRenderer().getStaticFile( filename );
+             //return GraphDragon.getInstance().getRenderer().getStaticFile( filename );
+             return SeventyEight.getInstance().getTemplateManager().getStaticFile( filename );
          }
 
      }
-     */
+
 }

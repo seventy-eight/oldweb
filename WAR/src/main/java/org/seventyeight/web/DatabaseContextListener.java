@@ -3,6 +3,7 @@ package org.seventyeight.web;
 import org.apache.log4j.Logger;
 import org.seventyeight.database.orientdb.impl.orientdb.OrientDBManager;
 import org.seventyeight.web.model.toplevelactionhandlers.ResourceHandler;
+import org.seventyeight.web.model.toplevelactionhandlers.StaticFileHandler;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -76,5 +77,6 @@ public class DatabaseContextListener implements ServletContextListener {
             /* Adding action handlers */
             //GraphDragon.getInstance().addActionHandler( "system", new SystemHandler() );
             SeventyEight.getInstance().addTopLevelAction( "resource", new ResourceHandler() );
+            SeventyEight.getInstance().addTopLevelAction( "static", new StaticFileHandler() );
         }
 }

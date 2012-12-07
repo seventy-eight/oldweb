@@ -60,7 +60,7 @@ public class Rest extends HttpServlet {
 
         StopWatch sw = new StopWatch();
         sw.reset();
-        sw.start();
+        sw.start( action.getName() );
 
 
         /**/
