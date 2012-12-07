@@ -7,6 +7,8 @@ import java.util.Arrays;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import org.apache.log4j.Logger;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.annotations.VisibleAction;
@@ -55,69 +57,110 @@ public class ResourceHandler implements TopLevelAction {
         Method method = null;
         String requestMethod = parts[3];
 
-        /* Get the resource */
-        AbstractResource r = null;
-        try {
-            r = helper.getResource( request, response );
-        } catch( Exception e ) {
-            throw new ActionHandlerException( e );
-        }
+        /* Special case */
+        if( requestMethod.equalsIgnoreCase( "create" ) ) {
+            String type = parts[2];
+            logger.debug( "[Create] " + type );
 
-        /* Check authentication */
-        if( !request.hasAccess( r ) ) {
-            //throw new
-        }
+            Descriptor<?> descriptor = SeventyEight.getInstance().getDescriptorFromResourceType( type );
 
-        /* Put the title */
-        request.getContext().put( "title", r.getTitle() );
-
-        /* Try implementation of method */
-        if( parts.length == 4 ) {
-
-            if( request.isRequestPost() ) {
-                logger.debug( "This is a POST request" );
-
-                try {
-                    method = getRequestMethod( r, requestMethod, request.isRequestPost() );
-                    method.invoke( method, request, null );
-
-                } catch( Exception e ) {
-                    throw new ActionHandlerException( e );
-                }
-
-            } else {
-                logger.debug( "This is a GET request" );
-
-                try {
-                    method = getRequestMethod( r, requestMethod, request.isRequestPost() );
-                    method.invoke( method, request, response );
-                } catch( Exception e ) {
-                    logger.warn( "Unable to execute " + requestMethod );
-                    logger.warn( e );
-                }
-
-
-                /* Try view file */
-                if( method == null ) {
-                    logger.debug( "Locating template" );
-                    try {
-                        request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( r, requestMethod + ".vm" ) );
-                        response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
-                    } catch( TemplateDoesNotExistException e ) {
-                        /* This solution does not work */
-                        logger.warn( e );
-                    } catch( IOException e ) {
-                        throw new ActionHandlerException( e );
-                    }
-                }
-
-
+            if( descriptor == null ) {
+                throw new ActionHandlerException( new MissingDescriptorException( "Could not find descriptor for " + type ) );
             }
 
-            return;
+            if( request.isRequestPost() ) {
+                logger.debug( "Creating new " + type );
+                try {
+                    createResource( descriptor, request, response );
+                } catch( ResourceNotCreatedException e ) {
+                    throw new ActionHandlerException( e );
+                }
+            } else {
+                logger.debug( "Configuring new " + type );
+                request.getContext().put( "url", "/resource/" + type + "/create" );
+                request.getContext().put( "class", descriptor.getClazz() );
+                request.getContext().put( "header", "Creating new " + type );
+
+                try {
+                    request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClass( descriptor.getClazz(), "configure.vm" ) );
+                    response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
+                } catch( TemplateDoesNotExistException e ) {
+                    /* This solution does not work */
+                    logger.warn( e );
+                } catch( IOException e ) {
+                    throw new ActionHandlerException( e );
+                }
+            }
+
         } else {
-            requestMethod = "";
-            throw new ActionHandlerException( "NOT IMPLEMENTED YET!" );
+
+            /* Get the resource */
+            AbstractResource r = null;
+            try {
+                r = helper.getResource( request, response );
+            } catch( Exception e ) {
+                throw new ActionHandlerException( e );
+            }
+
+            request.getContext().put( "url", "/resource/" + r.getIdentifier() );
+            request.getContext().put( "header", "Editing " + r.getTitle() );
+
+            /* Check authentication */
+            if( !request.hasAccess( r ) ) {
+                //throw new
+            }
+
+            /* Put the title */
+            request.getContext().put( "title", r.getTitle() );
+
+            /* Try implementation of method */
+            if( parts.length == 4 ) {
+
+                if( request.isRequestPost() ) {
+                    logger.debug( "This is a POST request" );
+
+                    try {
+                        method = getRequestMethod( r, requestMethod, request.isRequestPost() );
+                        method.invoke( method, request, null );
+
+                    } catch( Exception e ) {
+                        throw new ActionHandlerException( e );
+                    }
+
+                } else {
+                    logger.debug( "This is a GET request" );
+
+                    try {
+                        method = getRequestMethod( r, requestMethod, request.isRequestPost() );
+                        method.invoke( method, request, response );
+                    } catch( Exception e ) {
+                        logger.warn( "Unable to execute " + requestMethod );
+                        logger.warn( e );
+                    }
+
+
+                    /* Try view file */
+                    if( method == null ) {
+                        logger.debug( "Locating template" );
+                        try {
+                            request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( r, requestMethod + ".vm" ) );
+                            response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
+                        } catch( TemplateDoesNotExistException e ) {
+                            /* This solution does not work */
+                            logger.warn( e );
+                        } catch( IOException e ) {
+                            throw new ActionHandlerException( e );
+                        }
+                    }
+
+
+                }
+
+                return;
+            } else {
+                requestMethod = "";
+                throw new ActionHandlerException( "NOT IMPLEMENTED YET!" );
+            }
         }
 
 
@@ -143,5 +186,60 @@ public class ResourceHandler implements TopLevelAction {
 		return null;
 	}
 	*/
+
+    public AbstractResource createResource( Descriptor descriptor, Request request, HttpServletResponse response ) throws ResourceNotCreatedException {
+        try {
+            /* We need the json object first to determine if this is a valid configuration */
+            JsonObject jo;
+            try {
+                jo = getJsonFromRequest( request );
+            } catch( Exception e ) {
+                logger.warn( e.getMessage() );
+                throw new ResourceNotCreatedException( "The configuration did not contain a valid json object", e );
+            }
+
+
+            /* Initialize transaction for creation */
+            //request.initializeTransaction();
+            logger.debug( "Newing resource" );
+            AbstractResource r = (AbstractResource) descriptor.newInstance( request.getDB() );
+            logger.debug( "RESOURCE IS " + r );
+
+            /* Set the owner */
+            r.setOwner( request.getUser() );
+
+            request.getContext().put( "identifier", r.getIdentifier() );
+
+            logger.debug( "r: " + r.getIdentifier() );
+
+            r.doSave( request, jo );
+            //request.succeedTransaction();
+
+            return r;
+        } catch( Exception e ) {
+            //request.failTransaction();
+            throw new ResourceNotCreatedException( descriptor.getType(), e );
+        }
+    }
+
+    /**
+     * Get the top most configuration json object from a request.
+     * @param request
+     * @return
+     * @throws NoSuchJsonElementException
+     */
+    public JsonObject getJsonFromRequest( Request request ) throws NoSuchJsonElementException {
+        String json = request.getParameter( "json" );
+        JsonParser parser = new JsonParser();
+        JsonObject jo = (JsonObject) parser.parse( json );
+        logger.info( "JSON: " + request.getParameter( "json" ) );
+
+        JsonElement e = jo.get( SeventyEight.__JSON_CONFIGURATION_NAME );
+        if( e != null && e.isJsonObject() ) {
+            return (JsonObject)e;
+        } else {
+            throw new NoSuchJsonElementException( "Could not find origin json configuration" );
+        }
+    }
 
 }

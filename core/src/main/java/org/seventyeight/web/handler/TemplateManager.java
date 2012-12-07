@@ -252,6 +252,28 @@ public class TemplateManager {
             return context.get( "subchildcontent" ).toString();
         }
 
+        public String renderClass( Class clazz, String method ) throws TemplateDoesNotExistException {
+            List<String> list = getTemplateFile( clazz, method, -1 );
+
+            int c = 0;
+            for( String t : list ) {
+                try {
+                    context.put( "subchildcontent", render( t ) );
+                } catch( TemplateDoesNotExistException e ) {
+                    /* No op, we just bail */
+                    break;
+                }
+
+                c++;
+            }
+
+            if( c == 0 ) {
+                throw new TemplateDoesNotExistException( "No \"" + method + "\" template found for " + clazz );
+            }
+
+            return context.get( "subchildcontent" ).toString();
+        }
+
         /**
          * Render a specific object, given as "item" in the context
          * @param object
