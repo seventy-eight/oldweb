@@ -47,7 +47,7 @@ public class ResourcePreviewDirective extends Directive {
 			}
 
             Request request = (Request) context.get( "request" );
-            SeventyEight.getInstance().getTemplateManager().getRenderer( request ).setWriter( writer ).renderObject( r, "preview.vm" );
+            writer.write( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( r, "preview.vm" ) );
 			
 		} catch( Exception e ) {
 			logger.debug( e );

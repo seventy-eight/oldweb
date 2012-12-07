@@ -115,9 +115,9 @@ public class Rest extends HttpServlet {
 
             org.seventyeight.web.model.Error error = new org.seventyeight.web.model.Error( (Exception)e );
 
-            request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer().setContext( vc ).renderObject( error, "view.vm" ).get() );
+            request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer().setContext( vc ).renderObject( error, "view.vm" ) );
             request.getContext().put( "title", message );
-            writer.print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( "org/seventyeight/web/main.vm" ).get() );
+            writer.print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( "org/seventyeight/web/main.vm" ) );
         } catch( Exception ec ) {
             request.getContext().put( "content", "Error while displaying exception" );
         }

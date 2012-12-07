@@ -101,8 +101,8 @@ public class ResourceHandler implements TopLevelAction {
                 if( method == null ) {
                     logger.debug( "Locating template" );
                     try {
-                        request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( r, requestMethod + ".vm" ).get() );
-                        response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ).get() );
+                        request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( r, requestMethod + ".vm" ) );
+                        response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
                     } catch( TemplateDoesNotExistException e ) {
                         /* This solution does not work */
                         logger.warn( e );

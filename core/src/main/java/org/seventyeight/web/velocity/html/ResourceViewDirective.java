@@ -43,7 +43,7 @@ public class ResourceViewDirective extends Directive {
 			}
 			
 			Request request = (Request) context.get( "request" );
-            SeventyEight.getInstance().getTemplateManager().getRenderer( request ).setWriter( writer ).renderObject( r, "view.vm" );
+            writer.write( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( r, "view.vm" ) );
 			
 		} catch( Exception e ) {
 			writer.write( "???" );

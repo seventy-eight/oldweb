@@ -1,4 +1,8 @@
 
+<table
+
+$subchildcontent
+
 #set( $title = "" )
 #set( $title = $item.getTitle() )
 
@@ -33,3 +37,6 @@
 		</table>
 	</td>
 </tr>
+
+
+</table>

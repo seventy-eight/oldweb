@@ -48,17 +48,23 @@ public class DatabaseContextListener implements ServletContextListener {
                 List<File> plugins = gd.extractPlugins( gd.getPluginsPath() );
 
                 /* Paths added first is served first */
-                gd.getTemplateManager().addStaticPath( new File( "C:/projects/graph-dragon/war/src/main/webapp/static" ) );
+                //gd.getTemplateManager().addStaticPath( new File( "C:/projects/graph-dragon/war/src/main/webapp/static" ) );
                 gd.getTemplateManager().addStaticPath( new File( gd.getPath(), "static" ) );
 
 
                 //paths.add( new File( "/home/wolfgang/projects/graph-dragon/system/target/classes/themes" ) );
                 //paths.add( new File( "C:/projects/graph-dragon/system/target/classes/themes" ) );
 
+
+
+                /*
                 for( File plugin : plugins ) {
                     logger.debug( "Adding " + plugin );
                     paths.add( new File( plugin, "themes" ) );
                 }
+                */
+
+                paths.add( new File( "C:/Users/Christian/projects/seventy-eight/system/src/main/resources/themes" ) );
 
                 //paths.add( new File( "C:/projects/graph-dragon/system/target/classes/themes" ) );
 

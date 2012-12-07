@@ -35,7 +35,7 @@ public class TemplateTest {
 
         VelocityContext vc = new VelocityContext();
         vc.put( "test", "1" );
-        String result = m.getRenderer().setContext( vc ).setTheme( theme ).render( "test.vm" ).get();
+        String result = m.getRenderer().setContext( vc ).setTheme( theme ).render( "test.vm" );
 
         assertThat( result, is( "TEST 1" ) );
     }

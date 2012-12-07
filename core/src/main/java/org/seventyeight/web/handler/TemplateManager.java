@@ -75,7 +75,7 @@ public class TemplateManager {
 	
 	public void getTemplates( List<File> directories ) {
 		for( File dir : directories ) {
-			logger.debug( "Adding " + dir );
+			logger.debug( "[Template directory] " + dir );
 			this.paths += dir.toString() + ", ";
 			templatePaths.add( dir );
 		}
@@ -107,7 +107,7 @@ public class TemplateManager {
 		velocityProperties.setProperty( "resource.loader", "file" );
 		velocityProperties.setProperty( "file.resource.loader.path", this.paths );
 				
-		//velocityProperties.setProperty( "file.resource.loader.modificationCheckInterval", "2" );
+		velocityProperties.setProperty( "file.resource.loader.modificationCheckInterval", "2" );
 		
 		/* Custom directives */
 		velocityProperties.setProperty( "userdirective", "org.seventyeight.web.velocity.html.TextInputDirective,"
@@ -138,7 +138,7 @@ public class TemplateManager {
     }
 	
 	public class Renderer {
-		private Writer writer = new StringWriter();
+		//private Writer writer = new StringWriter();
 		private AbstractTheme theme;
 		private Locale locale;
         private VelocityContext context;
@@ -157,10 +157,12 @@ public class TemplateManager {
             return this;
         }
 
+        /*
 		public Renderer setWriter( Writer writer ) {
 			this.writer = writer;
             return this;
 		}
+		*/
 
         public Renderer setTheme( AbstractTheme theme ) {
             this.theme = theme;
@@ -172,11 +174,15 @@ public class TemplateManager {
             return this;
         }
 
+        /*
 		public String get() {
 			return writer.toString();
 		}
+		*/
 
-		public Renderer render( String template ) throws TemplateDoesNotExistException {
+		public String render( String template ) throws TemplateDoesNotExistException {
+            StringWriter writer = new StringWriter();
+
             if( theme == null ) {
                 theme  = SeventyEight.getInstance().getDefaultTheme();
             }
@@ -199,7 +205,7 @@ public class TemplateManager {
 			
 			t.merge( context, writer );
 			
-			return this;
+			return writer.toString();
 		}
 
         /**
@@ -209,7 +215,7 @@ public class TemplateManager {
          * @return
          * @throws TemplateDoesNotExistException
          */
-		public Renderer render( Object object, String template ) throws TemplateDoesNotExistException {
+		public String render( Object object, String template ) throws TemplateDoesNotExistException {
 			context.put( "item", object );
 			return render( template );
 		}
@@ -222,7 +228,7 @@ public class TemplateManager {
          * @return
          * @throws TemplateDoesNotExistException
          */
-        public Renderer renderObject( Object object, String method ) throws TemplateDoesNotExistException {
+        public String renderObject( Object object, String method ) throws TemplateDoesNotExistException {
             List<String> list = getTemplateFile( object, method, -1 );
 
             context.put( "item", object );
@@ -230,7 +236,7 @@ public class TemplateManager {
             int c = 0;
             for( String t : list ) {
                 try {
-                    context.put( "content", render( t ) );
+                    context.put( "subchildcontent", render( t ) );
                 } catch( TemplateDoesNotExistException e ) {
                     /* No op, we just bail */
                     break;
@@ -243,7 +249,7 @@ public class TemplateManager {
                 throw new TemplateDoesNotExistException( "No \"" + method + "\" template found for " + object.getClass() );
             }
 
-            return this;
+            return context.get( "subchildcontent" ).toString();
         }
 
         /**
@@ -253,7 +259,7 @@ public class TemplateManager {
          * @return
          * @throws TemplateDoesNotExistException
          */
-		public Renderer renderObjectNoRecursive( Object object, String method ) throws TemplateDoesNotExistException {
+		public String renderObjectNoRecursive( Object object, String method ) throws TemplateDoesNotExistException {
 			String template = getUrlFromClass( object.getClass().getCanonicalName(), method );
 			context.put( "item", object );
 			return render( template );
@@ -267,7 +273,7 @@ public class TemplateManager {
          * @return
          * @throws TemplateDoesNotExistException
          */
-        public Renderer renderObject( Class<?> clazz, Object object, String method ) throws TemplateDoesNotExistException {
+        public String renderObject( Class<?> clazz, Object object, String method ) throws TemplateDoesNotExistException {
             String template = getUrlFromClass( clazz.getCanonicalName(), method );
             context.put( "item", object );
             return render( template );
