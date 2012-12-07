@@ -193,8 +193,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 	}
 	
 	public AbstractTheme getTheme() throws ThemeDoesNotExistException {
-		//return SeventyEight.getInstance().getTheme( getField( "theme", SeventyEight.defaultThemeName ) );
-        return null;
+		return SeventyEight.getInstance().getTheme( getField( "theme", SeventyEight.defaultThemeName ) );
 	}
 	
 	public void setTheme( AbstractTheme theme ) {

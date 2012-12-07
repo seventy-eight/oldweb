@@ -26,9 +26,9 @@
 			</tr>
 			
 			<tr>
-				<td align="center">#groupsforresource($!item.getIdentifier(), "access-group", "GROUP_HAS_ACCESS")</td>
-				<td align="center">#groupsforresource($!item.getIdentifier(), "review-group", "GROUP_CAN_REVIEW")</td>
-				<td align="center">#groupsforresource($!item.getIdentifier(), "editor-group", "GROUP_CAN_EDIT")</td>
+				<td align="center">#groupsforresource($!item.getIdentifier(), "access-group", "readAccess")</td>
+				<td align="center">#groupsforresource($!item.getIdentifier(), "review-group", "reviewAccess")</td>
+				<td align="center">#groupsforresource($!item.getIdentifier(), "editor-group", "writeAccess")</td>
 			</tr>
 		</table>
 	</td>

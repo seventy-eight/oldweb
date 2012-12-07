@@ -146,9 +146,9 @@ public class Group extends AbstractResource {
 		logger.debug( "Getting all groups" );
 		List<Group> groups = new ArrayList<Group>();
 
-        List<Edge> edges = db.getFromIndex( SeventyEight.INDEX_RESOURCE_TYPES, "group" );
-		for( Edge edge : edges ) {
-			Group grp = new Group( edge.getTargetNode() );
+        List<Node> nodes = db.getFromIndex( SeventyEight.INDEX_RESOURCE_TYPES, "group" );
+		for( Node node : nodes ) {
+			Group grp = new Group( node );
 			logger.debug( "Adding " + grp + " to list" );
 			if( selected.contains( grp ) ) {
 				grp.selected = true;

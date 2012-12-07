@@ -2,6 +2,7 @@ package org.seventyeight.web.velocity.html;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -84,8 +85,8 @@ public class ThemeSelectInputDirective extends Directive {
 			}
 		}
 		
-		//List<AbstractTheme> themes = GraphDragon.getInstance().getAllThemes();
-        List<AbstractTheme> themes = null;
+		Collection<AbstractTheme> themes = SeventyEight.getInstance().getAllThemes();
+        //List<AbstractTheme> themes = null;
 		
 		writer.write( "<select name=\"" + name + "\">" );
 		

@@ -38,6 +38,11 @@ public class Rest extends HttpServlet {
     public void doRequest( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
         PrintWriter out = response.getWriter();
 
+        StopWatch sw = new StopWatch();
+        sw.reset();
+
+        sw.start( "preparing" );
+
         /* Instantiating request */
         Request r = new Request( request );
 
@@ -57,14 +62,14 @@ public class Rest extends HttpServlet {
             generateException( r, out, e, e.getMessage() );
             return;
         }
+        sw.stop();
 
-        StopWatch sw = new StopWatch();
-        sw.reset();
         sw.start( action.getName() );
 
 
         /**/
         r.setDB( OrientDBManager.getInstance().getDatabase() );
+        vc.put( "database", r.getDB() );
 
         r.setUser( SeventyEight.getInstance().getAnonymousUser() );
 

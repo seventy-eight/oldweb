@@ -158,7 +158,11 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
             docs = db.getMetadata().getIndexManager().getIndex( name ).getValues( Collections.singleton( new OCompositeKey( keys ) ) );
         } else {
             //docs = db.getMetadata().getIndexManager().getIndex( name ).getValues( Collections.singleton( new OCompositeKey( keys[0] ) ) );
-            docs = db.getMetadata().getIndexManager().getIndex( name ).getValuesBetween( keys[0], keys[0] );
+            if( count == 1 ) {
+                docs = db.getMetadata().getIndexManager().getIndex( name ).getValuesBetween( keys[0], keys[0] );
+            } else {
+                docs = db.getMetadata().getIndexManager().getIndex( name ).getValuesBetween( new OCompositeKey( keys[0] ), new OCompositeKey( keys[0] ) );
+            }
         }
 
         List<OrientNode> nodes = new LinkedList<OrientNode>();

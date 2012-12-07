@@ -104,6 +104,8 @@ public class SeventyEight {
 
     private ConcurrentMap<Class, DatabaseInquirer> dbinq = new ConcurrentHashMap<Class, DatabaseInquirer>();
 
+    private ConcurrentMap<String, AbstractTheme> themes = new ConcurrentHashMap<String, AbstractTheme>();
+
     /**
      * A {@link Map} of top level actions, given by its name
      */
@@ -168,6 +170,10 @@ public class SeventyEight {
 		defaultLocale = new Locale( "danish" );
 
         /* Configure indexes for descriptors */
+
+        /* Themes */
+        themes.put( "default", defaultTheme );
+
         db.close();
 
 		return this;
@@ -351,7 +357,14 @@ public class SeventyEight {
 		return r;
 	}
 	*/
-	
+
+    public AbstractTheme getTheme( String themeName ) {
+        return defaultTheme;
+    }
+
+    public Collection<AbstractTheme> getAllThemes() {
+        return themes.values();
+    }
 
     public DatabaseItem getDatabaseItem( long id ) {
         return null;
