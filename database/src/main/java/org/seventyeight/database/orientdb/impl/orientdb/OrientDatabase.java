@@ -35,6 +35,10 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
         return db;
     }
 
+    @Override
+    public void close() {
+        db.close();
+    }
 
     @Override
     public void beginTransation() {
@@ -57,27 +61,19 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
     }
 
     @Override
-    public void storeKeyValue( String key, Object value ) {
-        db.setProperty( key, value );
-        db.getUnderlying();
+    public void keepNode( String key, OrientNode node ) {
+        System.out.println( "BEFORE: " + db.getDictionary().keys() );
+        db.getDictionary().put( key, node.getDocument() );
+        System.out.println( "AFTER: " + db.getDictionary().keys() );
     }
 
     @Override
-    public <T> T getValue( String key ) {
-        return (T) db.getProperty( key );
+    public OrientNode getNode( String key ) {
+        return new OrientNode( this, (ODocument) db.getDictionary().get( key ) );
     }
 
     @Override
-    public <T> T getValue( String key, T defaultValue ) {
-        if( db.getProperty( key ) != null ) {
-            return (T) db.getProperty( key );
-        } else {
-            return defaultValue;
-        }
-    }
-
-    @Override
-    public boolean containsKey( String key ) {
+    public boolean containsNode( String key ) {
         return db.getDictionary().containsKey( key );
     }
 
@@ -107,7 +103,7 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
         //OIndexDefinition def = OIndexDefinitionFactory.createIndexDefinition( null, Collections.singletonList( "letter" ), Collections.singletonList( OType.FLOAT ) );
         OSimpleKeyIndexDefinition def2 = new OSimpleKeyIndexDefinition( getOrientValuesTypes( valueTypes ) );
         OIndex idx = db.getMetadata().getIndexManager().createIndex( index, type.toString(), def2, null, null );
-        db.getMetadata().getIndexManager().create();
+        //db.getMetadata().getIndexManager().create();
 
         System.out.println( db.getMetadata().getIndexManager().getIndex( index ).getSize() );
         System.out.println( Arrays.asList( db.getMetadata().getIndexManager().getIndex( index ).getKeyTypes() ) );

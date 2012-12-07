@@ -63,7 +63,8 @@ public class SeventyEight {
 		unknown
 	}
 	
-	private static final String SYSTEM_NODE_TYPE = "system";
+	private static final String SYSTEM_NODE = "system-node";
+    private static final String SYSTEM_INSTALLED = "system-installed";
 	
 	public enum ResourceEdgeType implements EdgeType {
 		owner,
@@ -140,14 +141,15 @@ public class SeventyEight {
 
 
         /* Get the system node */
-		db.containsKey( SYSTEM_NODE_TYPE );
-		if( db.containsKey( SYSTEM_NODE_TYPE ) ) {
-			systemNode = (Node) db.getValue( SYSTEM_NODE_TYPE );
+		if( db.containsNode( SYSTEM_NODE ) ) {
+			systemNode = db.getNode( SYSTEM_NODE );
 		} else {
 			logger.info( "System node not found, installing" );
 			//install( db );
             Installer installer = new Installer( db );
             try {
+                systemNode = db.createNode();
+                db.keepNode( SYSTEM_NODE, systemNode );
                 installer.install();
             } catch( Exception e ) {
                 throw new IllegalStateException( "Unable to install", e );
@@ -166,7 +168,7 @@ public class SeventyEight {
 		defaultLocale = new Locale( "danish" );
 
         /* Configure indexes for descriptors */
-
+        db.close();
 
 		return this;
 	}
@@ -276,11 +278,19 @@ public class SeventyEight {
         return resource;
     }
 
+    private Node getSystemNode( Database db ) {
+        return db.getNode( SYSTEM_NODE );
+    }
+
     private synchronized long getNextResourceIdentifier( Database db ) {
         //Integer next = (Integer) mainNode.getProperty( "next-resource-id", 1 );
-        Long next = (Long) db.getValue( "next-resource-id", 1l );
+        Node s = getSystemNode( db );
+        //Long next = (Long) db.getValue( "next-resource-id", 1l );
+        Long next = s.get( "next-resource-id", 1l );
         //mainNode.setProperty( "next-resource-id", ( next + 1 ) );
-        db.storeKeyValue( "next-resource-id", ( next + 1 ) );
+        //db.keepNode( "next-resource-id", ( next + 1 ) );
+        s.set( "next-resource-id", ( next + 1 ) );
+        s.save();
         return next;
     }
 

@@ -224,7 +224,7 @@ public abstract class AbstractItem implements Item, DatabaseItem<AbstractItem> {
 		for( Class<Extension> ext : list ) {
 			logger.debug( "CLASS: " + ext.getCanonicalName() );
 			
-			if( nodes.containsKey( ext.getCanonicalName() ) ) {
+			if( nodes.containsNode( ext.getCanonicalName() ) ) {
 				logger.debug( "Has nodes" );
 				
 				List<ODocument> ns = nodes.get( ext.getCanonicalName() );

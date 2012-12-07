@@ -38,18 +38,29 @@ public class Rest extends HttpServlet {
     public void doRequest( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
         PrintWriter out = response.getWriter();
 
-        StopWatch sw = new StopWatch();
-        sw.reset();
-        sw.start();
+        /* Instantiating request */
+        Request r = new Request( request );
 
         /* Instantiating context */
         VelocityContext vc = new VelocityContext();
         vc.put( "title", "" );
 
-        /* Instantiating request */
-        Request r = new Request( request );
         r.setContext( vc );
         r.getContext().put( "request", r );
+        r.setRequestParts( request.getRequestURI().split( "/" ) );
+        logger.debug( "------ " + Arrays.asList( r.getRequestParts() ) + " ------" );
+
+        TopLevelAction action = null;
+        try {
+            action = SeventyEight.getInstance().getTopLevelAction( r.getRequestParts()[1] );
+        } catch( ActionHandlerDoesNotExistException e ) {
+            generateException( r, out, e, e.getMessage() );
+            return;
+        }
+
+        StopWatch sw = new StopWatch();
+        sw.reset();
+        sw.start();
 
 
         /**/
@@ -59,23 +70,26 @@ public class Rest extends HttpServlet {
 
         /* TODO authentication */
 
-        r.setRequestParts( request.getRequestURI().split( "/" ) );
-        logger.debug( "------ " + Arrays.asList( r.getRequestParts() ) + " ------" );
+
 
         try {
-            parseRequest( r, response );
+            parseRequest( action, r, response );
         } catch( Exception e ) {
             e.printStackTrace();
             generateException( r, out, e, e.getMessage() );
         }
 
+        /* Close db connection */
+        r.getDB().close();
+
+        sw.stop();
+        logger.debug( sw.print( 1000 ) );
     }
 
-    public void parseRequest( Request request, HttpServletResponse response ) throws ActionHandlerDoesNotExistException, ActionHandlerException {
+    public void parseRequest( TopLevelAction action, Request request, HttpServletResponse response ) throws ActionHandlerDoesNotExistException, ActionHandlerException {
         logger.debug( "Parsing request" );
         String[] parts = request.getRequestParts();
 
-        TopLevelAction action = SeventyEight.getInstance().getTopLevelAction( parts[1] );
         action.prepare( request );
         action.execute( request, response );
     }

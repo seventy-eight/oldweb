@@ -19,10 +19,10 @@ public class OrientDBManager {
 
     public OrientDBManager( String type, String path ) {
         this.qualifiedPath = type + ":" + path;
-        try {
-            new OrientDatabase( (OGraphDatabase) new OGraphDatabase( qualifiedPath ).create() );
-        } catch( Exception e ) {
 
+        OGraphDatabase db = new OGraphDatabase( qualifiedPath );
+        if( !db.exists() ) {
+            new OrientDatabase( (OGraphDatabase) db.create() );
         }
 
         instance = this;

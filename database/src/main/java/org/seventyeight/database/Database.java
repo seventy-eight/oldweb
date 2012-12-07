@@ -11,10 +11,11 @@ import java.util.List;
  */
 public interface Database<IDB, NT extends Node> {
 
-    public void storeKeyValue( String key, Object value );
-    public boolean containsKey( String key );
-    public <T> T getValue( String key );
-    public <T> T getValue( String key, T defaultValue );
+    public void keepNode( String key, NT node );
+    public boolean containsNode( String key );
+    public NT getNode( String key );
+
+    public void close();
 
     /* Transactions */
 

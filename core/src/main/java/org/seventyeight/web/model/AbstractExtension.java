@@ -41,8 +41,8 @@ public abstract class AbstractExtension extends AbstractItem implements Extensio
 			/*
 			Set<Entry<String, JsonElement>> js = jsonData.entrySet();
 			for( Entry<String, JsonElement> jentry : js ) {
-				if( jentry.getValue().isJsonObject() ) {
-					node.setProperty( jentry.getKey(), jentry.getValue() );
+				if( jentry.getNode().isJsonObject() ) {
+					node.setProperty( jentry.getKey(), jentry.getNode() );
 				}
 			}
 			*/
