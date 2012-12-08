@@ -9,6 +9,8 @@ import org.seventyeight.web.exceptions.ActionHandlerException;
 import org.seventyeight.web.model.*;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +23,8 @@ import java.util.Arrays;
  * Date: 15-11-12
  * Time: 22:22
  */
+@MultipartConfig
+@WebServlet( asyncSupported = true )
 public class Rest extends HttpServlet {
 
     private static Logger logger = Logger.getLogger( Rest.class );

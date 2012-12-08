@@ -79,7 +79,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 					if( o instanceof User ) {
 						logger.debug( "Owner is " + ownerId );
 						AbstractResource.this.setOwner( (User)o );
-						//node.createRelationshipTo( o.getNode(), Relationships.OWNER );
+						//node.createRelationshipTo( o.getNode(), SessionEdge.OWNER );
 					} else {
 						logger.error( "Not a user: " + o );
 					}
@@ -89,7 +89,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 			} else {
 				/* If no other owner has been specified, use the current user */
 				AbstractResource.this.setOwner( request.getUser() );
-				//node.createRelationshipTo( request.getUser().getNode(), Relationships.OWNER );
+				//node.createRelationshipTo( request.getUser().getNode(), SessionEdge.OWNER );
 				
 			}
 		}

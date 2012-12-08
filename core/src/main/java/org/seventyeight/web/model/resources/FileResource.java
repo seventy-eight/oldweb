@@ -83,7 +83,7 @@ public class FileResource extends AbstractResource {
      */
 	public void setFileRelation( DatabaseItem item ) {
 		removeFileRelations();
-		//this.node.createRelationshipTo( node, Relationships.FILE );
+		//this.node.createRelationshipTo( node, SessionEdge.FILE );
         //SeventyEight.getInstance().createEdge( db, this, item, FileResourceEdgeType.file );
         node.createEdge( item.getNode(), FileResourceEdgeType.file );
 	}

@@ -70,9 +70,17 @@ public class ResourceHandler implements TopLevelAction {
 
             if( request.isRequestPost() ) {
                 logger.debug( "Creating new " + type );
+                AbstractResource r = null;
                 try {
-                    createResource( descriptor, request, response );
+                    r = createResource( descriptor, request, response );
                 } catch( ResourceNotCreatedException e ) {
+                    throw new ActionHandlerException( e );
+                }
+
+                /* When POST, view the resource */
+                try {
+                    viewResource( r, request, response );
+                } catch( Exception e ) {
                     throw new ActionHandlerException( e );
                 }
             } else {
@@ -127,6 +135,13 @@ public class ResourceHandler implements TopLevelAction {
                         throw new ActionHandlerException( e );
                     }
 
+                    /* When POST, view the resource */
+                    try {
+                        viewResource( r, request, response );
+                    } catch( Exception e ) {
+                        throw new ActionHandlerException( e );
+                    }
+
                 } else {
                     logger.debug( "This is a GET request" );
 
@@ -162,8 +177,11 @@ public class ResourceHandler implements TopLevelAction {
                 throw new ActionHandlerException( "NOT IMPLEMENTED YET!" );
             }
         }
+    }
 
-
+    private void viewResource( AbstractResource resource, Request request, HttpServletResponse response ) throws IOException, TemplateDoesNotExistException {
+        request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( resource, "view.vm" ) );
+        response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
     }
 
     private Method getRequestMethod( AbstractResource resource, String method, boolean post ) throws NoSuchMethodException {
