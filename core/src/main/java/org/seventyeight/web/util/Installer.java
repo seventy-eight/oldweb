@@ -33,6 +33,7 @@ public class Installer {
         db.createIndex( SeventyEight.INDEX_RESOURCES, IndexType.UNIQUE, IndexValueType.LONG );
         db.createIndex( SeventyEight.INDEX_RESOURCE_TYPES, IndexType.REGULAR, IndexValueType.STRING, IndexValueType.LONG );
         db.createIndex( SeventyEight.INDEX_SYSTEM_USERS, IndexType.UNIQUE, IndexValueType.STRING );
+        db.createIndex( SeventyEight.INDEX_FILES, IndexType.UNIQUE, IndexValueType.STRING );
 
         logger.info( "Installing users" );
         User admin = installUser( "wolle", true );

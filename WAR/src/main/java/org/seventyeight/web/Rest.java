@@ -4,6 +4,11 @@ import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
 import org.seventyeight.database.orientdb.impl.orientdb.OrientDBManager;
 import org.seventyeight.utils.StopWatch;
+import org.seventyeight.web.authentication.Authentication;
+import org.seventyeight.web.authentication.SimpleAuthentication;
+import org.seventyeight.web.authentication.exceptions.NoSuchUserException;
+import org.seventyeight.web.authentication.exceptions.PasswordDoesNotMatchException;
+import org.seventyeight.web.authentication.exceptions.UnableToCreateSessionException;
 import org.seventyeight.web.exceptions.ActionHandlerDoesNotExistException;
 import org.seventyeight.web.exceptions.ActionHandlerException;
 import org.seventyeight.web.model.*;
@@ -77,8 +82,17 @@ public class Rest extends HttpServlet {
 
         r.setUser( SeventyEight.getInstance().getAnonymousUser() );
 
-        /* TODO authentication */
-
+        Authentication auth = new SimpleAuthentication();
+        try {
+            logger.debug( "AUTHENTICATING" );
+            auth.authenticate( r, response );
+        } catch( PasswordDoesNotMatchException e ) {
+            logger.debug( "Passwords does not match!" );
+        } catch( NoSuchUserException e ) {
+            logger.debug( "User does not exist!" );
+        } catch( UnableToCreateSessionException e ) {
+            logger.debug( "Could not create session!" );
+        }
 
 
         try {

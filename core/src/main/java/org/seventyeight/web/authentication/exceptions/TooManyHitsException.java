@@ -1,8 +1,8 @@
 package org.seventyeight.web.authentication.exceptions;
 
-import org.seventyeight.exceptions.BlueDragonException;
+import org.seventyeight.web.exceptions.SeventyEightException;
 
-public class TooManyHitsException extends BlueDragonException {
+public class TooManyHitsException extends SeventyEightException {
 
 	public TooManyHitsException( String s ) {
 		super( s );

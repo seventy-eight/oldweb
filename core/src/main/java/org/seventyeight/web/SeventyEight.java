@@ -44,6 +44,9 @@ public class SeventyEight {
     public static final String INDEX_RESOURCE_TYPES = "resource-types";
 
     public static final String INDEX_SYSTEM_USERS = "system-users";
+
+    public static final String INDEX_FILES = "files";
+
 	
 	public static final String defaultThemeName = "default";
 	
@@ -491,7 +494,22 @@ public class SeventyEight {
     public User getAnonymousUser() {
         return anonymous;
     }
-	
+
+
+
+    public Node createFile( Database db, String filename ) {
+        logger.debug( "Creating new file " + filename );
+
+        Node node = db.createNode();
+        node.set( "file", filename );
+        db.putToIndex( INDEX_FILES, node, filename );
+        node.set( "created", new Date().getTime() );
+        node.save();
+
+        return node;
+
+    }
+
 	/* 
 	 * JSON
 	 */

@@ -1,12 +1,15 @@
 package org.seventyeight.web.model.toplevelactionhandlers;
 
 import org.apache.log4j.Logger;
+import org.seventyeight.database.Database;
+import org.seventyeight.database.Node;
 import org.seventyeight.utils.Date;
+import org.seventyeight.web.SeventyEight;
+import org.seventyeight.web.authentication.Session;
 import org.seventyeight.web.exceptions.ActionHandlerException;
 import org.seventyeight.web.model.Request;
 import org.seventyeight.web.model.TopLevelAction;
 
-import javax.jms.Session;
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
@@ -50,12 +53,14 @@ public class UploadHandler implements TopLevelAction {
     }
 
 
-
+/*
     private class Upload implements Runnable {
         AsyncContext ctx;
+        Database db;
 
-        public Upload( AsyncContext ctx ) {
+        public Upload( Database db, AsyncContext ctx ) {
             this.ctx = ctx;
+            this.db = db;
         }
 
         public void run() {
@@ -73,7 +78,7 @@ public class UploadHandler implements TopLevelAction {
 
                 Cookie c = org.seventyeight.web.util.Util.getCookie( request, "session" );
                 logger.debug( "Cookie: " + c );
-                Session session = GraphDragon.getInstance().getSessionsManager().getSession( c.getValue() );
+                Session session = SeventyEight.getInstance().getSessionManager().getSession( db, c.getValue() );
                 Date now = new Date();
                 int mid = filename.lastIndexOf( "." );
                 String fname = filename;
@@ -84,7 +89,7 @@ public class UploadHandler implements TopLevelAction {
                 }
                 String strpath = "upload/" + session.getUser().getIdentifier() + "/" + formatYear.format( now ) + "/" + formatMonth.format( now ) + "/" + ext;
 
-                File path = new File( GraphDragon.getInstance().getPath(), strpath );
+                File path = new File( SeventyEight.getInstance().getPath(), strpath );
                 logger.debug( "Trying to create path " + path );
                 path.mkdirs();
                 File file = new File( path, filename );
@@ -100,7 +105,7 @@ public class UploadHandler implements TopLevelAction {
                 Node node = null;
                 Long id = 0l;
                 try {
-                    node = GraphDragon.getInstance().createFile( file );
+                    node = SeventyEight.getInstance().createFile( file );
                     logger.debug( "ID=" + node.getId() );
                     node.setProperty( "estimated-size", filepart.getSize() );
                     node.setProperty( "file", file.toString() );
@@ -139,7 +144,7 @@ public class UploadHandler implements TopLevelAction {
         }
 
     }
-
+*/
 
     private String getFilename( Part part ) {
         for( String cd : part.getHeader( CONTENT_DISPOSITION ).split( ";" ) ) {
