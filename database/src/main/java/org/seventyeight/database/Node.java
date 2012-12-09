@@ -63,5 +63,7 @@ public interface Node extends Parameterized<Node> {
      */
     public Node removeEdges( EdgeType type, Direction direction );
 
+    public void remove();
+
     public Node save();
 }

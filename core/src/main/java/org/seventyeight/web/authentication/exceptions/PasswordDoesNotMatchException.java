@@ -1,8 +1,8 @@
 package org.seventyeight.web.authentication.exceptions;
 
-import org.seventyeight.exceptions.BlueDragonException;
+import org.seventyeight.web.exceptions.SeventyEightException;
 
-public class PasswordDoesNotMatchException extends BlueDragonException {
+public class PasswordDoesNotMatchException extends SeventyEightException {
 
 	public PasswordDoesNotMatchException( String s ) {
 		super( s );

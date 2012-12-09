@@ -1,23 +1,17 @@
 package org.seventyeight.web.authentication;
 
+import org.seventyeight.web.authentication.exceptions.NoSuchUserException;
+import org.seventyeight.web.authentication.exceptions.PasswordDoesNotMatchException;
+import org.seventyeight.web.authentication.exceptions.UnableToCreateSessionException;
+import org.seventyeight.web.model.Request;
+
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * @author cwolfgang
  *         Date: 03-12-12
  *         Time: 16:49
  */
-public class Authentication {
-    public static enum AuthenticationType {
-        NOT_AUTHENTICATED,
-        AUTHENTICATED;
-    }
-
-    private AuthenticationType authType = AuthenticationType.NOT_AUTHENTICATED;
-
-    public void setAuthenticated() {
-        authType = AuthenticationType.AUTHENTICATED;
-    }
-
-    public boolean isAuthenticated() {
-        return authType.equals( AuthenticationType.AUTHENTICATED );
-    }
+public interface Authentication {
+    void authenticate( Request request, HttpServletResponse response ) throws PasswordDoesNotMatchException, NoSuchUserException, UnableToCreateSessionException, NoSuchUserException;
 }

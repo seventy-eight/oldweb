@@ -35,7 +35,7 @@ public class Request extends HttpServletRequestWrapper implements ParameterReque
     private boolean transactional = false;
 
     private User user;
-    private Authentication authentication;
+    private boolean authenticated;
 
     private String[] requestParts;
 
@@ -120,11 +120,11 @@ public class Request extends HttpServletRequestWrapper implements ParameterReque
 
 
     public boolean isAuthenticated() {
-        return authentication.isAuthenticated();
+        return authenticated;
     }
 
-    public void setAuthentication( Authentication authentication ) {
-        this.authentication = authentication;
+    public void setAuthenticated( boolean authenticated ) {
+        this.authenticated = authenticated;
     }
 
     public String getTemplate() {

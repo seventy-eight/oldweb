@@ -254,6 +254,10 @@ public class OrientNode implements Node {
         return false;
     }
 
+    @Override
+    public void remove() {
+        doc.remove();
+    }
 
     @Override
     public String toString() {

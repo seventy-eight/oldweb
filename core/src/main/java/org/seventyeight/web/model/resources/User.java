@@ -8,6 +8,7 @@ import org.seventyeight.database.Database;
 import org.seventyeight.database.Node;
 import org.seventyeight.utils.Utils;
 import org.seventyeight.web.SeventyEight;
+import org.seventyeight.web.authentication.exceptions.NoSuchUserException;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.model.extensions.UserAvatar;
@@ -22,6 +23,8 @@ public class User extends AbstractResource {
 	public static final String __TYPENAME = "user";
 	
 	public static final String __USERNAME = "username";
+
+    public static final String INDEX_USERNAMES = "usernames";
 
 	public User( Node node ) {
 		super( node );
@@ -184,19 +187,16 @@ public class User extends AbstractResource {
 	 *  Get user resource by username 
 	 * @return
 	 */
-    /*
-	public static User getUserByUsername( String username ) {
+	public static User getUserByUsername( Database db, String username ) throws NoSuchUserException {
+
+        List<Node> nodes = db.getFromIndex( INDEX_USERNAMES, username );
 		
-		Index<Node> idx = GraphDragon.getInstance().getResourceIndex();
-		Node userNode = idx.get( User.__USERNAME, username ).getSingle();
-		
-		if( userNode != null ) {
-			return new User( userNode );
+		if( nodes.size() == 1 ) {
+			return new User( nodes.get( 0 ) );
 		} else {
-			return null;
+			throw new NoSuchUserException( "No single user found. Found " + nodes.size() + " users" );
 		}
 	}
-	*/
 	
 	public static class UserDescriptor extends ResourceDescriptor<User> {
 

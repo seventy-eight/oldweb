@@ -8,21 +8,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.index.IndexHits;
-import org.neo4j.graphdb.index.IndexManager;
-import org.seventyeight.GraphDragon;
-import org.seventyeight.aa.exceptions.UnableToCreateSessionException;
 import org.seventyeight.database.Database;
 import org.seventyeight.database.IndexType;
 import org.seventyeight.database.IndexValueType;
 import org.seventyeight.database.Node;
-import org.seventyeight.exceptions.ResourceNotCreatedException;
-import org.seventyeight.model.AbstractResource;
-import org.seventyeight.model.resources.User;
-import org.seventyeight.util.Util;
 import org.seventyeight.utils.Utils;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.authentication.exceptions.UnableToCreateSessionException;
@@ -106,10 +95,11 @@ public class SessionManager {
 	}
 	
 	public void removeSession( Database db, String hash ) {
+        logger.debug( "[Removing sessions] " + hash );
         List<Node> nodes = db.getFromIndex( INDEX_SESSIONS, hash );
 		
 		for( Node node : nodes ) {
-			node.r
+			node.remove();
 		}
 	}
 }

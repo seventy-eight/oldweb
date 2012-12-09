@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.seventyeight.database.*;
 import org.seventyeight.loader.Loader;
 import org.seventyeight.utils.FileUtilities;
+import org.seventyeight.web.authentication.SessionManager;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.handler.TemplateManager;
 import org.seventyeight.web.model.*;
@@ -89,6 +90,7 @@ public class SeventyEight {
 	private Locale defaultLocale;
 	
 	private TemplateManager templateManager = new TemplateManager();
+    private SessionManager sessionManager;
 	private AbstractTheme defaultTheme = new Default();
 	private I18N i18n;
 	
@@ -173,6 +175,8 @@ public class SeventyEight {
 
         /* Themes */
         themes.put( "default", defaultTheme );
+
+        sessionManager = new SessionManager( db );
 
         db.close();
 
@@ -438,6 +442,9 @@ public class SeventyEight {
         return extensions;
     }
 
+    public SessionManager getSessionManager() {
+        return sessionManager;
+    }
 
     public void addTopLevelAction( String name, TopLevelAction handler ) {
         logger.debug( "Adding " + name + " to action handlers" );
