@@ -26,7 +26,7 @@ import org.seventyeight.web.model.resources.Article;
 import org.seventyeight.web.model.resources.Group;
 import org.seventyeight.web.model.resources.User;
 import org.seventyeight.web.model.themes.Default;
-import org.seventyeight.web.util.Date;
+import org.seventyeight.utils.Date;
 import org.seventyeight.web.util.Installer;
 
 public class SeventyEight {

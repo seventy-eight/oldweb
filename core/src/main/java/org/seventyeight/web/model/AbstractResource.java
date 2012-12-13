@@ -12,13 +12,13 @@ import org.apache.log4j.Logger;
 import org.seventyeight.database.Database;
 import org.seventyeight.database.Edge;
 import org.seventyeight.database.Node;
+import org.seventyeight.utils.Date;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.CouldNotLoadResourceException;
 import org.seventyeight.web.exceptions.ErrorWhileSavingException;
 import org.seventyeight.web.exceptions.InconsistentParameterException;
 import org.seventyeight.web.exceptions.ThemeDoesNotExistException;
 import org.seventyeight.web.model.resources.User;
-import org.seventyeight.web.util.Date;
 
 import com.google.gson.JsonObject;
 

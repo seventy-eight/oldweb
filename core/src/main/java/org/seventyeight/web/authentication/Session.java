@@ -13,7 +13,7 @@ import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.AbstractItem;
 import org.seventyeight.web.model.ParameterRequest;
 import org.seventyeight.web.model.resources.User;
-import org.seventyeight.web.util.Date;
+import org.seventyeight.utils.Date;
 
 
 public class Session extends AbstractItem {

@@ -1,7 +1,6 @@
 package org.seventyeight.web.model.toplevelactionhandlers;
 
 import org.apache.log4j.Logger;
-import org.seventyeight.database.Database;
 import org.seventyeight.database.Node;
 import org.seventyeight.utils.Date;
 import org.seventyeight.web.SeventyEight;
@@ -10,15 +9,14 @@ import org.seventyeight.web.exceptions.ActionHandlerException;
 import org.seventyeight.web.model.Request;
 import org.seventyeight.web.model.TopLevelAction;
 
-import javax.servlet.AsyncContext;
-import javax.servlet.ServletResponse;
+import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-import java.io.File;
-import java.io.PrintWriter;
+import java.io.*;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author cwolfgang
@@ -39,17 +37,93 @@ public class UploadHandler implements TopLevelAction {
 
     @Override
     public void prepare( Request request ) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
-        //To change body of implemented methods use File | Settings | File Templates.
+        if( request.isRequestPost() ) {
+            /* Do the actual upload */
+
+        } else {
+
+        }
+    }
+
+    private void upload( Request request, HttpServletResponse response ) throws IOException, ServletException {
+        Part filepart = request.getPart( "filename" );
+        Part appendpart = request.getPart( "append" );
+        String filename = getFilename( filepart );
+        logger.debug( "Filename: " + filename );
+
+        /* Get the current sessions */
+        Cookie c = org.seventyeight.web.util.Util.getCookie( request, "session" );
+        logger.debug( "Cookie: " + c );
+        Session session = SeventyEight.getInstance().getSessionManager().getSession( request.getDB(), c.getValue() );
+
+        Date now = new Date();
+        int mid = filename.lastIndexOf( "." );
+        String fname = filename;
+        String ext = null;
+        if( mid > -1 ) {
+            ext = filename.substring( mid + 1, filename.length() );
+            fname = filename.substring( 0, mid );
+        }
+        String strpath = "upload/" + session.getUser().getIdentifier() + "/" + formatYear.format( now ) + "/" + formatMonth.format( now ) + "/" + ext;
+
+        File path = new File( SeventyEight.getInstance().getPath(), strpath );
+        logger.debug( "Trying to create path " + path );
+        path.mkdirs();
+        File file = new File( path, filename );
+        int cnt = 0;
+        while( file.exists() ) {
+            file = new File( path, fname + "_" + cnt + ( ext != null ? "." + ext : "" ) );
+            cnt++;
+        }
+        logger.debug( "FILE: " + file.getAbsolutePath() );
+
+        Node node = null;
+        Long id = 0l;
+        try {
+            //node = SeventyEight.getInstance().createFile( file );
+            //logger.debug( "ID=" + node.geti );
+            node.set( "size", filepart.getSize() );
+            node.set( "file", file.toString() );
+            //tx.success();
+            //id = node.getId();
+            logger.debug( "ID=" + id );
+        } catch( Exception e ) {
+            logger.debug( "FAILED: " + e.getMessage() );
+            logger.debug( e.getStackTrace() );
+            //tx.failure();
+        } finally {
+            //tx.finish();
+        }
+
+        logger.debug( "ID2=" + id );
+
+        String append = getValue( appendpart, request.getCharacterEncoding() );
+
+        response.setContentType( "text/html" );
+        logger.debug( "Setting out" );
+        //out = response.getWriter();
+        //logger.debug( "out: " + out );
+        //out.println( "<script language=\"javascript\">top.Utils.startupload(" + id + ", \"" + append + "\");</script>" );
     }
 
     @Override
     public String getName() {
         return "upload";
+    }
+
+
+    private String getValue( Part part, String encoding ) throws IOException {
+        BufferedReader reader = new BufferedReader( new InputStreamReader( part.getInputStream(), encoding ) );
+        StringBuilder value = new StringBuilder();
+        char[] buffer = new char[DEFAULT_BUFFER_SIZE];
+        for( int length = 0; ( length = reader.read( buffer ) ) > 0; ) {
+            value.append( buffer, 0, length );
+        }
+        return value.toString();
     }
 
 

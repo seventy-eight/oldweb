@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 import org.seventyeight.database.Database;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.UnableToInstantiateObjectException;
-import org.seventyeight.web.util.Date;
+import org.seventyeight.utils.Date;
 
 public abstract class ResourceDescriptor<T extends AbstractResource> extends Descriptor<T> {
 

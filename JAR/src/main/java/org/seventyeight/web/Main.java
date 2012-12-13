@@ -9,6 +9,7 @@ import org.eclipse.jetty.plus.webapp.PlusConfiguration;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.FragmentConfiguration;
 import org.eclipse.jetty.webapp.JettyWebXmlConfiguration;
@@ -71,6 +72,8 @@ public class Main {
 
         server.setConnectors( new Connector[] { connector0 } );
 
+        //ServletContextHandler servletHandler = new ServletContextHandler( server, "/", true, false );
+        //servletHandler.addServlet( Rest.class);
         WebAppContext context = new WebAppContext();
         context.setDescriptor( path + "/WEB-INF/web.xml" );
         context.setResourceBase( path.toString() );

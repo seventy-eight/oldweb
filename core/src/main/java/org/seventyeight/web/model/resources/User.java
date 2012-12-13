@@ -12,7 +12,7 @@ import org.seventyeight.web.authentication.exceptions.NoSuchUserException;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.model.extensions.UserAvatar;
-import org.seventyeight.web.util.Date;
+import org.seventyeight.utils.Date;
 
 import com.google.gson.JsonObject;
 

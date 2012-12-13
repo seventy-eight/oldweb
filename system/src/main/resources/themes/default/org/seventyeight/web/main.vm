@@ -2,17 +2,13 @@
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF8">
-    <script language="javascript" type="text/javascript" src="/static/javascript/org/cometd.js"></script>
-    <script language="javascript" type="text/javascript" src="/static/javascript/org/cometd/ReloadExtension.js"></script>
 	<script language="javascript" type="text/javascript" src="/static/javascript/jquery/jquery-1.8.3.js"></script>
-    <script language="javascript" type="text/javascript" src="/static/javascript/jquery/json2.js.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/javascript/ajaxupload-min.js"></script>
 
-    <script language="javascript" type="text/javascript" src="/static/javascript/jquery/jquery.cookie.js"></script>
-    <script language="javascript" type="text/javascript" src="/static/javascript/jquery/jquery.cometd.js"></script>
-    <script language="javascript" type="text/javascript" src="/static/javascript/jquery/jquery.cometd-reload.js"></script>
-    
-	<script language="javascript" type="text/javascript" src="/static/javascript/cometd.js"></script>
-    <script language="javascript" type="text/javascript" src="/static/javascript/utils.js"></script>
+	<script language="javascript" type="text/javascript" src="/static/javascript/utils.js"></script>
+
+    <link rel="stylesheet" href="/static/css/style.css" type="text/css" media="all" />
+
 	<title>$title</title>
 	
 	<script type="text/javascript">
@@ -31,11 +27,12 @@ $(function() {
 */
 
 $(function() {
-    alert( "BEFORE" );
-    testCometd();
-    alert( "AFTER" );
-})
-</script>
+    $('.demo').ajaxupload({
+        url:'/upload'
+    });
+});
+
+    </script>
 
 </head>
 
@@ -51,7 +48,8 @@ $(function() {
 		
 		<td valign="top" rowspan="2" style="border-style:solid;border-width:1px;border-color:#000000">
 			<div align="center">$content</div>
-		</td>
+            <div class="demo" > </div>
+        </td>
 
 	</tr>
 
