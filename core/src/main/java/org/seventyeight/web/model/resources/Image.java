@@ -50,7 +50,7 @@ public class Image extends FileResource {
 			super.save();
 
 			logger.debug( "Getting file" );
-			File file = getLocalFile();
+			File file = getFile();
 			logger.debug( "FILE: " + file );
 			
 			createImages( file );
@@ -94,7 +94,7 @@ public class Image extends FileResource {
 	}
 	
 	public File getFile( String type ) {
-		File f = getLocalFile();
+		File f = getFile();
 		int l = SeventyEight.getInstance().getPath().toString().length();
 		int l2 = f.getParentFile().getAbsoluteFile().toString().length();
 		

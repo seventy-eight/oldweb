@@ -19,6 +19,8 @@ import org.seventyeight.web.model.*;
 public class FileResource extends AbstractResource {
 
 	private static Logger logger = Logger.getLogger( FileResource.class );
+    public static final String INDEX_UPLOAD_IDENTITIES = "upload-identities";
+
 
     public enum FileResourceEdgeType implements EdgeType {
         file
@@ -42,6 +44,13 @@ public class FileResource extends AbstractResource {
 			super.save();
 			logger.debug( "Saving file" );
 
+            String title = request.getValue( "ax-file-name", null );
+            if( title != null ) {
+                logger.debug( "Short-cut titling to " + title );
+                node.set( "title", title );
+            }
+
+            /*
 			Long nodeid = null;
 			try {
 				nodeid = request.getValue( "nodeid" );
@@ -54,10 +63,10 @@ public class FileResource extends AbstractResource {
 				DatabaseItem item = SeventyEight.getInstance().getDatabaseItem( nodeid );
 				setFileRelation( item );
 			}
-			
-			File file = getLocalFile();
+
+			File file = getFile();
 			node.set( "ext", FileResource.getExtension( file ) );
-			
+			*/
 		}
 	}
 	
@@ -77,6 +86,12 @@ public class FileResource extends AbstractResource {
 		//reader.re
 		//fwriter.
 	}
+
+    public void addUploadIdentityToIndex() {
+        String uid = getUploadIdentity();
+        logger.debug( "Adding " + uid + " to upload identity index" );
+        getDB().putToIndex( INDEX_UPLOAD_IDENTITIES, node, uid );
+    }
 
     /**
      * Set the file relation for this {@link FileResource}. Any existing file relations are removed.
@@ -99,6 +114,7 @@ public class FileResource extends AbstractResource {
      * Get local {@link File} for this {@link FileResource}
      * @return
      */
+    /*
 	public File getLocalFile() {
         List<Edge> edges = node.getEdges( FileResourceEdgeType.file, Direction.OUTBOUND );
         if( edges.size() == 1 ) {
@@ -110,20 +126,34 @@ public class FileResource extends AbstractResource {
         }
 
 	}
+	*/
+
+    public String getRelativeFile() {
+        return (String) getProperty( "file" );
+    }
 	
 	public File getFile() {
-		File f = getLocalFile();
+		String rfilename = getRelativeFile();
 		int l = SeventyEight.getInstance().getPath().toString().length();
-		int l2 = f.getAbsoluteFile().toString().length();
+		int l2 = rfilename.length();
 		
 		logger.debug( "PATH: " + l + ", " + l2 );
 		
-		return new File( f.getAbsoluteFile().toString().substring( l, l2 ) );
+		//return new File( rfilename.substring( l, l2 ) );
+        return new File( SeventyEight.getInstance().getPath(), rfilename );
 	}
 	
 	public String getExtension() {
 		return (String) getProperty( "ext" );
 	}
+
+    public Long getFileSize() {
+        return (Long) getProperty( "fileSize" );
+    }
+
+    public String getUploadIdentity() {
+        return (String) getProperty( "uploadIdentity" );
+    }
 	
 	public static String getExtension( File file ) {
 		String filename = file.getName();
@@ -171,9 +201,20 @@ public class FileResource extends AbstractResource {
         public List<String> getRequiredJavascripts() {
             return Collections.singletonList( "ajaxupload-min" );
         }
+
+        @Override
+        public void configureIndex( Database db ) {
+            logger.debug( "Configuring " + INDEX_UPLOAD_IDENTITIES );
+            db.createIndex( INDEX_UPLOAD_IDENTITIES, IndexType.UNIQUE, IndexValueType.STRING );
+        }
     }
 
 	public String getPortrait() {
 		return null;
 	}
+
+    @Override
+    public String toString() {
+        return "FileResource[" + getRelativeFile() + "]";
+    }
 }

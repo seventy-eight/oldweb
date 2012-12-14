@@ -49,7 +49,7 @@ public abstract class Descriptor<T extends Configurable> {
     /**
      * When instantiated the descriptor can configure an index
      */
-    public void configureIndex() {
+    public void configureIndex( Database db ) {
         /* Default implementation is a no op */
     }
 }

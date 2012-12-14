@@ -23,6 +23,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.seventyeight.web.model.resources.Article;
+import org.seventyeight.web.model.resources.FileResource;
 import org.seventyeight.web.model.resources.Group;
 import org.seventyeight.web.model.resources.User;
 import org.seventyeight.web.model.themes.Default;
@@ -140,9 +141,10 @@ public class SeventyEight {
         this.pluginLoader = new Loader( classLoader );
 
         /* Add core types */
-        addDescriptor( new User.UserDescriptor() );
-        addDescriptor( new Group.GroupDescriptor() );
-        addDescriptor( new Article.ArticleDescriptor() );
+        addDescriptor( db, new User.UserDescriptor() );
+        addDescriptor( db, new Group.GroupDescriptor() );
+        addDescriptor( db, new Article.ArticleDescriptor() );
+        addDescriptor( db, new FileResource.FileDescriptor() );
 
         defaultLocale = new Locale( "english" );
 
@@ -311,12 +313,15 @@ public class SeventyEight {
      * Add a {@link Descriptor}. If it is a {@link ResourceDescriptor}, the type is added too.
      * @param descriptor
      */
-    public void addDescriptor( Descriptor<?> descriptor ) {
+    public void addDescriptor( Database db, Descriptor<?> descriptor ) {
         this.descriptors.put( descriptor.getClazz(), descriptor );
 
         if( descriptor instanceof ResourceDescriptor ) {
             this.resourceTypes.put( descriptor.getType(), (ResourceDescriptor<?>) descriptor );
         }
+
+        /**/
+        descriptor.configureIndex( db );
     }
 	
 	public Descriptor<?> getDescriptor( Class<?> clazz ) {

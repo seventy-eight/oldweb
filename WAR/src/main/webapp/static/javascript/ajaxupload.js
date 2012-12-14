@@ -59,6 +59,7 @@
 		params.push('ax-thumbPath=' + encodeURIComponent(settings.thumbPath));
 		params.push('ax-thumbFormat=' + encodeURIComponent(settings.thumbFormat));
 		params.push('ax-maxFileSize=' + encodeURIComponent(settings.maxFileSize));
+		params.push('upload-identity=' + encodeURIComponent( fileName + new Date().getTime() ) );
 		params.push('ax-fileSize=' + size);
 		
 		var otherdata	= (typeof(settings.data)=='function')?settings.data():settings.data;
@@ -613,7 +614,7 @@
 				
 				//generate a unique id for the uploader container
 				var ID = 'ax_uploader_'+Math.round( Math.random()*1000 );
-				while($(ID).length>)
+				while($(ID).length>0)
 				{
 					ID = 'ax_uploader_'+Math.round( Math.random()*1000 );
 				}

@@ -5,13 +5,15 @@ import java.net.URLDecoder;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.apache.log4j.Logger;
 
 import org.seventyeight.web.SeventyEight;
-import org.seventyeight.web.exceptions.CouldNotLoadResourceException;
-import org.seventyeight.web.exceptions.NotFoundException;
-import org.seventyeight.web.exceptions.TooManyException;
+import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.AbstractResource;
+import org.seventyeight.web.model.Descriptor;
 import org.seventyeight.web.model.Request;
 
 public class ResourceHelper {
@@ -41,4 +43,64 @@ public class ResourceHelper {
 
 		return r;
 	}
+
+    public AbstractResource createResource( Descriptor descriptor, Request request, HttpServletResponse response ) throws ResourceNotCreatedException {
+        try {
+            /* We need the json object first to determine if this is a valid configuration */
+            JsonObject jo = null;
+            try {
+                jo = getJsonFromRequest( request );
+            } catch( Exception e ) {
+                logger.warn( e.getMessage() );
+                // throw new ResourceNotCreatedException( "The configuration did not contain a valid json object", e );
+            }
+
+
+            /* Initialize transaction for creation */
+            //request.initializeTransaction();
+            logger.debug( "Newing resource" );
+            AbstractResource r = (AbstractResource) descriptor.newInstance( request.getDB() );
+            logger.debug( "RESOURCE IS " + r );
+
+            /* Set the owner */
+            r.setOwner( request.getUser() );
+
+            request.getContext().put( "identifier", r.getIdentifier() );
+
+            logger.debug( "r: " + r.getIdentifier() );
+
+            r.doSave( request, jo );
+            //request.succeedTransaction();
+
+            return r;
+        } catch( Exception e ) {
+            //request.failTransaction();
+            throw new ResourceNotCreatedException( descriptor.getType(), e );
+        }
+    }
+
+
+    /**
+     * Get the top most configuration json object from a request.
+     * @param request
+     * @return
+     * @throws org.seventyeight.web.exceptions.NoSuchJsonElementException
+     */
+    public JsonObject getJsonFromRequest( Request request ) throws NoSuchJsonElementException {
+        String json = request.getParameter( "json" );
+        logger.debug( "JSON: " + json );
+        if( json == null ) {
+            throw new NoSuchJsonElementException( "Null" );
+        }
+        JsonParser parser = new JsonParser();
+        JsonObject jo = (JsonObject) parser.parse( json );
+        logger.info( "JSON: " + request.getParameter( "json" ) );
+
+        JsonElement e = jo.get( SeventyEight.__JSON_CONFIGURATION_NAME );
+        if( e != null && e.isJsonObject() ) {
+            return (JsonObject)e;
+        } else {
+            throw new NoSuchJsonElementException( "Could not find origin json configuration" );
+        }
+    }
 }

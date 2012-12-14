@@ -6,8 +6,13 @@ import org.seventyeight.utils.Date;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.authentication.Session;
 import org.seventyeight.web.exceptions.ActionHandlerException;
+import org.seventyeight.web.exceptions.ResourceNotCreatedException;
+import org.seventyeight.web.model.AbstractResource;
 import org.seventyeight.web.model.Request;
+import org.seventyeight.web.model.ResourceDescriptor;
 import org.seventyeight.web.model.TopLevelAction;
+import org.seventyeight.web.model.resources.FileResource;
+import org.seventyeight.web.util.ResourceHelper;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -15,7 +20,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.io.*;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,6 +42,9 @@ public class UploadHandler implements TopLevelAction {
     private SimpleDateFormat formatYear = new SimpleDateFormat( "yyyy" );
     private SimpleDateFormat formatMonth = new SimpleDateFormat( "MM" );
 
+    private ResourceHelper helper = new ResourceHelper();
+    private ResourceDescriptor descriptor = (ResourceDescriptor) SeventyEight.getInstance().getDescriptor( FileResource.class );
+
     @Override
     public void prepare( Request request ) {
     }
@@ -43,8 +53,6 @@ public class UploadHandler implements TopLevelAction {
     public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
 
         System.out.println( request.getParameterMap() );
-        System.out.println( "Content type: " + request.getContentType() );
-
 
         if( request.isRequestPost() ) {
             /* Do the actual upload */
@@ -54,11 +62,21 @@ public class UploadHandler implements TopLevelAction {
                 throw new ActionHandlerException( e );
             }
         } else {
-
+            String uid = request.getRequestParts()[2];
+            logger.debug( "UID: " + uid );
+            List<Node> nodes = request.getDB().getFromIndex( FileResource.INDEX_UPLOAD_IDENTITIES, uid );
+            if( nodes.size() > 0 ) {
+                logger.debug( "NODE: " + nodes.get( 0 ) );
+                FileResource f = new FileResource( nodes.get( 0 ) );
+                logger.debug( "FR: " + f );
+                long size = f.getFileSize();
+                File file = f.getFile();
+                logger.debug( "FILE: " + file + " - " + file.exists() );
+            }
         }
     }
 
-    private void upload( Request request, HttpServletResponse response ) throws IOException, ServletException {
+    private void upload( Request request, HttpServletResponse response ) throws IOException, ServletException, ResourceNotCreatedException {
         logger.debug( "Trying to get ax-file-name!" );
         logger.debug( "Trying to get ax-file-name: " + request.getParameter( "ax-file-name" ) );
         //Part filepart = request.getPart( "ax-file-name" );
@@ -84,6 +102,7 @@ public class UploadHandler implements TopLevelAction {
         String strpath = "upload/wolle/" + formatYear.format( now ) + "/" + formatMonth.format( now ) + "/" + ext;
 
         File path = new File( SeventyEight.getInstance().getPath(), strpath );
+        File relativePath = new File( strpath, filename );
         logger.debug( "Trying to create path " + path );
         path.mkdirs();
         File file = new File( path, filename );
@@ -96,37 +115,17 @@ public class UploadHandler implements TopLevelAction {
 
         //write( filepart, file );
 
+        FileResource resource = (FileResource) helper.createResource( descriptor, request, response );
+        resource.getNode().set( "fileSize", Long.parseLong( request.getParameter( "ax-fileSize" ) ) );
+        resource.getNode().set( "uploadIdentity", request.getParameter( "upload-identity" ) );
+        resource.getNode().set( "file", relativePath.toString() );
+        resource.getNode().set( "ext", FileResource.getExtension( file ) );
+        resource.getNode().save();
+
+        resource.addUploadIdentityToIndex();
+
+        /* Finally, write to disk */
         write( request.getInputStream(), file );
-
-                /*
-                Node node = null;
-                Long id = 0l;
-                try {
-                    //node = SeventyEight.getInstance().createFile( file );
-                    //logger.debug( "ID=" + node.geti );
-                    node.set( "size", filepart.getSize() );
-                    node.set( "file", file.toString() );
-                    //tx.success();
-                    //id = node.getId();
-                    logger.debug( "ID=" + id );
-                } catch( Exception e ) {
-                    logger.debug( "FAILED: " + e.getMessage() );
-                    logger.debug( e.getStackTrace() );
-                    //tx.failure();
-                } finally {
-                    //tx.finish();
-                }
-
-                logger.debug( "ID2=" + id );
-
-                String append = getValue( appendpart, request.getCharacterEncoding() );
-
-                response.setContentType( "text/html" );
-                logger.debug( "Setting out" );
-                //out = response.getWriter();
-                //logger.debug( "out: " + out );
-                //out.println( "<script language=\"javascript\">top.Utils.startupload(" + id + ", \"" + append + "\");</script>" );
-                */
     }
 
     @Override
@@ -150,11 +149,21 @@ public class UploadHandler implements TopLevelAction {
         try {
             InputStream input = new BufferedInputStream( is, DEFAULT_BUFFER_SIZE );
             OutputStream os = new BufferedOutputStream( new FileOutputStream( file ), DEFAULT_BUFFER_SIZE );
+            int i = 0;
             try {
                 byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
                 for( int length = 0; ( ( length = input.read( buffer ) ) > 0 ); ) {
                     //System.out.println( "LENGTH: " + length );
                     os.write( buffer, 0, length );
+
+                    try {
+                        System.out.println( "Waiting.... " + i );
+                        Thread.sleep( 1000 );
+                    } catch( InterruptedException e ) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
+
+                    i++;
                 }
             } finally {
                 os.close();
