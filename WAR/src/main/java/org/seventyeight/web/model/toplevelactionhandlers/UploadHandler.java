@@ -148,11 +148,13 @@ public class UploadHandler implements TopLevelAction {
     private void write( InputStream is, File file ) throws IOException {
         logger.debug( "Writing " + is + " to " + file );
         try {
-            OutputStream os = new FileOutputStream( file );
+            InputStream input = new BufferedInputStream( is, DEFAULT_BUFFER_SIZE );
+            OutputStream os = new BufferedOutputStream( new FileOutputStream( file ), DEFAULT_BUFFER_SIZE );
             try {
                 byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
-                for (int n; (n = is.read(buffer)) != -1; ) {
-                    os.write(buffer, 0, n);
+                for( int length = 0; ( ( length = input.read( buffer ) ) > 0 ); ) {
+                    //System.out.println( "LENGTH: " + length );
+                    os.write( buffer, 0, length );
                 }
             } finally {
                 os.close();

@@ -62,7 +62,7 @@ public class ResourceHandler implements TopLevelAction {
             String type = parts[2];
             logger.debug( "[Create] " + type );
 
-            Descriptor<?> descriptor = SeventyEight.getInstance().getDescriptorFromResourceType( type );
+            ResourceDescriptor<?> descriptor = (ResourceDescriptor<?>) SeventyEight.getInstance().getDescriptorFromResourceType( type );
 
             if( descriptor == null ) {
                 throw new ActionHandlerException( new MissingDescriptorException( "Could not find descriptor for " + type ) );
@@ -88,6 +88,9 @@ public class ResourceHandler implements TopLevelAction {
                 request.getContext().put( "url", "/resource/" + type + "/create" );
                 request.getContext().put( "class", descriptor.getClazz() );
                 request.getContext().put( "header", "Creating new " + type );
+
+                /* Required javascrips */
+                request.getContext().put( "javascript", descriptor.getRequiredJavascripts() );
 
                 try {
                     request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClass( descriptor.getClazz(), "configure.vm" ) );

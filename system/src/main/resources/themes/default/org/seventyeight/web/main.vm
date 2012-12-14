@@ -9,6 +9,10 @@
 
     <link rel="stylesheet" href="/static/css/style.css" type="text/css" media="all" />
 
+#foreach( $js in $javascripts )
+    <script language="javascript" type="text/javascript" src="/static/javascript/$js.js"></script>
+#end
+
 	<title>$title</title>
 	
 	<script type="text/javascript">
@@ -28,7 +32,8 @@ $(function() {
 
 $(function() {
     $('.demo').ajaxupload({
-        url:'/upload'
+        url:'/upload',
+        chunkSize: 0
     });
 });
 

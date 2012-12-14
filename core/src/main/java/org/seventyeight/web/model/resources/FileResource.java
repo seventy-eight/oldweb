@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -165,7 +166,12 @@ public class FileResource extends AbstractResource {
 		public FileResource newInstance( Database db ) throws UnableToInstantiateObjectException {
 			return super.newInstance( db );
 		}
-	}
+
+        @Override
+        public List<String> getRequiredJavascripts() {
+            return Collections.singletonList( "ajaxupload-min" );
+        }
+    }
 
 	public String getPortrait() {
 		return null;
