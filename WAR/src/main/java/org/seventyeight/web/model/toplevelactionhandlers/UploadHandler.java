@@ -41,24 +41,36 @@ public class UploadHandler implements TopLevelAction {
 
     @Override
     public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
+
+        System.out.println( request.getParameterMap() );
+        System.out.println( "Content type: " + request.getContentType() );
+
+
         if( request.isRequestPost() ) {
             /* Do the actual upload */
-
+            try {
+                upload( request, response );
+            } catch( Exception e ) {
+                throw new ActionHandlerException( e );
+            }
         } else {
 
         }
     }
 
     private void upload( Request request, HttpServletResponse response ) throws IOException, ServletException {
-        Part filepart = request.getPart( "filename" );
-        Part appendpart = request.getPart( "append" );
-        String filename = getFilename( filepart );
+        logger.debug( "Trying to get ax-file-name!" );
+        logger.debug( "Trying to get ax-file-name: " + request.getParameter( "ax-file-name" ) );
+        //Part filepart = request.getPart( "ax-file-name" );
+        //Part appendpart = request.getPart( "append" );
+        //String filename = getFilename( filepart );
+        String filename = request.getParameter( "ax-file-name" );
         logger.debug( "Filename: " + filename );
 
         /* Get the current sessions */
         Cookie c = org.seventyeight.web.util.Util.getCookie( request, "session" );
         logger.debug( "Cookie: " + c );
-        Session session = SeventyEight.getInstance().getSessionManager().getSession( request.getDB(), c.getValue() );
+        //Session session = SeventyEight.getInstance().getSessionManager().getSession( request.getDB(), c.getValue() );
 
         Date now = new Date();
         int mid = filename.lastIndexOf( "." );
@@ -68,7 +80,8 @@ public class UploadHandler implements TopLevelAction {
             ext = filename.substring( mid + 1, filename.length() );
             fname = filename.substring( 0, mid );
         }
-        String strpath = "upload/" + session.getUser().getIdentifier() + "/" + formatYear.format( now ) + "/" + formatMonth.format( now ) + "/" + ext;
+        //String strpath = "upload/" + session.getUser().getIdentifier() + "/" + formatYear.format( now ) + "/" + formatMonth.format( now ) + "/" + ext;
+        String strpath = "upload/wolle/" + formatYear.format( now ) + "/" + formatMonth.format( now ) + "/" + ext;
 
         File path = new File( SeventyEight.getInstance().getPath(), strpath );
         logger.debug( "Trying to create path " + path );
@@ -81,33 +94,39 @@ public class UploadHandler implements TopLevelAction {
         }
         logger.debug( "FILE: " + file.getAbsolutePath() );
 
-        Node node = null;
-        Long id = 0l;
-        try {
-            //node = SeventyEight.getInstance().createFile( file );
-            //logger.debug( "ID=" + node.geti );
-            node.set( "size", filepart.getSize() );
-            node.set( "file", file.toString() );
-            //tx.success();
-            //id = node.getId();
-            logger.debug( "ID=" + id );
-        } catch( Exception e ) {
-            logger.debug( "FAILED: " + e.getMessage() );
-            logger.debug( e.getStackTrace() );
-            //tx.failure();
-        } finally {
-            //tx.finish();
-        }
+        //write( filepart, file );
 
-        logger.debug( "ID2=" + id );
+        write( request.getInputStream(), file );
 
-        String append = getValue( appendpart, request.getCharacterEncoding() );
+                /*
+                Node node = null;
+                Long id = 0l;
+                try {
+                    //node = SeventyEight.getInstance().createFile( file );
+                    //logger.debug( "ID=" + node.geti );
+                    node.set( "size", filepart.getSize() );
+                    node.set( "file", file.toString() );
+                    //tx.success();
+                    //id = node.getId();
+                    logger.debug( "ID=" + id );
+                } catch( Exception e ) {
+                    logger.debug( "FAILED: " + e.getMessage() );
+                    logger.debug( e.getStackTrace() );
+                    //tx.failure();
+                } finally {
+                    //tx.finish();
+                }
 
-        response.setContentType( "text/html" );
-        logger.debug( "Setting out" );
-        //out = response.getWriter();
-        //logger.debug( "out: " + out );
-        //out.println( "<script language=\"javascript\">top.Utils.startupload(" + id + ", \"" + append + "\");</script>" );
+                logger.debug( "ID2=" + id );
+
+                String append = getValue( appendpart, request.getCharacterEncoding() );
+
+                response.setContentType( "text/html" );
+                logger.debug( "Setting out" );
+                //out = response.getWriter();
+                //logger.debug( "out: " + out );
+                //out.println( "<script language=\"javascript\">top.Utils.startupload(" + id + ", \"" + append + "\");</script>" );
+                */
     }
 
     @Override
@@ -124,6 +143,50 @@ public class UploadHandler implements TopLevelAction {
             value.append( buffer, 0, length );
         }
         return value.toString();
+    }
+
+    private void write( InputStream is, File file ) throws IOException {
+        logger.debug( "Writing " + is + " to " + file );
+        try {
+            OutputStream os = new FileOutputStream( file );
+            try {
+                byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+                for (int n; (n = is.read(buffer)) != -1; ) {
+                    os.write(buffer, 0, n);
+                }
+            } finally {
+                os.close();
+            }
+        } finally {
+            is.close();
+        }
+    }
+
+    private void write2( Part part, File file ) throws IOException {
+        InputStream input = null;
+        OutputStream output = null;
+        logger.debug( "WRITING...." );
+        try {
+            input = new BufferedInputStream( part.getInputStream(), DEFAULT_BUFFER_SIZE );
+            output = new BufferedOutputStream( new FileOutputStream( file ), DEFAULT_BUFFER_SIZE );
+            byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+            for( int length = 0; ( ( length = input.read( buffer ) ) > 0 ); ) {
+                output.write( buffer, 0, length );
+            }
+        } catch( Exception e ) {
+            logger.warn( "Whoops: " + e.getMessage() );
+        } finally {
+            if( output != null ) try {
+                output.close();
+            } catch( IOException logOrIgnore ) {
+            }
+            if( input != null ) try {
+                input.close();
+            } catch( IOException logOrIgnore ) {
+            }
+        }
+
+        logger.debug( "File uploaded" );
     }
 
 
