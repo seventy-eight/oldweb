@@ -48,6 +48,7 @@
 	 */
     function getURL(settings, fileName, size)
     {
+		var uid = fileName + new Date().getTime();
 		var getpath	= (typeof(settings.remotePath)=='function')?settings.remotePath():settings.remotePath;
 		var params	= [];
 		params.push('ax-file-path=' + encodeURIComponent(getpath));
@@ -59,8 +60,10 @@
 		params.push('ax-thumbPath=' + encodeURIComponent(settings.thumbPath));
 		params.push('ax-thumbFormat=' + encodeURIComponent(settings.thumbFormat));
 		params.push('ax-maxFileSize=' + encodeURIComponent(settings.maxFileSize));
-		params.push('upload-identity=' + encodeURIComponent( fileName + new Date().getTime() ) );
+		params.push('upload-identity=' + encodeURIComponent( uid ) );
 		params.push('ax-fileSize=' + size);
+		
+		settings.uid = uid;
 		
 		var otherdata	= (typeof(settings.data)=='function')?settings.data():settings.data;
 		if(typeof(otherdata)=='object')
@@ -132,11 +135,9 @@
     	//progress function, with ajax upload progress can be monitored
     	xhr.upload.addEventListener('progress', function(e)
 		{
-			if (e.lengthComputable) 
-			{
-				var perc = Math.round((e.loaded + chunkNum * chunkSize - chunkSize) * 100 / size);
-				queued.progress(perc);
-			}  
+			$.get('/upload/' + settings.uid, function(data) {
+				queued.progress(data);
+			}, "html");
 		}, false); 
     	    	
     	xhr.upload.addEventListener('error', function(e){

@@ -72,6 +72,16 @@ public class UploadHandler implements TopLevelAction {
                 long size = f.getFileSize();
                 File file = f.getFile();
                 logger.debug( "FILE: " + file + " - " + file.exists() );
+
+                double d1 = (double)file.length();
+                double d2 = (double)f.getFileSize();
+                double d = ( Math.round( ( d1 / d2 ) * 10000.0 ) ) / 100.0;
+                logger.debug( "DOUBLE: " + d );
+                try {
+                    response.getWriter().print( d );
+                } catch( IOException e ) {
+                    logger.warn( e );
+                }
             }
         }
     }
@@ -156,12 +166,14 @@ public class UploadHandler implements TopLevelAction {
                     //System.out.println( "LENGTH: " + length );
                     os.write( buffer, 0, length );
 
+                    /*
                     try {
                         System.out.println( "Waiting.... " + i );
-                        Thread.sleep( 1000 );
+                        Thread.sleep( 250 );
                     } catch( InterruptedException e ) {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
+                    */
 
                     i++;
                 }
