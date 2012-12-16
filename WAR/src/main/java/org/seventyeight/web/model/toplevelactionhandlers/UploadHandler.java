@@ -1,6 +1,7 @@
 package org.seventyeight.web.model.toplevelactionhandlers;
 
 import org.apache.log4j.Logger;
+import org.seventyeight.database.Database;
 import org.seventyeight.database.Node;
 import org.seventyeight.utils.Date;
 import org.seventyeight.web.SeventyEight;
@@ -14,8 +15,10 @@ import org.seventyeight.web.model.TopLevelAction;
 import org.seventyeight.web.model.resources.FileResource;
 import org.seventyeight.web.util.ResourceHelper;
 
+import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.io.*;
@@ -24,6 +27,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * @author cwolfgang
@@ -135,7 +140,12 @@ public class UploadHandler implements TopLevelAction {
         resource.addUploadIdentityToIndex();
 
         /* Finally, write to disk */
-        write( request.getInputStream(), file );
+        //write( request.getInputStream(), file );
+        AsyncContext aCtx = request.startAsync( request, response );
+        Executor uploadExecutor = Executors.newCachedThreadPool();
+
+        logger.debug( "SERVLET THREAD: " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName() );
+        uploadExecutor.execute( new Copier( aCtx, file ) );
     }
 
     @Override
@@ -212,6 +222,26 @@ public class UploadHandler implements TopLevelAction {
         logger.debug( "File uploaded" );
     }
 
+
+    private class Copier implements Runnable {
+        AsyncContext ctx;
+        File file;
+
+        public Copier( AsyncContext ctx, File file ) {
+            this.ctx = ctx;
+            this.file = file;
+        }
+
+        public void run() {
+            HttpServletRequest request = (HttpServletRequest) ctx.getRequest();
+            logger.debug( "REQUEST IS " + request );
+            try {
+                write( request.getInputStream(), file );
+            } catch( IOException e ) {
+                logger.error( "Unable to copy file", e );
+            }
+        }
+    }
 
 /*
     private class Upload implements Runnable {

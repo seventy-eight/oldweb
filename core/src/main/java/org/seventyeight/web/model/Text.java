@@ -8,7 +8,7 @@ import org.seventyeight.web.SeventyEight.ResourceEdgeType;
 
 import com.google.gson.JsonObject;
 
-public class Text implements Item, DatabaseItem<Item> {
+public class Text implements Item, DatabaseItem {
 	Node node;
 	
 	public Text( Node node ) {
@@ -60,7 +60,7 @@ public class Text implements Item, DatabaseItem<Item> {
     }
 
     @Override
-    public Item createRelation( DatabaseItem<Item> other, EdgeType type ) {
+    public Edge createRelation( DatabaseItem other, EdgeType type ) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

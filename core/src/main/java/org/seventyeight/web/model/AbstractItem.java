@@ -19,7 +19,7 @@ import org.seventyeight.web.exceptions.ResourceDoesNotExistException;
 import com.google.gson.JsonObject;
 
 
-public abstract class AbstractItem implements Item, DatabaseItem<AbstractItem> {
+public abstract class AbstractItem implements Item, DatabaseItem {
 
 	private static Logger logger = Logger.getLogger( AbstractItem.class );
 	protected Node node;
@@ -301,10 +301,8 @@ public abstract class AbstractItem implements Item, DatabaseItem<AbstractItem> {
 	*/
 
     @Override
-    public AbstractItem createRelation( DatabaseItem<AbstractItem> other, EdgeType type ) {
-        node.createEdge( other.getNode(), type );
-
-        return this;
+    public Edge createRelation( DatabaseItem other, EdgeType type ) {
+        return node.createEdge( other.getNode(), type );
     }
 
     @Override

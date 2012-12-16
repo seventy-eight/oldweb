@@ -1,6 +1,7 @@
 package org.seventyeight.web.model;
 
 import org.seventyeight.database.Database;
+import org.seventyeight.database.Edge;
 import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
 
@@ -9,9 +10,9 @@ import org.seventyeight.database.Node;
  * Date: 20-11-12
  * Time: 14:53
  */
-public interface DatabaseItem<T> {
+public interface DatabaseItem {
     public Node getNode();
-    public T createRelation( DatabaseItem<T> other, EdgeType type );
+    public Edge createRelation( DatabaseItem other, EdgeType type );
     public String getItemClass();
     public Database getDB();
 }

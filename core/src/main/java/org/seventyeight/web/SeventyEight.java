@@ -14,6 +14,7 @@ import org.seventyeight.loader.Loader;
 import org.seventyeight.utils.FileUtilities;
 import org.seventyeight.web.authentication.SessionManager;
 import org.seventyeight.web.exceptions.*;
+import org.seventyeight.web.handler.Dictionary;
 import org.seventyeight.web.handler.TemplateManager;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.model.Locale;
@@ -57,6 +58,10 @@ public class SeventyEight {
 	private Node systemNode = null;
     private User anonymous;
 
+    /**
+     * The {@link Dictionary}
+     */
+    private Dictionary dictionary = new Dictionary();
 
     public enum NodeType {
 		item,

@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.seventyeight.web.exceptions.DictionaryDoesNotExistException;
-import org.seventyeight.web.model.AbstractDictionary;
+import org.seventyeight.web.handler.Dictionary;
 
 public class I18N {
-	private Map<Class<?>, AbstractDictionary> i18n = new HashMap<Class<?>, AbstractDictionary>();
+	private Map<Class<?>, Dictionary> i18n = new HashMap<Class<?>, Dictionary>();
 		
-	public AbstractDictionary getDictionary( Class<?> clazz ) throws DictionaryDoesNotExistException {
+	public Dictionary getDictionary( Class<?> clazz ) throws DictionaryDoesNotExistException {
 		try {
 			return i18n.get( clazz );
 		} catch( Exception e ) {
@@ -17,7 +17,7 @@ public class I18N {
 		}
 	}
 	
-	public void addDictionary( Class<?> clazz, AbstractDictionary dictionary ) {
+	public void addDictionary( Class<?> clazz, Dictionary dictionary ) {
 		i18n.put( clazz, dictionary );
 	}
 }
