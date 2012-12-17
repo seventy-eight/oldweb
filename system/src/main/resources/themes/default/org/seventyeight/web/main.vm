@@ -29,15 +29,7 @@ $(function() {
 	}, "html");
 });
 */
-
-$(function() {
-    $('.demo').ajaxupload({
-        url:'/upload',
-        chunkSize: 0
-    });
-});
-
-    </script>
+</script>
 
 </head>
 
@@ -53,7 +45,6 @@ $(function() {
 		
 		<td valign="top" rowspan="2" style="border-style:solid;border-width:1px;border-color:#000000">
 			<div align="center">$content</div>
-            <div class="demo" > </div>
         </td>
 
 	</tr>

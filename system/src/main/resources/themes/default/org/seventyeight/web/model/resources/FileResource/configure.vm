@@ -1,7 +1,16 @@
 
+<script type="text/javascript">
+$(function() {
+    $('.upload').ajaxupload({
+        url:'/upload',
+        chunkSize: 0
+    });
+});
+
+</script>
 
 <tr>
 	<td>File</td>
-	<td>#upload()</td>
+	<td><div class="upload"></div></td>
 </tr>
 
