@@ -62,8 +62,9 @@
 		params.push('ax-maxFileSize=' + encodeURIComponent(settings.maxFileSize));
 		params.push('upload-identity=' + encodeURIComponent( uid ) );
 		params.push('ax-fileSize=' + size);
-		
+
 		settings.uid = uid;
+        settings.lastCheck = 0;
 		
 		var otherdata	= (typeof(settings.data)=='function')?settings.data():settings.data;
 		if(typeof(otherdata)=='object')
@@ -135,9 +136,12 @@
     	//progress function, with ajax upload progress can be monitored
     	xhr.upload.addEventListener('progress', function(e)
 		{
-			$.get('/upload/' + settings.uid, function(data) {
-				queued.progress(data);
-			}, "html");
+            if( e.timeStamp > settings.lastCheck ) {
+                settings.lastCheck = e.timeStamp + 1000000; // 500.000
+                $.get('/upload/' + settings.uid, function(data) {
+                    queued.progress(data);
+                }, "html");
+            }
 		}, false); 
     	    	
     	xhr.upload.addEventListener('error', function(e){
