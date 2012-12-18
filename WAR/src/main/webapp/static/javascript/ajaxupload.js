@@ -162,8 +162,14 @@
 					{
 						settings.SLOTS--;
 						queued.end(ret.name, ret.size, ret.status, ret.info);
-					}
-					else if(ret.status == 'error')
+                        /* This is where I add to my list */
+                        var form = $("#configure");
+
+                        alert( form );
+                        form.find("#uploadedIDS").val(function(index, val) {
+                            return val + "(" + ret + ")" + "\n";
+                        });
+                    } else if(ret.status == 'error')
 					{
 						throw ret.info;
 					}

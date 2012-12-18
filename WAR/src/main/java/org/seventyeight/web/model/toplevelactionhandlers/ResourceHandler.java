@@ -70,6 +70,7 @@ public class ResourceHandler implements TopLevelAction {
 
             if( request.isRequestPost() ) {
                 logger.debug( "Creating new " + type );
+                logger.debug( "Parameters: " + request.getParameterMap() );
                 AbstractResource r = null;
                 try {
                     r = helper.createResource( descriptor, request, response );
@@ -88,11 +89,22 @@ public class ResourceHandler implements TopLevelAction {
                 request.getContext().put( "url", "/resource/" + type + "/create" );
                 request.getContext().put( "class", descriptor.getClazz() );
                 request.getContext().put( "header", "Creating new " + type );
+                request.getContext().put( "descriptor", descriptor );
 
                 /* Required javascrips */
                 request.getContext().put( "javascript", descriptor.getRequiredJavascripts() );
 
                 try {
+                    /* Special dual side */
+                    try {
+                        request.getContext().put( "dualSide", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClassNoRecursive( descriptor.getClazz(), "dualSide.vm" ) );
+                    } catch ( TemplateDoesNotExistException e ) {
+                        /* No op */
+                        logger.debug( "Dual side not defined" );
+                    }
+
+                    /* Options */
+
                     request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClass( descriptor.getClazz(), "configure.vm" ) );
                     response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
                 } catch( TemplateDoesNotExistException e ) {

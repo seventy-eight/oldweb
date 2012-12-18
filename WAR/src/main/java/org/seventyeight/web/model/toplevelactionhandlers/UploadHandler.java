@@ -146,6 +146,9 @@ public class UploadHandler implements TopLevelAction {
 
         logger.debug( "SERVLET THREAD: " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName() );
         uploadExecutor.execute( new Copier( aCtx, file ) );
+
+        //response.setStatus( 200 );
+        response.getWriter().print( resource.getIdentifier() );
     }
 
     @Override

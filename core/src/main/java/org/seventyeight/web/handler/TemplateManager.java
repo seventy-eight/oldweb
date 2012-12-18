@@ -274,6 +274,14 @@ public class TemplateManager {
             return context.get( "subchildcontent" ).toString();
         }
 
+        public String renderClassNoRecursive( Class clazz, String method ) throws TemplateDoesNotExistException {
+            String template = getUrlFromClass( clazz.getCanonicalName(), method );
+
+            context.put( "subchildcontent", render( template ) );
+
+            return context.get( "subchildcontent" ).toString();
+        }
+
         /**
          * Render a specific object, given as "item" in the context
          * @param object

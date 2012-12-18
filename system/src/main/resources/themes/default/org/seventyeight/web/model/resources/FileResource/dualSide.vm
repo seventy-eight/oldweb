@@ -1,0 +1,11 @@
+<script type="text/javascript">
+    $(function() {
+        $('.upload').ajaxupload({
+            url:'/upload',
+            chunkSize: 0
+        });
+    });
+
+</script>
+
+<div class="upload"></div>

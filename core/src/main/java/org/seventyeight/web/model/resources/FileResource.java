@@ -203,6 +203,11 @@ public class FileResource extends AbstractResource {
         }
 
         @Override
+        public boolean inputTitle() {
+            return false;
+        }
+
+        @Override
         public void configureIndex( Database db ) {
             logger.debug( "Configuring " + INDEX_UPLOAD_IDENTITIES );
             db.createIndex( INDEX_UPLOAD_IDENTITIES, IndexType.UNIQUE, IndexValueType.STRING );

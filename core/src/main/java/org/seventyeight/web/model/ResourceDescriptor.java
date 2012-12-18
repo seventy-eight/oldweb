@@ -31,4 +31,8 @@ public abstract class ResourceDescriptor<T extends AbstractResource> extends Des
 
 		return instance;
 	}
+
+    public boolean inputTitle() {
+        return true;
+    }
 }

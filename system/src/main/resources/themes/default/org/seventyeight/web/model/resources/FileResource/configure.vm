@@ -1,16 +1,5 @@
-
-<script type="text/javascript">
-$(function() {
-    $('.upload').ajaxupload({
-        url:'/upload',
-        chunkSize: 0
-    });
-});
-
-</script>
-
 <tr>
-	<td>File</td>
-	<td><div class="upload"></div></td>
+    <td>
+        <textarea style="width: 250px; height: 150px" id="uploadedIDS"></textarea>
+    </td>
 </tr>
-
