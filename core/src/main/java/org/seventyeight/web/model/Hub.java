@@ -31,9 +31,20 @@ public abstract class Hub extends AbstractDatabaseItem implements Describable {
         }
     }
 
-    public void addItem( DatabaseItem item, EdgeType relation ) {
+    public int getNumberOfItems() {
+        return node.getEdges( null, Direction.OUTBOUND ).size();
+    }
+
+    public int getNextIdentifier() {
+        return getNumberOfItems();
+    }
+
+    public int addItem( DatabaseItem item, EdgeType relation ) {
+        int id = getNextIdentifier();
         Edge edge = node.createEdge( item.getNode(), relation );
-        edge.set( "timestamp", new Date().getTime() );
+        edge.set( "id", id );
+
+        return id;
     }
 
     public Descriptor<?> getDescriptor() {

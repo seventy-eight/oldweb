@@ -27,7 +27,9 @@ public class ReplyHub extends Hub {
     }
 
     public void addReply( Reply reply ) {
-        addItem( reply, Reply.ReplyRelation.reply );
+        int id = addItem( reply, Reply.ReplyRelation.reply );
+        AbstractResource resource = getResource();
+        node.getDB().putToIndex( INDEX_REPLIES, reply.getNode(), resource.getIdentifier(), id );
     }
 
     public List<Reply> getReplies( int offset, int number ) {
