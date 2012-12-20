@@ -67,7 +67,7 @@ public class EdgeTest {
 
         /*
         sw.start( "Getting enemies" );
-        List<OrientEdge> edges2 = node.getEdges( TestEdgeType.ENEMY, Direction.OUTBOUND );
+        List<OrientEdge> edges2 = node.getEdgesTo( TestEdgeType.ENEMY, Direction.OUTBOUND );
         sw.stop();
         */
 

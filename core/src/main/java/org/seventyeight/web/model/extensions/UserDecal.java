@@ -1,13 +1,11 @@
 package org.seventyeight.web.model.extensions;
 
 import org.apache.log4j.Logger;
-import org.seventyeight.database.Database;
 import org.seventyeight.database.Node;
-import org.seventyeight.web.exceptions.UnableToInstantiateObjectException;
 import org.seventyeight.web.model.*;
 
 //@ExtensionType
-public class UserDecal extends AbstractExtension implements Portrait, Configurable, UserAvatarExtension {
+public class UserDecal extends AbstractExtension implements Portrait, Describable, UserAvatarExtension {
 
 	private static Logger logger = Logger.getLogger( UserDecal.class );
 	

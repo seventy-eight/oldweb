@@ -20,7 +20,7 @@ import org.seventyeight.web.model.resources.User;
 import com.google.gson.JsonObject;
 
 
-public abstract class AbstractObject extends AbstractItem implements Ownable, Configurable {
+public abstract class AbstractObject extends AbstractItem implements Ownable, Describable {
 
 	private static Logger logger = Logger.getLogger( AbstractObject.class );
 
@@ -153,7 +153,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, Co
 	 * @return
 	 */
 	public Node getTextNode( String language, String property ) {
-		//List<ODocument> edges = SeventyEight.getInstance().getEdges( db, this, ResourceEdgeType.translation );
+		//List<ODocument> edges = SeventyEight.getInstance().getEdgesTo( db, this, ResourceEdgeType.translation );
         List<Edge> edges = node.getEdges( ResourceEdgeType.translation, Direction.OUTBOUND );
 		Node d = null;
 

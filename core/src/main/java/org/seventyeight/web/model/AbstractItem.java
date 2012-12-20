@@ -1,9 +1,6 @@
 package org.seventyeight.web.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.seventyeight.database.*;
@@ -109,10 +106,10 @@ public abstract class AbstractItem implements Item, DatabaseItem {
 							//}
 						} else {
 							logger.debug( "There were NO extensions defined" );
-							Configurable e = d.newInstance( getDB() );
+							Describable e = d.newInstance( getDB() );
 							logger.debug( "Saving configurable " + e );
 							e.doSave( request, o );
-							logger.debug( "Configurable saved" );
+							logger.debug( "Describable saved" );
 							//SeventyEight.getInstance().addNodeRelation( db, item, e, ResourceEdgeType.extension, false );
                             node.createEdge( e.getNode(), ResourceEdgeType.extension );
 						}
@@ -161,24 +158,49 @@ public abstract class AbstractItem implements Item, DatabaseItem {
 		/**/
 	}
 
+    public List<Node> getExtensions( Class<?> assignableFrom ) {
+        List<Edge> edges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND );
+
+        List<Node> nodes = new LinkedList<Node>();
+
+        for( Edge edge : edges ) {
+            Node node = edge.getTargetNode();
+            String clazzStr = (String) node.get( "class" );
+            try {
+                Class clazz = Class.forName( clazzStr );
+                clazz.isAssignableFrom( assignableFrom );
+                nodes.add( node );
+            } catch( ClassNotFoundException e ) {
+                logger.warn( e );
+            }
+        }
+
+        return nodes;
+    }
 	
-	public Map<String, List<Node>> getExtensionNodes() {
+	public Map<Class, List<Node>> getExtensionNodes() {
 		//List<ODocument> ns = SeventyEight.getInstance().getNodes( db, this, ResourceEdgeType.extension );
         List<Edge> edges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND );
 		
-		Map<String, List<Node>> nodes = new HashMap<String, List<Node>>();
+		Map<Class, List<Node>> nodes = new HashMap<Class, List<Node>>();
 		
 		for( Edge edge : edges ) {
             Node node = edge.getTargetNode();
-			String clazz = (String) node.get( "class" );
-			
-			if( clazz != null ) {
-				if( !nodes.containsKey( clazz ) ) {
-					nodes.put( clazz, new ArrayList<Node>() );
-				}
-				
-				nodes.get( clazz ).add( node );
-			}
+			String clazzStr = (String) node.get( "class" );
+            try {
+                Class clazz = Class.forName( clazzStr );
+                if( clazz != null ) {
+                    if( !nodes.containsKey( clazz ) ) {
+                        nodes.put( clazz, new ArrayList<Node>() );
+                    }
+
+                    nodes.get( clazz ).add( node );
+                }
+            } catch( ClassNotFoundException e ) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+
+
 		}
 		
 		return nodes;

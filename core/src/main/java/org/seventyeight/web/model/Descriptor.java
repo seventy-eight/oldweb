@@ -7,7 +7,7 @@ import org.seventyeight.database.Database;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.exceptions.UnableToInstantiateObjectException;
 
-public abstract class Descriptor<T extends Configurable> {
+public abstract class Descriptor<T extends Describable> {
 	
 	private static Logger logger = Logger.getLogger( Descriptor.class );
 	
@@ -42,7 +42,7 @@ public abstract class Descriptor<T extends Configurable> {
 	//public abstract T get( Node node );
 	public abstract Class<? extends Extension> getExtensionClass();
 	
-	public Class<? extends Configurable> getClazz() {
+	public Class<? extends Describable> getClazz() {
 		return clazz;
 	}
 

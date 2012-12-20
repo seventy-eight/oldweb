@@ -27,7 +27,7 @@ public class Text implements Item, DatabaseItem {
 	public static Text create( Database db, DatabaseItem item, String property, String language ) {
 		//ODocument node = SeventyEight.getInstance().createNode( Text.class, NodeType.text );
 		Text t = new Text( db.createNode() );
-		//List<Edge> edges = t.getNode().getEdges( ResourceEdgeType.translation );
+		//List<Edge> edges = t.getNode().getEdgesTo( ResourceEdgeType.translation );
         Edge edge = item.getNode().createEdge( t.getNode(), ResourceEdgeType.translation );
 		//ODocument edge = SeventyEight.getInstance().createEdge( item, t, ResourceEdgeType.translation );
 

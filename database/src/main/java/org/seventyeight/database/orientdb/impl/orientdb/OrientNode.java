@@ -104,26 +104,7 @@ public class OrientNode implements Node {
         return es;
     }
 
-    @Override
-    public List<OrientEdge> getEdges( Node other, EdgeType type ) {
-        logger.debug( "Getting edges between " + this + " and " + other + " of type " + type );
 
-        OrientNode n = (OrientNode) other;
-
-        Set<OIdentifiable> ois = db.getInternalDatabase().getEdgesBetweenVertexes( doc, n.doc, ( type != null ? new String[]{ type.toString() } : null ) );
-
-        logger.debug( "EDGES: " + ois );
-        List<OrientEdge> es = new LinkedList<OrientEdge>();
-
-        for( OIdentifiable e : ois ) {
-
-            OrientEdge edge = new OrientEdge( e, this, (OrientNode)other );
-            es.add( edge );
-            logger.debug( "Edge2: " + edge );
-        }
-
-        return es;
-    }
 
     @Override
     public List<OrientEdge> getEdgesTo( Node to, EdgeType type ) {

@@ -79,7 +79,7 @@ public class NodeVerifier {
             System.out.println( "Checking " + r );
             List<Edge> edges = null;
             if( r.bidirectional ) {
-                edges = node.getEdges( r.other, r.type );
+                edges = node.getEdgesTo( r.other, r.type );
             } else {
                 edges = node.getEdgesTo( r.other, r.type );
             }

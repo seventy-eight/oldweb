@@ -1,6 +1,5 @@
 package org.seventyeight.web.model.extensions;
 
-import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
@@ -8,7 +7,7 @@ import org.seventyeight.web.exceptions.NoSuchObjectException;
 import org.seventyeight.web.exceptions.UnableToInstantiateObjectException;
 import org.seventyeight.web.model.*;
 
-public class UserAvatar extends AbstractExtension implements UserExtension, Configurable {
+public class UserAvatar extends AbstractExtension implements UserExtension, Describable {
 	
 	private static Logger logger = Logger.getLogger( UserAvatar.class );
 

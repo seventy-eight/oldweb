@@ -13,6 +13,7 @@ import org.seventyeight.database.*;
 import org.seventyeight.loader.Loader;
 import org.seventyeight.utils.FileUtilities;
 import org.seventyeight.web.authentication.SessionManager;
+import org.seventyeight.web.debate.treelike.ReplyHub;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.handler.Dictionary;
 import org.seventyeight.web.handler.TemplateManager;
@@ -88,6 +89,14 @@ public class SeventyEight {
 		writeAccess,
 		reviewAccess
 	}
+
+    /**
+     * A resource hub is a {@link Node} that extracts specific relations from the actual resource. These {@link Node}'s should be identified with a property called <i>type</i>.
+     * resourceHubRelations points to such {@link Node}'s
+     */
+    public enum HubRelation implements EdgeType {
+        resourceHubRelation
+    }
 	
 	/* Paths */
 	private File path;
@@ -553,7 +562,14 @@ public class SeventyEight {
 		return objects;
 	}
 	
-	
+
+    /**********************/
+    /*  TEMPORARY STUFF   */
+    /**********************/
+
+    public Class<? extends Hub> getReplyHubType() {
+        return ReplyHub.class;
+    }
 
 
 }

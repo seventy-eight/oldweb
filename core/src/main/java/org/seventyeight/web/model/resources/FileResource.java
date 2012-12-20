@@ -116,7 +116,7 @@ public class FileResource extends AbstractResource {
      */
     /*
 	public File getLocalFile() {
-        List<Edge> edges = node.getEdges( FileResourceEdgeType.file, Direction.OUTBOUND );
+        List<Edge> edges = node.getEdgesTo( FileResourceEdgeType.file, Direction.OUTBOUND );
         if( edges.size() == 1 ) {
             return new File( (String) edges.get( 0 ).getTargetNode().get( "file" ) );
         } else if( edges.size() > 1 ) {

@@ -31,13 +31,6 @@ public interface Node extends Parameterized<Node> {
     public <E extends Edge> List<E> getEdges( EdgeType type, Direction direction );
 
     /**
-     * Get the {@link Edge}'s between this and the other {@link Node} with a certain {@link EdgeType}
-     * @param type
-     * @return
-     */
-    public <E extends Edge, N extends Node> List<E> getEdges( N other, EdgeType type );
-
-    /**
      * Get the {@link Edge}'s between this and the other {@link Node} with a certain {@link EdgeType} in a given {@link Direction}
      * @param other
      * @param type
