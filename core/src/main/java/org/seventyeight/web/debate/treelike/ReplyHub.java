@@ -32,6 +32,7 @@ public class ReplyHub extends Hub {
 
     public List<Reply> getReplies( int offset, int number ) {
         List<Edge> edges = node.getEdges( null, Direction.OUTBOUND );
+        node.getDB().getFromIndex()
     }
 
     @Override
@@ -64,7 +65,8 @@ public class ReplyHub extends Hub {
         @Override
         public void configureIndex( Database db ) {
             logger.debug( "Configuring " + INDEX_REPLIES );
-            db.createIndex( INDEX_REPLIES, IndexType.UNIQUE, IndexValueType.STRING );
+            // identifier, time
+            db.createIndex( INDEX_REPLIES, IndexType.UNIQUE, IndexValueType.LONG, IndexValueType.LONG );
         }
     }
 }

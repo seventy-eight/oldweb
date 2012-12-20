@@ -54,6 +54,8 @@ public interface Database<IDB, NT extends Node> {
 
     public List<NT> getFromIndex( String name, Object ... keys );
 
+    public List<NT> getFromIndexAbove( String name, int limit, Object ... keys );
+
     /**
      * Remove a {@link Node} from the named index
      * @param indexName

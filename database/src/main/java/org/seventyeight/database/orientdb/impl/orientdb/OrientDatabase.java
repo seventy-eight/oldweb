@@ -174,6 +174,36 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
         return nodes;
     }
 
+    public List<OrientNode> getFromIndexAbove( String name, int limit, Object ... keys ) {
+        int count = db.getMetadata().getIndexManager().getIndex( name ).getDefinition().getParamCount();
+        System.out.println( "COUNT: " + count );
+        System.out.println( "COUNT: " + keys.length );
+        Collection<OIdentifiable> docs = null;
+        if( keys.length > 1 ) {
+            docs = db.getMetadata().getIndexManager().getIndex( name ).getValuesMajor( new OCompositeKey( keys ), true, limit );
+        } else {
+            if( count == 1 ) {
+                docs = db.getMetadata().getIndexManager().getIndex( name ).getValuesMajor( keys[0], true, limit );
+            } else {
+                docs = db.getMetadata().getIndexManager().getIndex( name ).getValuesMajor( new OCompositeKey( keys[0] ), true, limit );
+            }
+        }
+
+        List<OrientNode> nodes = new LinkedList<OrientNode>();
+
+        for( OIdentifiable d : docs ) {
+            nodes.add( new OrientNode( this, (ODocument) d.getRecord() ) );
+        }
+
+        return nodes;
+    }
+
+    /*
+    public void bla() {
+        db.getMetadata().getIndexManager().getIndex("").getValues()
+    }
+    */
+
     public void removeNodeFromIndex( String indexName, OrientNode node ) {
         db.getMetadata().getIndexManager().getIndex( indexName ).remove( node.getDocument() );
     }
