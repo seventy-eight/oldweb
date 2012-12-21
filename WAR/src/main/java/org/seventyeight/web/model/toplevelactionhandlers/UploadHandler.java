@@ -8,6 +8,7 @@ import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.authentication.Session;
 import org.seventyeight.web.exceptions.ActionHandlerException;
 import org.seventyeight.web.exceptions.ResourceNotCreatedException;
+import org.seventyeight.web.exceptions.TemplateDoesNotExistException;
 import org.seventyeight.web.model.AbstractResource;
 import org.seventyeight.web.model.Request;
 import org.seventyeight.web.model.ResourceDescriptor;
@@ -54,6 +55,18 @@ public class UploadHandler implements TopLevelAction {
     public void prepare( Request request ) {
     }
 
+    /*
+
+    (0) / (1) upload handler / (2) type
+
+    Types:
+    GET: /info: get information
+    GET: /multiple: multiple upload form
+    POST: /: upload a single file
+
+
+     */
+
     @Override
     public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
 
@@ -67,25 +80,36 @@ public class UploadHandler implements TopLevelAction {
                 throw new ActionHandlerException( e );
             }
         } else {
-            String uid = request.getRequestParts()[2];
-            logger.debug( "UID: " + uid );
-            List<Node> nodes = request.getDB().getFromIndex( FileResource.INDEX_UPLOAD_IDENTITIES, uid );
-            if( nodes.size() > 0 ) {
-                logger.debug( "NODE: " + nodes.get( 0 ) );
-                FileResource f = new FileResource( nodes.get( 0 ) );
-                logger.debug( "FR: " + f );
-                long size = f.getFileSize();
-                File file = f.getFile();
-                logger.debug( "FILE: " + file + " - " + file.exists() );
+            if( request.getRequestParts()[2].equals( "info" ) ) {
+                String uid = request.getRequestParts()[3];
+                logger.debug( "Upload information: " + uid );
+                List<Node> nodes = request.getDB().getFromIndex( FileResource.INDEX_UPLOAD_IDENTITIES, uid );
+                if( nodes.size() > 0 ) {
+                    logger.debug( "NODE: " + nodes.get( 0 ) );
+                    FileResource f = new FileResource( nodes.get( 0 ) );
+                    logger.debug( "FR: " + f );
+                    long size = f.getFileSize();
+                    File file = f.getFile();
+                    logger.debug( "FILE: " + file + " - " + file.exists() );
 
-                double d1 = (double)file.length();
-                double d2 = (double)f.getFileSize();
-                double d = ( Math.round( ( d1 / d2 ) * 10000.0 ) ) / 100.0;
-                logger.debug( "DOUBLE: " + d );
+                    double d1 = (double)file.length();
+                    double d2 = (double)f.getFileSize();
+                    double d = ( Math.round( ( d1 / d2 ) * 10000.0 ) ) / 100.0;
+                    logger.debug( "DOUBLE: " + d );
+                    try {
+                        response.getWriter().print( d );
+                    } catch( IOException e ) {
+                        logger.warn( e );
+                    }
+                }
+            } else {
+                logger.debug( "Multiple upload form" );
                 try {
-                    response.getWriter().print( d );
-                } catch( IOException e ) {
-                    logger.warn( e );
+                    request.getContext().put( "javascript", "ajaxupload" );
+                    request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer().render( "org.seventyeight.web.multipleupload.vm" ) );
+                    response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
+                } catch( Exception e ) {
+                    throw new ActionHandlerException( e );
                 }
             }
         }
