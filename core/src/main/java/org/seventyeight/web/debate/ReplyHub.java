@@ -57,6 +57,8 @@ public abstract class ReplyHub extends Hub {
         return replies;
     }
 
+    public abstract Descriptor<?> getReplyDescriptor();
+
     @Override
     public String getDisplayName() {
         return "Reply Hub";
@@ -67,7 +69,7 @@ public abstract class ReplyHub extends Hub {
         /* No op */
     }
 
-    public abstract class ReplyHubDescriptor extends HubDescriptor {
+    public static abstract class ReplyHubDescriptor extends HubDescriptor {
 
         @Override
         public String getDisplayName() {

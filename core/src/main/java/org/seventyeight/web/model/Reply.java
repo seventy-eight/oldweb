@@ -9,7 +9,7 @@ import java.util.List;
  *         Date: 20-12-12
  *         Time: 09:14
  */
-public interface Reply extends DatabaseItem {
+public interface Reply extends DatabaseItem, Savable {
 
     public enum ReplyRelation implements EdgeType {
         reply

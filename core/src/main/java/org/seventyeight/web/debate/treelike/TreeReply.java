@@ -55,7 +55,7 @@ public class TreeReply extends AbstractDatabaseItem implements Reply, Describabl
         node.save();
     }
 
-    public class ReplyDescriptor extends Descriptor<TreeReply> {
+    public static class ReplyDescriptor extends Descriptor<TreeReply> {
 
         @Override
         public String getDisplayName() {

@@ -2,7 +2,11 @@ package org.seventyeight.web.debate.treelike;
 
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Node;
+import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.debate.ReplyHub;
+import org.seventyeight.web.exceptions.HubException;
+import org.seventyeight.web.model.Descriptor;
+import org.seventyeight.web.model.Reply;
 
 /**
  * @author cwolfgang
@@ -17,8 +21,18 @@ public class ReplyTreeHub extends ReplyHub {
         super( node );
     }
 
+    @Override
+    public void addReply( Reply reply ) throws HubException {
+        /* TODO determine what reply to add to, for now just */
+        super.addReply( reply );
+    }
 
-    public class ReplyTreeHubDescriptor extends ReplyHubDescriptor {
+    @Override
+    public Descriptor<?> getReplyDescriptor() {
+        return SeventyEight.getInstance().getDescriptor( TreeReply.class );
+    }
+
+    public static class ReplyTreeHubDescriptor extends ReplyHubDescriptor {
 
         @Override
         public String getDisplayName() {
