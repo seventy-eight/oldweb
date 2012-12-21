@@ -119,6 +119,7 @@ public class TemplateManager {
 				                                       + "org.seventyeight.web.velocity.html.ResourceViewDirective,"
 				                                       + "org.seventyeight.web.velocity.html.ResourcePreviewDirective,"
 				                                       + "org.seventyeight.web.velocity.html.ResourceSelectorDirective,"
+                                                       + "org.seventyeight.web.velocity.html.RenderDescriptorDirective,"
 				                                       + "org.seventyeight.web.velocity.html.FileInputDirective" );
 		
 		/* Initialize velocity */

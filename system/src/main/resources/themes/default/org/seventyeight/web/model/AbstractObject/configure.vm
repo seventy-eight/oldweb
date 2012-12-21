@@ -41,6 +41,12 @@
                                 <td>#inputtext( "description", $description )</td>
                             </tr>
 
+                            <!-- Debate -->
+                            <tr>
+                                #set( $clazz = "org.seventyeight.web.debate.ReplyHubExtension" )
+                                #parse( "default/org/seventyeight/web/model/singleselector.vm" )
+                            </tr>
+
                             <tr>
                                 <td>Groups</td>
                                 <td>
@@ -80,5 +86,7 @@
 
     #end
     </tr>
+
+
 
 </table>

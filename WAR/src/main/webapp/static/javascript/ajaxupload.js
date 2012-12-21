@@ -136,6 +136,7 @@
     	//progress function, with ajax upload progress can be monitored
     	xhr.upload.addEventListener('progress', function(e)
 		{
+            /* Changed by Wolle */
             if( e.timeStamp > settings.lastCheck ) {
                 settings.lastCheck = e.timeStamp + 1000000; // 500.000
                 $.get('/upload/' + settings.uid, function(data) {
@@ -163,12 +164,14 @@
 						settings.SLOTS--;
 						queued.end(ret.name, ret.size, ret.status, ret.info);
                         /* This is where I add to my list */
+                        /*
                         var form = $("#configure");
 
                         alert( form );
                         form.find("#uploadedIDS").val(function(index, val) {
                             return val + "(" + ret + ")" + "\n";
                         });
+                        */
                     } else if(ret.status == 'error')
 					{
 						throw ret.info;

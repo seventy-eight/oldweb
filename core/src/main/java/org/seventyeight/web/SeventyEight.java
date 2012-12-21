@@ -61,6 +61,8 @@ public class SeventyEight {
 	private Node systemNode = null;
     private User anonymous;
 
+    private Map<Class, List<Descriptor>> descriptorList = new HashMap<Class, List<Descriptor>>();
+
     /**
      * The {@link Dictionary}
      */
@@ -339,6 +341,8 @@ public class SeventyEight {
             this.resourceTypes.put( descriptor.getType(), (ResourceDescriptor<?>) descriptor );
         }
 
+        addExtension( descriptor );
+
         /**/
         descriptor.configureIndex( db );
     }
@@ -367,7 +371,34 @@ public class SeventyEight {
 			return null;
 		}
 	}
-	
+
+    public void addExtension( Extension extension ) {
+
+    }
+
+    public void addExtension( Descriptor<?> descriptor ) {
+        logger.debug( "Adding extension descriptor " + descriptor.getClazz() );
+
+        Class<?>[] interfaces = descriptor.getClazz().getInterfaces();
+        for( Class<?> i : interfaces ) {
+            logger.debug( "INTERFACE: " + i );
+            List<Descriptor> list = null;
+            if( !descriptorList.containsKey( i ) ) {
+                descriptorList.put( i, new ArrayList<Descriptor>() );
+            }
+            list = descriptorList.get( i );
+
+            list.add( descriptor );
+        }
+    }
+
+    public List<Descriptor> getExtensionDescriptors( Class clazz ) {
+        if( descriptorList.containsKey( clazz ) ) {
+            return descriptorList.get( clazz );
+        } else {
+            return Collections.emptyList();
+        }
+    }
 	
 	/**
 	 * Get a list of extension classes that implements this 

@@ -106,7 +106,7 @@ public class UploadHandler implements TopLevelAction {
                 logger.debug( "Multiple upload form" );
                 try {
                     request.getContext().put( "javascript", "ajaxupload" );
-                    request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer().render( "org.seventyeight.web.multipleupload.vm" ) );
+                    request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( "org/seventyeight/web/multipleupload.vm" ) );
                     response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
                 } catch( Exception e ) {
                     throw new ActionHandlerException( e );

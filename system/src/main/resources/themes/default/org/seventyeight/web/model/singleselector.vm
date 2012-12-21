@@ -1,0 +1,8 @@
+$clazz
+$item
+
+#set( $ds = $core.getExtensionDescriptors( $clazz ) )
+
+#foreach( $d in $ds )
+    #renderDescriptor( $d, $item )
+#end

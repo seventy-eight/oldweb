@@ -158,7 +158,7 @@ public abstract class AbstractItem implements Item, DatabaseItem {
 		/**/
 	}
 
-    public List<Node> getExtensions( Class<?> assignableFrom ) {
+    public List<Node> getExtensionNodes( Class<?> extensionClass ) {
         List<Edge> edges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND );
 
         List<Node> nodes = new LinkedList<Node>();
@@ -168,7 +168,7 @@ public abstract class AbstractItem implements Item, DatabaseItem {
             String clazzStr = (String) node.get( "class" );
             try {
                 Class clazz = Class.forName( clazzStr );
-                clazz.isAssignableFrom( assignableFrom );
+                clazz.equals( extensionClass );
                 nodes.add( node );
             } catch( ClassNotFoundException e ) {
                 logger.warn( e );

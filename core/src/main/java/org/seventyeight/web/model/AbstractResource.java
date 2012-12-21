@@ -263,8 +263,6 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
     public Hub createHub( Class<? extends Hub> clazz, String type ) throws CouldNotLoadObjectException {
         logger.debug( "Creating a " + clazz + " hub for " + this );
 
-        List<Node> nodes = getExtensions( Hub.class );
-
         Node node = SeventyEight.getInstance().createNode( getDB(), clazz );
         node.set( "type", type );
         Hub hub = (Hub) SeventyEight.getInstance().getDatabaseItem( node );
