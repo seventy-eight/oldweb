@@ -7,6 +7,7 @@ import org.seventyeight.database.Node;
 import org.seventyeight.utils.Date;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.CouldNotLoadObjectException;
+import org.seventyeight.web.exceptions.HubException;
 
 import java.util.List;
 
@@ -37,6 +38,25 @@ public abstract class Hub extends AbstractDatabaseItem implements Describable {
 
     public int getNextIdentifier() {
         return getNumberOfItems();
+    }
+
+    public void setResourceIdentifier( long id ) {
+        node.set( "resourceIdentifier", id );
+    }
+
+    public Long getResourceIdentifier() throws HubException {
+        Long id = node.get( "resourceIdentifier" );
+        if( id == null ) {
+            try {
+                AbstractResource r = getResource();
+                setResourceIdentifier( r.getIdentifier() );
+                return r.getIdentifier();
+            } catch( CouldNotLoadObjectException e ) {
+                throw new HubException( "Could not retrieve identifier for resource", e );
+            }
+        } else {
+            return id;
+        }
     }
 
     public int addItem( DatabaseItem item, EdgeType relation ) {

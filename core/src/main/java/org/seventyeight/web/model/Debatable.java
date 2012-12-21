@@ -1,5 +1,6 @@
 package org.seventyeight.web.model;
 
+import org.seventyeight.web.debate.exceptions.ReplyException;
 import org.seventyeight.web.exceptions.NotRepliedException;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public interface Debatable {
      * Reply to a debate
      * @param reply
      */
-    public void reply( Reply reply ) throws NotRepliedException;
+    public void reply( Reply reply ) throws NotRepliedException, ReplyException;
 
     /**
      * Determines whether this is debatable

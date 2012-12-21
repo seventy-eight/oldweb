@@ -11,7 +11,8 @@ import org.seventyeight.database.Edge;
 import org.seventyeight.database.Node;
 import org.seventyeight.utils.Date;
 import org.seventyeight.web.SeventyEight;
-import org.seventyeight.web.debate.treelike.ReplyHub;
+import org.seventyeight.web.debate.exceptions.ReplyException;
+import org.seventyeight.web.debate.ReplyHub;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.resources.User;
 
@@ -289,22 +290,24 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
     }
 
     @Override
-    public void reply( Reply reply ) throws NotRepliedException {
+    public void reply( Reply reply ) throws ReplyException {
         logger.debug( "Replying to " + this );
 
         ReplyHub hub = null;
         try {
             hub = getReplyHub();
-            hub.addItem( reply, Reply.ReplyRelation.reply );
+            hub.addReply( reply );
         } catch( Exception e ) {
-            throw new NotRepliedException( e );
+            throw new ReplyException( "Could not reply", e );
         }
+
     }
 
     @Override
     public List<Reply> getReplies( int offset, int number ) {
         try {
             ReplyHub hub = getReplyHub();
+            return hub.getReplies( offset, number );
         } catch( Exception e ) {
             logger.debug( "Hub not found, ergo none! " + e.getMessage() );
             return Collections.EMPTY_LIST;

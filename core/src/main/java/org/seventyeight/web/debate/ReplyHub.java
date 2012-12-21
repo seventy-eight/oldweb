@@ -1,11 +1,15 @@
-package org.seventyeight.web.debate.treelike;
+package org.seventyeight.web.debate;
 
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
 import org.seventyeight.database.*;
+import org.seventyeight.database.utils.SortingUtils;
+import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -13,7 +17,7 @@ import java.util.List;
  *         Date: 20-12-12
  *         Time: 11:35
  */
-public class ReplyHub extends Hub {
+public abstract class ReplyHub extends Hub {
 
     private static Logger logger = Logger.getLogger( ReplyHub.class );
     public static final String INDEX_REPLIES = "debate-replies";
@@ -26,15 +30,31 @@ public class ReplyHub extends Hub {
         return node.getEdges( null, Direction.OUTBOUND ).size();
     }
 
-    public void addReply( Reply reply ) {
+    public void addReply( Reply reply ) throws HubException {
+        logger.debug( "Adding " + reply );
+
         int id = addItem( reply, Reply.ReplyRelation.reply );
-        AbstractResource resource = getResource();
-        node.getDB().putToIndex( INDEX_REPLIES, reply.getNode(), resource.getIdentifier(), id );
+        long rid = getResourceIdentifier();
+        node.getDB().putToIndex( INDEX_REPLIES, reply.getNode(), rid, id );
     }
 
-    public List<Reply> getReplies( int offset, int number ) {
-        List<Edge> edges = node.getEdges( null, Direction.OUTBOUND );
-        node.getDB().getFromIndex()
+    public List<Reply> getReplies( int offset, int number ) throws HubException {
+        long rid = getResourceIdentifier();
+        List<Node> nodes = node.getDB().getFromIndexAbove( INDEX_REPLIES, number, rid, offset );
+
+        /* Sort 'em */
+        Collections.sort( nodes, new SortingUtils.NodeSorter( "id" ) );
+
+        List<Reply> replies = new ArrayList<Reply>( nodes.size() );
+        for( Node node : nodes ) {
+            try {
+                replies.add( (Reply) SeventyEight.getInstance().getDatabaseItem( node ) );
+            } catch( CouldNotLoadObjectException e ) {
+                logger.warn( "Could not add " + node + " to list" );
+            }
+        }
+
+        return replies;
     }
 
     @Override
@@ -47,7 +67,7 @@ public class ReplyHub extends Hub {
         /* No op */
     }
 
-    public class ReplyHubDescriptor extends HubDescriptor {
+    public abstract class ReplyHubDescriptor extends HubDescriptor {
 
         @Override
         public String getDisplayName() {

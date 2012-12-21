@@ -13,7 +13,7 @@ import org.seventyeight.database.*;
 import org.seventyeight.loader.Loader;
 import org.seventyeight.utils.FileUtilities;
 import org.seventyeight.web.authentication.SessionManager;
-import org.seventyeight.web.debate.treelike.ReplyHub;
+import org.seventyeight.web.debate.ReplyHub;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.handler.Dictionary;
 import org.seventyeight.web.handler.TemplateManager;
