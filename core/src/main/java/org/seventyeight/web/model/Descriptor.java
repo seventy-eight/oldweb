@@ -71,7 +71,7 @@ public abstract class Descriptor<T extends Describable> {
 
     public String getConfigurationPage( Request request, Node node ) throws TemplateDoesNotExistException {
         VelocityContext c = new VelocityContext();
-        c.put( "class", getClazz() );
+        c.put( "class", getClazz().getName() );
 
         T instance = null;
         try {

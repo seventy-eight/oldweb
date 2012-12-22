@@ -27,14 +27,17 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 	public static final String __ACCESS_GROUP_NAME = "access-group";
 	public static final String __EDITOR_GROUP_NAME = "editor-group";
 	public static final String __REVIEW_GROUP_NAME = "review-group";
-	
+
+    protected Locale locale;
 	
 	public AbstractObject( Node node ) {
 		super( node );
+        this.locale = SeventyEight.getInstance().getDefaultLocale();
 	}
 	
 	public AbstractObject( Node node, Locale locale ) {
-		super( node, locale );
+		super( node );
+        this.locale = locale;
 	}
 	
 	protected abstract class ObjectSave extends Save {
@@ -123,6 +126,14 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 		*/
 		
 	}
+
+    public void setLocale( Locale locale ) {
+        this.locale = locale;
+    }
+
+    public Locale getLocale() {
+        return locale;
+    }
 	
 	public void setText( String property, String value, String language ) {
 		logger.debug( "Setting " + property + " text node for " + language + " to " + value );

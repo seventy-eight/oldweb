@@ -16,24 +16,16 @@ import org.seventyeight.web.exceptions.ResourceDoesNotExistException;
 import com.google.gson.JsonObject;
 
 
-public abstract class AbstractItem implements Item, DatabaseItem {
+public abstract class AbstractItem extends AbstractDatabaseItem implements Item {
 
 	private static Logger logger = Logger.getLogger( AbstractItem.class );
-	protected Node node;
-	
-	//protected Long identifier;
-	protected Locale locale;
-		
+
 	public AbstractItem( Node node ) {
-		this.node = node;
-		this.locale = SeventyEight.getInstance().getDefaultLocale();
-		//this.identifier = (Long) node.getProperty( "identifier" );
+		super( node );
 	}
 	
 	public AbstractItem( Node node, Locale locale ) {
-		this.node = node;
-		this.locale = locale;
-		//this.identifier = (Long) node.getProperty( "identifier" );
+        super( node );
 	}
 	
 	protected final void save( Save save ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
@@ -140,18 +132,6 @@ public abstract class AbstractItem implements Item, DatabaseItem {
 	public void setIdentifier( Long identifier ) {
 		logger.debug( "Setting id to " + identifier );
 		node.set( "identifier", identifier );
-	}
-		
-	public Node getNode() {
-		return node;
-	}
-	
-	public void setLocale( Locale locale ) {
-		this.locale = locale;
-	}
-	
-	public Locale getLocale() {
-		return locale;
 	}
 	
 	public void updateIndexes() {
@@ -321,19 +301,4 @@ public abstract class AbstractItem implements Item, DatabaseItem {
 		}
 	}
 	*/
-
-    @Override
-    public Edge createRelation( DatabaseItem other, EdgeType type ) {
-        return node.createEdge( other.getNode(), type );
-    }
-
-    @Override
-    public String getItemClass() {
-        return this.getClass().getSimpleName();
-    }
-
-    @Override
-    public Database getDB() {
-        return node.getDB();
-    }
 }
