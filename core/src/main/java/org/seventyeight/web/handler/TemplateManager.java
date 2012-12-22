@@ -200,7 +200,9 @@ public class TemplateManager {
             }
 
 			logger.debug( "Using the template file: " + t.getName() );
-			
+
+            context.put( "core", SeventyEight.getInstance() );
+
 			/* I18N */
 			context.put( "locale", locale );
 			

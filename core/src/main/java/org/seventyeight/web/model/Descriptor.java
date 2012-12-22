@@ -84,6 +84,6 @@ public abstract class Descriptor<T extends Describable> {
             request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClass( getClazz(), "configure.vm" ) );
         }
 
-        return SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( "org/seventyeight/web/model/descriptorpage.vm" );
+        return SeventyEight.getInstance().getTemplateManager().getRenderer( request ).setContext( c ).render( "org/seventyeight/web/model/descriptorpage.vm" );
     }
 }

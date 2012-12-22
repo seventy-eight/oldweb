@@ -43,6 +43,11 @@
 
                             <!-- Debate -->
                             <tr>
+                                <td colspan="2" align="center" style="font-weight: bold; text-decoration: underline">
+                                    #i18n( "Debatable" )
+                                </td>
+                            </tr>
+                            <tr>
                                 #set( $clazz = "org.seventyeight.web.debate.ReplyHubExtension" )
                                 #parse( "default/org/seventyeight/web/model/singleselector.vm" )
                             </tr>

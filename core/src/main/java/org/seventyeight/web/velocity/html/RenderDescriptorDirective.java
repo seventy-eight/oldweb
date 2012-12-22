@@ -33,7 +33,7 @@ public class RenderDescriptorDirective extends Directive {
 
 	@Override
 	public boolean render( InternalContextAdapter context, Writer writer, Node node ) throws IOException, ResourceNotFoundException, ParseErrorException, MethodInvocationException {
-
+        logger.debug( "Rendering descriptor" );
 		Descriptor d = null;
         AbstractResource r = null;
 		
@@ -55,13 +55,28 @@ public class RenderDescriptorDirective extends Directive {
             logger.debug( e );
 		}
 
-        /* get the extension node */
-        List<org.seventyeight.database.Node> nodes = r.getExtensionNodes( d.getClazz() );
+        logger.debug( "1" );
 
         Request request = (Request) context.get( "request" );
-        for( org.seventyeight.database.Node n : nodes ) {
+
+        /* Already configured descriptor */
+        if( r != null ) {
+            /* get the extension node */
+            List<org.seventyeight.database.Node> nodes = r.getExtensionNodes( d.getClazz() );
+
+            logger.debug( nodes );
+
+            for( org.seventyeight.database.Node n : nodes ) {
+                try {
+                    writer.write( d.getConfigurationPage( request, n ) );
+                } catch( TemplateDoesNotExistException e ) {
+                    logger.warn( e );
+                    writer.write( e.getMessage() );
+                }
+            }
+        } else {
             try {
-                writer.write( d.getConfigurationPage( request, n ) );
+                writer.write( d.getConfigurationPage( request, null ) );
             } catch( TemplateDoesNotExistException e ) {
                 logger.warn( e );
                 writer.write( e.getMessage() );

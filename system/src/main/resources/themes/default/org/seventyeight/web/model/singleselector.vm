@@ -1,6 +1,3 @@
-$clazz
-$item
-
 #set( $ds = $core.getExtensionDescriptors( $clazz ) )
 
 #foreach( $d in $ds )

@@ -392,6 +392,10 @@ public class SeventyEight {
         }
     }
 
+    public List<Descriptor> getExtensionDescriptors( String clazz ) throws ClassNotFoundException {
+        return getExtensionDescriptors( Class.forName( clazz ) );
+    }
+
     public List<Descriptor> getExtensionDescriptors( Class clazz ) {
         if( descriptorList.containsKey( clazz ) ) {
             return descriptorList.get( clazz );
