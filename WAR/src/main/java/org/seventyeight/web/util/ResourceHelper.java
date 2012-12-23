@@ -44,6 +44,29 @@ public class ResourceHelper {
 		return r;
 	}
 
+    public AbstractResource getResource( Request request, String idx ) throws CouldNotLoadResourceException, TooManyException, NotFoundException {
+        Long id = null;
+        AbstractResource r = null;
+        try {
+            id = new Long( idx );
+            r = SeventyEight.getInstance().getResource( request.getDB(), id );
+
+        } catch( NumberFormatException e ) {
+            /* This is an identifier, let's try the title */
+            String s = "";
+            try {
+                s = URLDecoder.decode( idx, "UTF-8" );
+                logger.debug( "Finding " + s );
+                //r = SeventyEight.getInstance().getResourceByTitle( s );
+            } catch( UnsupportedEncodingException e1 ) {
+                logger.warn( s + " not found" );
+                throw new CouldNotLoadResourceException( "Unable to find resource[" + s + "]: " + e1.getMessage());
+            }
+        }
+
+        return r;
+    }
+
     public AbstractResource createResource( Descriptor descriptor, Request request, HttpServletResponse response ) throws ResourceNotCreatedException {
         try {
             /* We need the json object first to determine if this is a valid configuration */

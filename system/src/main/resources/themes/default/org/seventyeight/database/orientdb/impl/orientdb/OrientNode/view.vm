@@ -1,0 +1,35 @@
+$item
+
+<table>
+    <tr>
+        <td style="font-weight: bold">Field</td>
+        <td style="font-weight: bold">Value</td>
+    </tr>
+#set ($map = $item.getFieldData() )
+#foreach ($mapEntry in $map.entrySet())
+    <tr>
+        <td style="font-weight: bold">$mapEntry.key</td>
+        <td>$mapEntry.value</td>
+    </tr>
+#end
+
+</table>
+
+
+
+<table>
+    <tr>
+        <td style="font-weight: bold">Edges</td>
+        <td style="font-weight: bold">Label</td>
+        <td style="font-weight: bold">Target</td>
+    </tr>
+    #set ($list = $item.getEdges( null, $direction ) )
+    #foreach ($l in $list )
+        <tr>
+            <td></td>
+            <td>$l.get( "label" )</td>
+            <td><a href="/db/browse/node/orient/$l.getTargetNode().getId( true )">$l.getTargetNode()</a></td>
+        </tr>
+    #end
+
+</table>

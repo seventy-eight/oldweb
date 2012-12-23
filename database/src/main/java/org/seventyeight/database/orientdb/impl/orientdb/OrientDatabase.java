@@ -3,6 +3,7 @@ package org.seventyeight.database.orientdb.impl.orientdb;
 import com.orientechnologies.common.collection.OCompositeKey;
 import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
+import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.index.OCompositeIndexDefinition;
 import com.orientechnologies.orient.core.index.OIndex;
 import com.orientechnologies.orient.core.index.OIndexDefinition;
@@ -208,4 +209,9 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
         db.getMetadata().getIndexManager().getIndex( indexName ).remove( node.getDocument() );
     }
 
+    @Override
+    public OrientNode getByIndex( String idx ) {
+        ODocument doc = db.load( new ORecordId( idx ) );
+        return new OrientNode( this, doc );
+    }
 }

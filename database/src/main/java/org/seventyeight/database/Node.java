@@ -1,6 +1,7 @@
 package org.seventyeight.database;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: cwolfgang
@@ -57,6 +58,10 @@ public interface Node extends Parameterized<Node> {
     public Node removeEdges( EdgeType type, Direction direction );
 
     public void remove();
+
+    public Map<String, Object> getFieldData();
+
+    public String getId(  boolean safe );
 
     public Node save();
 }

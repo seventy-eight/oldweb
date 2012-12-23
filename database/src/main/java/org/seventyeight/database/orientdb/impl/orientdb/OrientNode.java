@@ -2,13 +2,14 @@ package org.seventyeight.database.orientdb.impl.orientdb;
 
 import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
+import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.log4j.Logger;
 import org.seventyeight.database.*;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.*;
 
 /**
  *
@@ -190,6 +191,16 @@ public class OrientNode implements Node {
     }
 
     @Override
+    public Map<String, Object> getFieldData() {
+        Map<String, Object> data = new HashMap<String, Object>();
+        for( String field : doc.fieldNames() ) {
+            data.put( field, doc.field( field ) );
+        }
+
+        return data;
+    }
+
+    @Override
     public OrientNode removeEdges( EdgeType type, Direction direction ) {
         logger.debug( "Removing " + direction + " edges from " + this + " of type " + type );
 
@@ -243,5 +254,20 @@ public class OrientNode implements Node {
     @Override
     public String toString() {
         return "OrientNode[" + doc + "]";
+    }
+
+    @Override
+    public String getId( boolean safe ) {
+        if( safe ) {
+            try {
+                return URLEncoder.encode( doc.getIdentity().toString(), "UTF-8" );
+            } catch( UnsupportedEncodingException e ) {
+                logger.warn( "Unable to encode, NOT encoding" );
+                logger.warn( e );
+                return doc.getIdentity().toString();
+            }
+        } else {
+            return doc.getIdentity().toString();
+        }
     }
 }

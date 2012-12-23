@@ -2,10 +2,7 @@ package org.seventyeight.web;
 
 import org.apache.log4j.Logger;
 import org.seventyeight.database.orientdb.impl.orientdb.OrientDBManager;
-import org.seventyeight.web.model.toplevelactionhandlers.DebateHandler;
-import org.seventyeight.web.model.toplevelactionhandlers.ResourceHandler;
-import org.seventyeight.web.model.toplevelactionhandlers.StaticFileHandler;
-import org.seventyeight.web.model.toplevelactionhandlers.UploadHandler;
+import org.seventyeight.web.model.toplevelactionhandlers.*;
 import org.seventyeight.web.services.InformationService;
 
 import javax.servlet.ServletContextEvent;
@@ -90,5 +87,7 @@ public class DatabaseContextListener implements ServletContextListener {
             SeventyEight.getInstance().addTopLevelAction( "upload", new UploadHandler() );
 
             SeventyEight.getInstance().addTopLevelAction( "debate", new DebateHandler() );
+
+            SeventyEight.getInstance().addTopLevelAction( "db", new DatabaseBrowser() );
         }
 }
