@@ -35,7 +35,9 @@ public class DatabaseBrowser implements TopLevelAction {
 
     @Override
     public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
-        request.getContext().put( "direction", Direction.OUTBOUND );
+        request.getContext().put( "outbound", Direction.OUTBOUND );
+        request.getContext().put( "inbound", Direction.INBOUND );
+
         if( request.getRequestParts()[2].equals( "browse" ) ) {
             if( request.getRequestParts()[3].equals( "resource" ) ) {
                 try {

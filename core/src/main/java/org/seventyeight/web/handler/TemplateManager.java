@@ -108,6 +108,7 @@ public class TemplateManager {
 		velocityProperties.setProperty( "file.resource.loader.path", this.paths );
 				
 		velocityProperties.setProperty( "file.resource.loader.modificationCheckInterval", "2" );
+        velocityProperties.setProperty( "eventhandler.include.class", "org.apache.velocity.app.event.implement.IncludeRelativePath" );
 		
 		/* Custom directives */
 		velocityProperties.setProperty( "userdirective", "org.seventyeight.web.velocity.html.TextInputDirective,"

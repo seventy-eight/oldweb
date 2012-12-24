@@ -92,5 +92,7 @@ public abstract class ReplyHub extends Hub {
             // identifier, time
             db.createIndex( INDEX_REPLIES, IndexType.UNIQUE, IndexValueType.LONG, IndexValueType.LONG );
         }
+
+
     }
 }

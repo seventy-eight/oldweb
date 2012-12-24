@@ -16,20 +16,10 @@ $item
 </table>
 
 
+#set( $list = $item.getEdges( null, $outbound ) )
+#set( $caption = "Out bound relations" )
+#parse( "edges.vm" )
 
-<table>
-    <tr>
-        <td style="font-weight: bold">Edges</td>
-        <td style="font-weight: bold">Label</td>
-        <td style="font-weight: bold">Target</td>
-    </tr>
-    #set ($list = $item.getEdges( null, $direction ) )
-    #foreach ($l in $list )
-        <tr>
-            <td></td>
-            <td>$l.get( "label" )</td>
-            <td><a href="/db/browse/node/orient/$l.getTargetNode().getId( true )">$l.getTargetNode()</a></td>
-        </tr>
-    #end
-
-</table>
+#set( $list = $item.getEdges( null, $inbound ) )
+#set( $caption = "In bound relations" )
+#parse( "edges.vm" )

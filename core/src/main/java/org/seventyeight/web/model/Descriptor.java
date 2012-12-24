@@ -6,6 +6,7 @@ import java.lang.reflect.Constructor;
 import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
 import org.seventyeight.database.Database;
+import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.TemplateDoesNotExistException;
@@ -85,5 +86,9 @@ public abstract class Descriptor<T extends Describable> {
         }
 
         return SeventyEight.getInstance().getTemplateManager().getRenderer( request ).setContext( c ).render( "org/seventyeight/web/model/descriptorpage.vm" );
+    }
+
+    public EdgeType getRelationType() {
+        return SeventyEight.ResourceEdgeType.extension;
     }
 }

@@ -2,6 +2,7 @@ package org.seventyeight.web.model;
 
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Database;
+import org.seventyeight.database.EdgeType;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.UnableToInstantiateObjectException;
 import org.seventyeight.utils.Date;
@@ -12,6 +13,10 @@ import java.util.List;
 public abstract class ResourceDescriptor<T extends AbstractResource> extends Descriptor<T> {
 
 	private static Logger logger = Logger.getLogger( ResourceDescriptor.class );
+
+    public enum ResourceDescriptorRelation implements EdgeType {
+        resource;
+    }
 
     public List<String> getRequiredJavascripts() {
         return Collections.EMPTY_LIST;
@@ -34,5 +39,10 @@ public abstract class ResourceDescriptor<T extends AbstractResource> extends Des
 
     public boolean inputTitle() {
         return true;
+    }
+
+    @Override
+    public EdgeType getRelationType() {
+        return ResourceDescriptorRelation.resource;
     }
 }

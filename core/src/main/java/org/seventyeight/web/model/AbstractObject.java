@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Direction;
 import org.seventyeight.database.Edge;
+import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.SeventyEight.GroupEdgeType;
@@ -202,6 +203,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 		/* Removing all owners */
 		removeAllOwners();
 		/* Adding new owner */
+        createRelation( owner, ResourceEdgeType.owner );
 		//SeventyEight.getInstance().createEdge( this, owner, EdgeType.owner );
 	}
 	

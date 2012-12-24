@@ -49,7 +49,7 @@
                             </tr>
                             <tr>
                                 #set( $clazz = "org.seventyeight.web.debate.ReplyHubExtension" )
-                                #parse( "default/org/seventyeight/web/model/singleselector.vm" )
+                                #parse( "/default/org/seventyeight/web/model/singleselector.vm" )
                             </tr>
 
                             <tr>

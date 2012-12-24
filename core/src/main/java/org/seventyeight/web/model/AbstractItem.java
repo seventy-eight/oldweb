@@ -86,7 +86,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
 						Class<?> clazz = Class.forName( cls );
 						logger.debug( "Class is " + clazz );
 						Descriptor<?> d = SeventyEight.getInstance().getDescriptor( clazz );
-						logger.debug( "Descroiptor is " + d );
+						logger.debug( "Descriptor is " + d );
 						//List<ODocument> nodes = SeventyEight.getInstance().getNodeRelation( item, ResourceEdgeType.extension );
                         List<Edge> edges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND );
 						
@@ -103,7 +103,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
 							e.doSave( request, o );
 							logger.debug( "Describable saved" );
 							//SeventyEight.getInstance().addNodeRelation( db, item, e, ResourceEdgeType.extension, false );
-                            node.createEdge( e.getNode(), ResourceEdgeType.extension );
+                            node.createEdge( e.getNode(), d.getRelationType() );
 						}
 					} catch( Exception e ) {
 						logger.warn( "Unable to get descriptor for " + o + ": " + e.getMessage() );

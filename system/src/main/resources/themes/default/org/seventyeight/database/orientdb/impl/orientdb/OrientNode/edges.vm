@@ -1,0 +1,21 @@
+<table>
+    <caption>$caption</caption>
+    <thead>
+    <tr>
+        <th style="font-weight: bold">Edges</th>
+        <th style="font-weight: bold">Label</th>
+        <th style="font-weight: bold">Target</th>
+    </tr>
+    </thead>
+
+    #foreach ($l in $list )
+        <tbody>
+        <tr>
+            <td></td>
+            <td>$l.get( "label" )</td>
+            <td><a href="/db/browse/node/orient/$l.getTargetNode().getId( true )">$l.getTargetNode()</a></td>
+        </tr>
+        </tbody>
+    #end
+
+</table>
