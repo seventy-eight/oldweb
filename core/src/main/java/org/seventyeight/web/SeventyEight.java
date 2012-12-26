@@ -38,6 +38,10 @@ public class SeventyEight {
 	private static Logger logger = Logger.getLogger( SeventyEight.class );
 	private static SeventyEight instance;
 
+    public static final String TEMPLATE_PATH_NAME = "templates";
+    public static final String THEMES_PATH_NAME = "themes";
+    public static final String PLUGINS_PATH_NAME = "plugins";
+
     /**
      * This index contains all the identifiers for resources
      */
@@ -107,6 +111,7 @@ public class SeventyEight {
 	private File orientdbPath;
 	private File pluginsPath;
 	private File uploadPath;
+    private File themesPath;
 	
 	/* Locale */
 	private Locale defaultLocale;
@@ -153,6 +158,9 @@ public class SeventyEight {
 		pluginsPath.mkdir();
 		uploadPath = new File( path, "upload" );
 		uploadPath.mkdir();
+
+        themesPath = new File( path, "themes" );
+        themesPath.mkdir();
 
 		/* Class loader */
 		classLoader = new org.seventyeight.loader.ClassLoader( Thread.currentThread().getContextClassLoader() );
@@ -220,29 +228,51 @@ public class SeventyEight {
 
     /**
      * From the given path, get all jars and extract them to their directories
-     * @param path
+     * @param basePath
      * @return
      * @throws IOException
      */
-    public static List<File> extractPlugins( File path ) throws IOException {
-        logger.debug( "Extracting plugins to " + path );
+    public static List<File> extractPlugins( File basePath ) throws IOException {
+        logger.debug( "Extracting plugins to " + PLUGINS_PATH_NAME );
+        File path = new File( basePath, PLUGINS_PATH_NAME );
+        File themes = new File( basePath, THEMES_PATH_NAME );
+
+        FileUtils.deleteDirectory( themes );
+        themes.mkdir();
 
         File[] files = path.listFiles( FileUtilities.getExtension( "jar" ) );
 
         List<File> plugins = new ArrayList<File>();
         for( File f : files ) {
+            logger.debug( "Extracting plugin " + f );
             String p = f.getName();
             p = p.substring( 0, ( p.length() - 4 ) );
-            logger.debug( "f: " + f );
-            logger.debug( "f: " + p );
             File op = new File( path, p );
             FileUtils.deleteDirectory( op );
 
             FileUtilities.extractArchive( f, op );
             plugins.add( op );
+
+            /* Copy any theme directory to path */
+            File pthemes = new File( op, "themes" );
+            if( pthemes.exists() ) {
+                logger.debug( "Copying themes from " + pthemes + " to " + themes );
+                FileUtils.copyDirectory( pthemes, themes );
+            }
         }
 
         return plugins;
+    }
+
+    public File getThemeFile( AbstractTheme theme, String filename ) throws IOException {
+        File themePath = new File( themesPath, theme.getName() );
+        File themeFile = new File( themePath, filename );
+
+        if( themeFile.exists() ) {
+            return themeFile;
+        }
+
+        throw new IOException( "Theme file " + themeFile + " does not exist" );
     }
 
     public org.seventyeight.loader.ClassLoader getClassLoader() {
@@ -253,6 +283,7 @@ public class SeventyEight {
         for( File p : plugins ) {
             logger.debug( "Plugin " + p );
             try {
+                /* Maybe check for classes directory */
                 pluginLoader.load( p, "" );
             } catch( Exception e ) {
                 logger.error( "Unable to load " + p );
@@ -554,7 +585,13 @@ public class SeventyEight {
         return anonymous;
     }
 
+    public File getThemesPath() {
+        return themesPath;
+    }
 
+    public void setThemesPath( File path ) {
+        this.themesPath = path;
+    }
 
     public Node createFile( Database db, String filename ) {
         logger.debug( "Creating new file " + filename );

@@ -14,4 +14,9 @@ public abstract class AbstractTheme {
 	}
 	
 	public abstract String getName();
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

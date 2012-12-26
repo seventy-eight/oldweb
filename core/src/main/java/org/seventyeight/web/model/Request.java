@@ -135,6 +135,10 @@ public class Request extends HttpServletRequestWrapper implements ParameterReque
         this.template = template;
     }
 
+    public void setTheme( AbstractTheme theme ) {
+        this.theme = theme;
+    }
+
     public AbstractTheme getTheme() {
         return theme;
     }

@@ -1,0 +1,31 @@
+table.listing {
+    border-style: solid;
+    border-width: 2px;
+    border-collapse: collapse;
+}
+
+caption.listing {
+    font-weight: bold;
+    font-size: 18px;
+    background-color: #172849;
+    color: #a7b7c7;
+}
+
+thead.listing {
+    font-weight: bold;
+    font-size: 14px;
+    color: #172849;
+}
+
+th.listing {
+    padding-left: 10px;
+    padding-right: 10px;
+    color: #172849;
+    border-style: solid;
+    border-width: 1px;
+}
+
+td.listing {
+    padding-left: 5px;
+    padding-right: 5px;
+}

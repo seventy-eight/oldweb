@@ -81,6 +81,7 @@ public class Rest extends HttpServlet {
         vc.put( "database", r.getDB() );
 
         r.setUser( SeventyEight.getInstance().getAnonymousUser() );
+        r.setTheme( SeventyEight.getInstance().getDefaultTheme() );
 
         Authentication auth = new SimpleAuthentication();
         try {

@@ -56,12 +56,8 @@ public class TemplateManager {
 	
 	public File getStaticFile( String filename ) throws IOException {
 		for( File path : staticPaths ) {
-			logger.debug( "STATIC PATH: " + path );
 			File file = new File( path, filename );
-			logger.debug( "STATIC FILE: " + file );
-			logger.debug( "STATIC FILE: " + file.getAbsolutePath() );
 			if( file.exists() ) {
-				logger.debug( "Returning " + file );
 				return file;
 			}
 		}
@@ -203,6 +199,7 @@ public class TemplateManager {
 			logger.debug( "Using the template file: " + t.getName() );
 
             context.put( "core", SeventyEight.getInstance() );
+            context.put( "theme", theme );
 
 			/* I18N */
 			context.put( "locale", locale );

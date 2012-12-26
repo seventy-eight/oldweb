@@ -3,6 +3,7 @@ package org.seventyeight.web.model.toplevelactionhandlers;
 import org.apache.log4j.Logger;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.ActionHandlerException;
+import org.seventyeight.web.model.AbstractTheme;
 import org.seventyeight.web.model.Request;
 import org.seventyeight.web.model.TopLevelAction;
 import org.seventyeight.web.util.FileHelper;
@@ -24,14 +25,14 @@ public class ThemeFileHandler implements TopLevelAction {
     public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
         FileHelper fh = new FileHelper();
         try {
-            fh.getFile( request, response, new S(), true );
+            fh.getFile( request, response, new GetThemeFile( request.getTheme() ), true );
         } catch( IOException e ) {
             throw new ActionHandlerException( e );
         }
     }
 
     public String getName() {
-		return "static";
+		return "theme";
 	}
 
     @Override
@@ -40,7 +41,13 @@ public class ThemeFileHandler implements TopLevelAction {
     }
 
 
-     private class S implements GetFile {
+     private class GetThemeFile implements GetFile {
+
+         AbstractTheme theme;
+
+         public GetThemeFile( AbstractTheme theme ) {
+             this.theme = theme;
+         }
 
          public File getFile( HttpServletRequest request, HttpServletResponse response ) throws IOException {
              // Get requested file by path info.
@@ -48,7 +55,7 @@ public class ThemeFileHandler implements TopLevelAction {
 
              requestedFile = requestedFile.replaceFirst( "^/?.*?/", "" );
 
-             logger.debug( "--------------------> " + requestedFile + " <------------------------" );
+             logger.debug( "[Theme file] " + requestedFile );
 
              // Check if file is actually supplied to the request URL.
              if( requestedFile == null ) {
@@ -60,9 +67,8 @@ public class ThemeFileHandler implements TopLevelAction {
              }
 
              String filename = URLDecoder.decode( requestedFile, "UTF-8" );
-             logger.debug( "HERE!!!!" );
              //return GraphDragon.getInstance().getRenderer().getStaticFile( filename );
-             return SeventyEight.getInstance().getTemplateManager().getStaticFile( filename );
+             return SeventyEight.getInstance().getThemeFile( theme, filename );
          }
 
      }

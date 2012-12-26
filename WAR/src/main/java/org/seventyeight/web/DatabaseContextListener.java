@@ -45,15 +45,15 @@ public class DatabaseContextListener implements ServletContextListener {
             OrientDBManager dbm = new OrientDBManager( "local", odbPath.getAbsolutePath() );
             SeventyEight gd = new SeventyEight( path, dbm.getDatabase() );
             try {
-                List<File> plugins = gd.extractPlugins( gd.getPluginsPath() );
+                List<File> plugins = gd.extractPlugins( gd.getPath() );
 
                 /* Paths added first is served first */
                 //gd.getTemplateManager().addStaticPath( new File( "C:/projects/graph-dragon/war/src/main/webapp/static" ) );
                 gd.getTemplateManager().addStaticPath( new File( gd.getPath(), "static" ) );
 
 
-                //paths.add( new File( "/home/wolfgang/projects/graph-dragon/system/target/classes/themes" ) );
-                //paths.add( new File( "C:/projects/graph-dragon/system/target/classes/themes" ) );
+                //paths.add( new File( "/home/wolfgang/projects/graph-dragon/system/target/classes/templates" ) );
+                //paths.add( new File( "C:/projects/graph-dragon/system/target/classes/templates" ) );
 
 
 
@@ -64,9 +64,9 @@ public class DatabaseContextListener implements ServletContextListener {
                 }
                 */
 
-                paths.add( new File( "C:/Users/Christian/projects/seventy-eight/system/src/main/resources/themes" ) );
+                paths.add( new File( "C:/Users/Christian/projects/seventy-eight/system/src/main/resources/templates" ) );
 
-                //paths.add( new File( "C:/projects/graph-dragon/system/target/classes/themes" ) );
+                //paths.add( new File( "C:/projects/graph-dragon/system/target/classes/templates" ) );
 
                 logger.info( "Loading plugins" );
                 gd.getClassLoader().addUrls( new URL[] { new File( spath, "WEB-INF/lib/seventy-eight.jar" ).toURI().toURL() } );
@@ -89,5 +89,10 @@ public class DatabaseContextListener implements ServletContextListener {
             SeventyEight.getInstance().addTopLevelAction( "debate", new DebateHandler() );
 
             SeventyEight.getInstance().addTopLevelAction( "db", new DatabaseBrowser() );
+
+            SeventyEight.getInstance().addTopLevelAction( "theme", new ThemeFileHandler() );
+
+            /* Post actions */
+            SeventyEight.getInstance().setThemesPath( new File( "C:/Users/Christian/projects/seventy-eight/system/src/main/resources/themes" ) );
         }
 }
