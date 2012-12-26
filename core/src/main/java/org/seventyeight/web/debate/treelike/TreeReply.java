@@ -13,7 +13,7 @@ import java.util.List;
  *         Date: 21-12-12
  *         Time: 13:16
  */
-public class TreeReply extends AbstractDatabaseItem implements Reply, Describable {
+public class TreeReply extends AbstractItem implements Reply, Describable {
 
     public TreeReply( Node node ) {
         super( node );

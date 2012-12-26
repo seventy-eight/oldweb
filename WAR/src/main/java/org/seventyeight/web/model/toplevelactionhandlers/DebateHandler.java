@@ -45,7 +45,7 @@ public class DebateHandler implements TopLevelAction {
         }
     }
 
-    protected Reply createReply( Request request, AbstractResource resource ) throws CouldNotLoadObjectException, UnableToInstantiateObjectException, ErrorWhileSavingException, ParameterDoesNotExistException, IncorrectTypeException, ResourceDoesNotExistException, InconsistentParameterException {
+    protected Reply createReply( Request request, AbstractResource resource ) throws CouldNotLoadObjectException, UnableToInstantiateObjectException, ErrorWhileSavingException, ParameterDoesNotExistException, IncorrectTypeException, ResourceDoesNotExistException, InconsistentParameterException, NoSuchHubException {
         ReplyHub hub = resource.getReplyHub();
         Descriptor<?> d = hub.getReplyDescriptor();
         Reply reply = (Reply) d.newInstance( request.getDB() );

@@ -18,6 +18,9 @@ $item
 
 #set( $list = $item.getEdges( null, $outbound ) )
 #set( $caption = "Out bound relations" )
+#macro( getNode )
+    $l.getTargetNode()
+#end
 #parse( "edges.vm" )
 
 #set( $list = $item.getEdges( null, $inbound ) )

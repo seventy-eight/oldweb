@@ -98,14 +98,6 @@ public class SeventyEight {
 		reviewAccess
 	}
 
-    /**
-     * A resource hub is a {@link Node} that extracts specific relations from the actual resource. These {@link Node}'s should be identified with a property called <i>type</i>.
-     * resourceHubRelations points to such {@link Node}'s
-     */
-    public enum HubRelation implements EdgeType {
-        resourceHubRelation
-    }
-	
 	/* Paths */
 	private File path;
 	private File orientdbPath;

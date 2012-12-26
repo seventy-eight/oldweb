@@ -113,7 +113,7 @@ public class TemplateManager {
 				                                       + "org.seventyeight.web.velocity.html.GroupSelectInputDirective,"
 				                                       + "org.seventyeight.web.velocity.html.ThemeSelectInputDirective,"
 				                                       + "org.seventyeight.web.velocity.html.I18NDirective,"
-				                                       + "org.seventyeight.web.velocity.html.ResourceViewDirective,"
+				                                       + "org.seventyeight.web.velocity.html.ViewDirective,"
 				                                       + "org.seventyeight.web.velocity.html.ResourcePreviewDirective,"
 				                                       + "org.seventyeight.web.velocity.html.ResourceSelectorDirective,"
                                                        + "org.seventyeight.web.velocity.html.RenderDescriptorDirective,"

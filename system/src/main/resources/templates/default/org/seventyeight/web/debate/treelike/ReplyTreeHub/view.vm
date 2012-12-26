@@ -1,0 +1,7 @@
+Comments:<br>$item.getReplies( 0, 10 )
+<br>
+<br>
+#set( $d = $item.getReplyDescriptor() )
+<table>
+#renderDescriptor( $d, 0 )
+</table>

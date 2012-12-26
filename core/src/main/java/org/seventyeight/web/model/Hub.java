@@ -23,7 +23,7 @@ public abstract class Hub extends AbstractDatabaseItem implements Describable {
     }
 
     public AbstractResource getResource() throws CouldNotLoadObjectException {
-        List<Edge> edges = node.getEdges( SeventyEight.HubRelation.resourceHubRelation, Direction.INBOUND );
+        List<Edge> edges = node.getEdges( HubDescriptor.HubRelation.hub, Direction.INBOUND );
 
         if( edges.size() == 1 ) {
             return (AbstractResource) SeventyEight.getInstance().getDatabaseItem( edges.get( 0 ).getSourceNode() );

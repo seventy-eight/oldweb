@@ -13,7 +13,7 @@
         <tr>
             <td class="listing"></td>
             <td class="listing" align="center">$l.get( "label" )</td>
-            <td class="listing"><a href="/db/browse/node/orient/$l.getTargetNode().getId( true )">$l.getTargetNode()</a></td>
+            <td class="listing"><a href="/db/browse/node/orient/$l.getTargetNode().getId( true )">$l</a></td>
         </tr>
         </tbody>
     #end

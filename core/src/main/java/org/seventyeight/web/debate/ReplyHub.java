@@ -40,8 +40,9 @@ public abstract class ReplyHub extends Hub {
 
     public List<Reply> getReplies( int offset, int number ) throws HubException {
         long rid = getResourceIdentifier();
+        logger.debug( "RID " + rid );
         List<Node> nodes = node.getDB().getFromIndexAbove( INDEX_REPLIES, number, rid, offset );
-
+        logger.debug( "NODES " + nodes );
         /* Sort 'em */
         Collections.sort( nodes, new SortingUtils.NodeSorter( "id" ) );
 
@@ -66,7 +67,9 @@ public abstract class ReplyHub extends Hub {
 
     @Override
     public void doSave( ParameterRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
-        /* No op */
+        node.set( "type", Debatable.HUB_DEBATE );
+
+        node.save();
     }
 
     public static abstract class ReplyHubDescriptor extends HubDescriptor {

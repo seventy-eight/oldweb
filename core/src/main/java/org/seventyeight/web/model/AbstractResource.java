@@ -64,6 +64,8 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 			if( rev > 0 ) {
 				node.set( "updated", new Date().getTime() );
 			}
+
+            node.set( "debatable", true );
 		}
 		
 		public void setOwner() {
@@ -248,7 +250,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
      * @throws NoSuchHubException
      */
     public Hub getHub( String type ) throws NoSuchHubException, CouldNotLoadObjectException {
-        List<Edge> edges = node.getEdges( SeventyEight.HubRelation.resourceHubRelation, Direction.OUTBOUND );
+        List<Edge> edges = node.getEdges( HubDescriptor.HubRelation.hub, Direction.OUTBOUND );
         for( Edge edge : edges ) {
             Node hubNode = edge.getTargetNode();
             if( hubNode.get( "type", "" ).equals( type ) ) {
@@ -260,6 +262,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
         throw new NoSuchHubException( "The resource hub " + type + " does not exist" );
     }
 
+    /*
     public Hub createHub( Class<? extends Hub> clazz, String type ) throws CouldNotLoadObjectException {
         logger.debug( "Creating a " + clazz + " hub for " + this );
 
@@ -270,15 +273,10 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 
         return hub;
     }
+    */
 
-    public ReplyHub getReplyHub() throws CouldNotLoadObjectException {
-        ReplyHub hub = null;
-        try {
-            hub = (ReplyHub) getHub( HUB_DEBATE );
-        } catch( NoSuchHubException e ) {
-            hub = (ReplyHub) createHub( SeventyEight.getInstance().getReplyHubType(), HUB_DEBATE );
-        }
-
+    public ReplyHub getReplyHub() throws NoSuchHubException, CouldNotLoadObjectException {
+        ReplyHub hub = (ReplyHub) getHub( HUB_DEBATE );
         return hub;
     }
 
