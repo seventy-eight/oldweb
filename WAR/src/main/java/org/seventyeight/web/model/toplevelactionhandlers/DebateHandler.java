@@ -21,7 +21,7 @@ public class DebateHandler implements TopLevelAction {
 
     @Override
     public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
-        long rid = request.getValue( "identifier" );
+        long rid = Long.parseLong( (String) request.getValue( "identifier" ) );
 
         AbstractResource resource = null;
         try {

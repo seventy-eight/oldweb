@@ -50,6 +50,8 @@ public class Rest extends HttpServlet {
         StopWatch sw = new StopWatch();
         sw.reset();
 
+        logger.debug( "[Parameters] " + request.getParameterMap() );
+
         sw.start( "preparing" );
 
         /* Instantiating request */

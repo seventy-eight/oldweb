@@ -1,6 +1,7 @@
 package org.seventyeight.web.debate.treelike;
 
 import com.google.gson.JsonObject;
+import org.apache.log4j.Logger;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
@@ -14,6 +15,8 @@ import java.util.List;
  *         Time: 13:16
  */
 public class TreeReply extends AbstractItem implements Reply, Describable {
+
+    private static Logger logger = Logger.getLogger( TreeReply.class );
 
     public TreeReply( Node node ) {
         super( node );
@@ -46,12 +49,17 @@ public class TreeReply extends AbstractItem implements Reply, Describable {
 
     @Override
     public void doSave( ParameterRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+        logger.debug( "Saving reply" );
 
         String title = request.getValue( "title", "" );
         node.set( "title", title );
 
-        String msg = request.getValue( "message", "" );
-        node.set( "message", msg );
+        String msg = request.getValue( "reply", "" );
+        node.set( "reply", msg );
+
+        String id = request.getValue( "nodeId", "" );
+        node.set( "nodeId", id );
+
         node.save();
     }
 

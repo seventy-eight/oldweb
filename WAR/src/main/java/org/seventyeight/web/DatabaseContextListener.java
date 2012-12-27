@@ -66,6 +66,10 @@ public class DatabaseContextListener implements ServletContextListener {
 
                 paths.add( new File( "C:/Users/Christian/projects/seventy-eight/system/src/main/resources/templates" ) );
 
+                /* LIB */
+                paths.add( new File( "C:/Users/Christian/projects/seventy-eight/system/src/main/resources/lib" ) );
+                SeventyEight.getInstance().getTemplateManager().addTemplateLibrary( "form.vm" );
+
                 //paths.add( new File( "C:/projects/graph-dragon/system/target/classes/templates" ) );
 
                 logger.info( "Loading plugins" );

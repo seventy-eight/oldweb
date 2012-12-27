@@ -1,7 +1,19 @@
-Comments:<br>$item.getReplies( 0, 10 )
+Comments:<br>
 <br>
 <br>
 #set( $d = $item.getReplyDescriptor() )
+#set( $id = $item.getNode().getId( false ) )
+#set( $rid = $item.getResourceIdentifier() )
+$d<br>
+$rid<br>
+$id
+
+<form action="/debate/reply/create" method="post">
 <table>
 #renderDescriptor( $d, 0 )
 </table>
+
+    <input type="hidden" name="nodeId" value="$id">
+    <input type="hidden" name="identifier" value="$rid">
+    <input type="submit" value="Submit">
+</form>

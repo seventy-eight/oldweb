@@ -77,12 +77,11 @@ public abstract class Descriptor<T extends Describable> {
         T instance = null;
         try {
             instance = getInstance( node );
-            request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( instance, "configure.vm" ) );
-
+            c.put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( instance, "configure.vm" ) );
         } catch( UnableToInstantiateObjectException e ) {
             /* instance == null || node == null */
             logger.warn( e );
-            request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClass( getClazz(), "configure.vm" ) );
+            c.put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClass( getClazz(), "configure.vm" ) );
         }
 
         return SeventyEight.getInstance().getTemplateManager().getRenderer( request ).setContext( c ).render( "org/seventyeight/web/model/descriptorpage.vm" );

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
@@ -34,6 +35,8 @@ public class TemplateManager {
 	private List<File> templatePaths = new ArrayList<File>();
 	private List<File> staticPaths = new ArrayList<File>();
 
+    private List<String> libsList = new LinkedList<String>();
+
 	public Template getTemplate( AbstractTheme theme, String template ) throws TemplateDoesNotExistException {
 		
 		try {
@@ -53,6 +56,10 @@ public class TemplateManager {
 	public void addStaticPath( File path ) {
 		staticPaths.add( path );
 	}
+
+    public void addTemplateLibrary( String lib ) {
+        libsList.add( lib );
+    }
 	
 	public File getStaticFile( String filename ) throws IOException {
 		for( File path : staticPaths ) {
@@ -118,10 +125,31 @@ public class TemplateManager {
 				                                       + "org.seventyeight.web.velocity.html.ResourceSelectorDirective,"
                                                        + "org.seventyeight.web.velocity.html.RenderDescriptorDirective,"
 				                                       + "org.seventyeight.web.velocity.html.FileInputDirective" );
+
+        String l = getListAsCommaString( libsList );
+        logger.debug( "L: " + l );
+        velocityProperties.setProperty( "velocimacro.library", l );
+        velocityProperties.setProperty( "velocimacro.library.autoreload", "true" );
 		
 		/* Initialize velocity */
 		engine.init( velocityProperties );
 	}
+
+    private <T> String getListAsCommaString( List<T> files ) {
+        StringBuilder s = new StringBuilder();
+        for( int i = 0 ; i < files.size() ; i++ ) {
+            T f = files.get( i );
+
+            if( i < ( files.size() - 1 ) ) {
+                s.append( f );
+                s.append( "," );
+            } else {
+                s.append( f );
+            }
+        }
+
+        return s.toString();
+    }
 	
 	public VelocityEngine getEngine() {
 		return engine;

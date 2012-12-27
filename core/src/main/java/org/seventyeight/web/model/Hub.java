@@ -16,7 +16,7 @@ import java.util.List;
  *         Date: 20-12-12
  *         Time: 11:16
  */
-public abstract class Hub extends AbstractDatabaseItem implements Describable {
+public abstract class Hub extends AbstractItem implements Describable {
 
     public Hub( Node node ) {
         super( node );
