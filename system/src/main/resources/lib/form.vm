@@ -1,0 +1,23 @@
+#macro( textField $name $title $default )
+<tr>
+    <td>
+        $title
+    </td>
+
+    <td>
+        <input name="$name" type="text" style="" class="input" value="$default">
+    </td>
+</tr>
+#end
+
+#macro( textarea $name $title $default )
+<tr>
+    <td>
+       $title
+    </td>
+
+    <td>
+        <textarea name="$name" style="resize:vertical;height:200px" class="input">$default</textarea>
+    </td>
+</tr>
+#end
