@@ -186,16 +186,6 @@ public class FileResource extends AbstractResource {
 		public String getType() {
 			return "file";
 		}
-		
-		@Override
-		public Class<? extends Extension> getExtensionClass() {
-			return null;
-		}
-
-		@Override
-		public FileResource newInstance( Database db ) throws UnableToInstantiateObjectException {
-			return super.newInstance( db );
-		}
 
         @Override
         public void configureIndex( Database db ) {

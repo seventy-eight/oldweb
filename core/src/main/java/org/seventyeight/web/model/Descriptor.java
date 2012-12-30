@@ -2,6 +2,8 @@ package org.seventyeight.web.model;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
@@ -55,9 +57,14 @@ public abstract class Descriptor<T extends Describable> {
 
         return instance;
     }
-	
-	//public abstract T get( Node node );
-	public abstract Class<? extends Extension> getExtensionClass();
+
+    /**
+     * Get the descriptors for
+     * @return
+     */
+    public List<Class> getExtensionClasses() {
+        return Collections.emptyList();
+    }
 	
 	public Class<? extends Describable> getClazz() {
 		return clazz;

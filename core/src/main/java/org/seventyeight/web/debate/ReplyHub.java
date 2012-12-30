@@ -35,12 +35,13 @@ public abstract class ReplyHub extends Hub {
 
         int id = addItem( reply, Reply.ReplyRelation.reply );
         long rid = getResourceIdentifier();
+        logger.debug( "RID IS " + rid + " and ID IS " + id );
         node.getDB().putToIndex( INDEX_REPLIES, reply.getNode(), rid, id );
     }
 
     public List<Reply> getReplies( int offset, int number ) throws HubException {
         long rid = getResourceIdentifier();
-        logger.debug( "RID " + rid );
+        logger.debug( number + ", " + rid + ", " + offset );
         List<Node> nodes = node.getDB().getFromIndexAbove( INDEX_REPLIES, number, rid, offset );
         logger.debug( "NODES " + nodes );
         /* Sort 'em */
@@ -82,11 +83,6 @@ public abstract class ReplyHub extends Hub {
         @Override
         public String getType() {
             return "replyHub";
-        }
-
-        @Override
-        public Class<? extends Extension> getExtensionClass() {
-            return null;
         }
 
         @Override

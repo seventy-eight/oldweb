@@ -71,6 +71,17 @@
                                 </td>
                             </tr>
 
+                            #set( $classes = $descriptor.getExtensionClasses() )
+                            <tr>
+                                <td>
+                                    CLASSES: $classes
+                                </td>
+                            </tr>
+                            #foreach( $class in $classes )
+                                #configureExtensions( $class )
+                            #end
+
+
                             <tr>
                                 <td colspan="2" align="center"><input type="submit" value="OK"></td>
                             </tr>

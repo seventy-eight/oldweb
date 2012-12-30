@@ -74,10 +74,5 @@ public class TreeReply extends AbstractItem implements Reply, Describable {
         public String getType() {
             return "";
         }
-
-        @Override
-        public Class<? extends Extension> getExtensionClass() {
-            return null;
-        }
     }
 }

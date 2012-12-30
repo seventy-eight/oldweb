@@ -67,16 +67,6 @@ public class Article extends AbstractResource {
 		public String getType() {
 			return "article";
 		}
-
-		@Override
-		public Class<? extends Extension> getExtensionClass() {
-			return null;
-		}
-
-		@Override
-		public Article newInstance( Database db ) throws UnableToInstantiateObjectException {
-			return super.newInstance( db );
-		}
 	}
 
 }

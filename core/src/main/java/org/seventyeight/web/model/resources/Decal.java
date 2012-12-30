@@ -76,17 +76,6 @@ public class Decal extends Image {
 		public String getType() {
 			return "decal";
 		}
-		
-		@Override
-		public Class<? extends Extension> getExtensionClass() {
-			return null;
-		}
-
-		@Override
-		public Decal newInstance( Database db) throws UnableToInstantiateObjectException {
-			return super.newInstance( db );
-		}
-
 	}
 
 }

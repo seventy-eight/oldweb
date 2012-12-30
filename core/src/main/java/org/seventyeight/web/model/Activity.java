@@ -11,14 +11,14 @@ import org.seventyeight.utils.Date;
  *         Date: 16-12-12
  *         Time: 23:01
  */
-public class Activity implements DatabaseItem, Timestamped {
+public class Activity extends AbstractDatabaseItem implements Timestamped {
 
     public static final String KEY_TEXT = "text";
 
     protected Node node;
 
     public Activity( Node node ) {
-        this.node = node;
+        super( node );
     }
 
     public void setText( String text ) {
@@ -45,22 +45,8 @@ public class Activity implements DatabaseItem, Timestamped {
     }
 
     @Override
-    public Node getNode() {
-        return node;
-    }
-
-    @Override
-    public Edge createRelation( DatabaseItem other, EdgeType type ) {
-        return node.createEdge( other.getNode(), type );
-    }
-
-    @Override
     public String getItemClass() {
         return this.getClass().getSimpleName();
     }
 
-    @Override
-    public Database getDB() {
-        return node.getDB();
-    }
 }

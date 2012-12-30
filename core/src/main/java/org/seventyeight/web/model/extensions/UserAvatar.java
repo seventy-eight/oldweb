@@ -34,11 +34,6 @@ public class UserAvatar extends AbstractExtension implements UserExtension, Desc
 		public String getType() {
 			return "userAvatar";
 		}
-		
-		@Override
-		public Class<? extends Extension> getExtensionClass() {
-			return UserAvatarExtension.class;
-		}
 	}
 
 	@Override

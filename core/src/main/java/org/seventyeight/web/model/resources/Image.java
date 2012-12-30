@@ -206,16 +206,6 @@ public class Image extends FileResource {
 		public String getType() {
 			return "image";
 		}
-		
-		@Override
-		public Class<? extends Extension> getExtensionClass() {
-			return null;
-		}
-
-		@Override
-		public Image newInstance( Database db ) throws UnableToInstantiateObjectException {
-			return super.newInstance( db );
-		}
 	}
 
 }

@@ -6,7 +6,9 @@ import org.seventyeight.database.EdgeType;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.UnableToInstantiateObjectException;
 import org.seventyeight.utils.Date;
+import org.seventyeight.web.model.extensions.PostViewExtension;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,5 +46,15 @@ public abstract class ResourceDescriptor<T extends AbstractResource> extends Des
     @Override
     public EdgeType getRelationType() {
         return ResourceDescriptorRelation.resource;
+    }
+
+
+    @Override
+    public List<Class> getExtensionClasses() {
+        List<Class> classes = new ArrayList<Class>(1);
+
+        classes.add( PostViewExtension.class );
+
+        return classes;
     }
 }

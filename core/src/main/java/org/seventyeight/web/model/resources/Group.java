@@ -170,23 +170,7 @@ public class Group extends AbstractResource {
 		public String getType() {
 			return "group";
 		}
-		
-		@Override
-		public Class<? extends Extension> getExtensionClass() {
-			return null;
-		}
 
-		@Override
-		public Group newInstance( Database db ) throws UnableToInstantiateObjectException {
-			return super.newInstance( db );
-		}
-
-		/*
-		@Override
-		public Group get( Node node ) {
-			return new Group( node );
-		}
-		*/
 	}
 
 	public String getPortrait() {

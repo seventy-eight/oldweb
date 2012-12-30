@@ -241,16 +241,6 @@ public class Collection extends AbstractResource {
 		public String getType() {
 			return "collection";
 		}
-		
-		@Override
-		public Class<? extends Extension> getExtensionClass() {
-			return null;
-		}
-
-		@Override
-		public Collection newInstance( Database db ) throws UnableToInstantiateObjectException {
-			return super.newInstance( db );
-		}
 	}
 
 }

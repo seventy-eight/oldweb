@@ -2,6 +2,7 @@ package org.seventyeight.web.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -14,6 +15,8 @@ import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.debate.exceptions.ReplyException;
 import org.seventyeight.web.debate.ReplyHub;
 import org.seventyeight.web.exceptions.*;
+import org.seventyeight.web.hub.PostViewExtensionHub;
+import org.seventyeight.web.model.extensions.PostViewExtension;
 import org.seventyeight.web.model.resources.User;
 
 import com.google.gson.JsonObject;
@@ -242,6 +245,16 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 
         getDB().putToIndex( SeventyEight.INDEX_RESOURCES, node, getIdentifier() );
 	}
+
+    @Override
+    public List<AbstractExtensionHub> getExtensionsHubs() {
+        List<AbstractExtensionHub> hubs = new LinkedList<AbstractExtensionHub>();
+
+        List<Edge> edges = node.getEdges( PostViewExtensionHub.ExtensionRelation.postViewExtension, Direction.OUTBOUND );
+
+        return hubs;
+    }
+
 
     /**
      * Get a resource hub {@link Node} identified by type

@@ -209,23 +209,6 @@ public class User extends AbstractResource {
 		public String getType() {
 			return "user";
 		}
-		
-		@Override
-		public Class<? extends Extension> getExtensionClass() {
-			return UserExtension.class;
-		}
-
-		@Override
-		public User newInstance( Database db ) throws UnableToInstantiateObjectException {
-			return super.newInstance( db );
-		}
-
-		/*
-		@Override
-		public User get( Node node ) {
-			return new User( node );
-		}
-		*/
 	}
 
 	public String getPortrait() {

@@ -15,4 +15,9 @@ public interface DatabaseItem {
     public Edge createRelation( DatabaseItem other, EdgeType type );
     public String getItemClass();
     public Database getDB();
+
+    /**
+     * Remove this {@link Item} from the persistence layer
+     */
+    public void remove();
 }

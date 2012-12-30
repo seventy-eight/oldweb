@@ -21,3 +21,21 @@
     </td>
 </tr>
 #end
+
+#macro( configureExtensions $extensionClass )
+
+    #set( $descriptors = $core.getExtensionDescriptors( $extensionClass ) )
+    $descriptors
+    <tr>
+        <td>
+            <div title="extensionClass" style="width:100%">
+                <input type="hidden" name="class" value="$class" />
+                <table style="width:100%">
+                    #foreach( $descriptor in $descriptors )
+                        #renderDescriptor( $descriptor )
+                    #end
+                </table>
+            </div>
+        </td>
+    </tr>
+#end

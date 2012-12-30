@@ -37,4 +37,8 @@ public abstract class AbstractDatabaseItem implements DatabaseItem {
     public Database getDB() {
         return node.getDB();
     }
+
+    @Override
+    public void remove() {
+    }
 }

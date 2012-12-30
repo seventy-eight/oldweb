@@ -190,6 +190,8 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
             }
         }
 
+        System.out.println( "NNODEASS: " + docs );
+
         List<OrientNode> nodes = new LinkedList<OrientNode>();
 
         for( OIdentifiable d : docs ) {

@@ -40,11 +40,6 @@ public class UserDecal extends AbstractExtension implements Portrait, Describabl
 		public String getType() {
 			return "userDecal";
 		}
-		
-		@Override
-		public Class<? extends Extension> getExtensionClass() {
-			return null;
-		}
 	}
 
 	@Override

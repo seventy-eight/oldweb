@@ -6,12 +6,7 @@ import org.apache.log4j.Logger;
 import org.seventyeight.database.*;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.SeventyEight.ResourceEdgeType;
-import org.seventyeight.web.exceptions.ErrorWhileSavingException;
-import org.seventyeight.web.exceptions.IllegalStateRuntimeException;
-import org.seventyeight.web.exceptions.InconsistentParameterException;
-import org.seventyeight.web.exceptions.IncorrectTypeException;
-import org.seventyeight.web.exceptions.ParameterDoesNotExistException;
-import org.seventyeight.web.exceptions.ResourceDoesNotExistException;
+import org.seventyeight.web.exceptions.*;
 
 import com.google.gson.JsonObject;
 
@@ -88,6 +83,12 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
 						Descriptor<?> d = SeventyEight.getInstance().getDescriptor( clazz );
 						logger.debug( "Descriptor is " + d );
 						//List<ODocument> nodes = SeventyEight.getInstance().getNodeRelation( item, ResourceEdgeType.extension );
+
+                        AbstractExtensionHub hub = getExtensionHub( d );
+
+                        /* First remove the extensions */
+                        hub.removeExtensions();
+
                         List<Edge> edges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND );
 						
 						logger.debug( "Extension nodes: " + edges.size() );
@@ -102,6 +103,11 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
 							logger.debug( "Saving configurable " + e );
 							e.doSave( request, o );
 							logger.debug( "Describable saved" );
+
+                            //Hub hub = e.getHub();
+
+
+
 							//SeventyEight.getInstance().addNodeRelation( db, item, e, ResourceEdgeType.extension, false );
                             node.createEdge( e.getNode(), d.getRelationType() );
 						}
@@ -198,7 +204,20 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
 	public void prepareView( ParameterRequest request ) {
 		/* Default implementation is no op */
 	}
-	
+
+    public AbstractExtensionHub<?> getExtensionHub( Descriptor<?> descriptor ) throws CouldNotLoadObjectException {
+        List<Edge> edges = node.getEdges( descriptor.getRelationType(), Direction.OUTBOUND );
+
+        if( edges.size() == 0 ) {
+            return null;
+        } else {
+            if( edges.size() > 1 ) {
+                logger.error( "Too many hubs defined for " + descriptor );
+            }
+            return (AbstractExtensionHub) SeventyEight.getInstance().getDatabaseItem( edges.get( 0 ).getTargetNode() );
+        }
+    }
+
 	/*
 	public static Class<?> getExtensionClass() {
 		return this.getClass();
@@ -301,4 +320,14 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
 		}
 	}
 	*/
+
+
+
+    /**
+     * Get the extension hubs for this {@link Item}. Base implementation returns the empty list
+     * @return
+     */
+    public List<AbstractExtensionHub> getExtensionsHubs() {
+        return Collections.emptyList();
+    }
 }
