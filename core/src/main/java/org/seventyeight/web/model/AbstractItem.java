@@ -70,7 +70,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
 		public void handleExtensions() {
 			logger.debug( "Handling extensions" );
 			if( jsonData != null ) {
-				List<JsonObject> objects = SeventyEight.getInstance().getConfigurationJsonObjects( jsonData );
+				List<JsonObject> objects = SeventyEight.getInstance().getJsonObjects( jsonData );
 				logger.debug( "I got " + objects.size() + " configurations" );
 				
 				for( JsonObject o : objects ) {
@@ -204,6 +204,73 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
 	public void prepareView( ParameterRequest request ) {
 		/* Default implementation is no op */
 	}
+
+
+    public void handleJsonExtensioClass( JsonObject extensionClassData ) throws NoSuchExtensionException {
+        logger.debug( "Handling extension class Json data" );
+
+        String cls = extensionClassData.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
+        logger.debug( "Class is " + cls );
+        try {
+            Class<?> clazz = Class.forName( cls );
+            logger.debug( "Extension class is " + clazz );
+        } catch ( Exception e ) {
+            throw new NoSuchExtensionException( e.getMessage(), e );
+        }
+
+    }
+
+    public void handleJsonConfig( JsonObject jsonData ) {
+        logger.debug( "Handling configuration Json data" );
+
+        List<JsonObject> objects = SeventyEight.getInstance().getJsonObjects( jsonData );
+        logger.debug( "I got " + objects.size() + " configurations" );
+
+        for( JsonObject o : objects ) {
+            logger.debug( "o: " + o );
+            try {
+                String cls = o.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
+                logger.debug( "Class is " + cls );
+                Class<?> clazz = Class.forName( cls );
+                logger.debug( "Class is " + clazz );
+                Descriptor<?> d = SeventyEight.getInstance().getDescriptor( clazz );
+                logger.debug( "Descriptor is " + d );
+                //List<ODocument> nodes = SeventyEight.getInstance().getNodeRelation( item, ResourceEdgeType.extension );
+
+                AbstractExtensionHub hub = getExtensionHub( d );
+
+                /* First remove the extensions */
+                hub.removeExtensions();
+
+                List<Edge> edges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND );
+
+                logger.debug( "Extension nodes: " + edges.size() );
+                if( edges.size() > 0 ) {
+                    logger.debug( "There were extensions defined" );
+                    //for() {
+
+                    //}
+                } else {
+                    logger.debug( "There were NO extensions defined" );
+                    Describable e = d.newInstance( getDB() );
+                    logger.debug( "Saving configurable " + e );
+                    e.doSave( request, o );
+                    logger.debug( "Describable saved" );
+
+                    //Hub hub = e.getHub();
+
+
+
+                    //SeventyEight.getInstance().addNodeRelation( db, item, e, ResourceEdgeType.extension, false );
+                    node.createEdge( e.getNode(), d.getRelationType() );
+                }
+            } catch( Exception e ) {
+                logger.warn( "Unable to get descriptor for " + o + ": " + e.getMessage() );
+                //ExceptionUtils.getRootCause( e ).printStackTrace();
+            }
+        }
+    }
+
 
     public AbstractExtensionHub<?> getExtensionHub( Descriptor<?> descriptor ) throws CouldNotLoadObjectException {
         List<Edge> edges = node.getEdges( descriptor.getRelationType(), Direction.OUTBOUND );

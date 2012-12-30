@@ -605,13 +605,25 @@ public class SeventyEight {
 	 * JSON
 	 */
 	
-	public static final String __JSON_CONFIGURATION_NAME = "config";
+	//public static final String __JSON_CONFIGURATION_NAME = "config";
+    //public static final String __JSON_EXTENSION_NAME = "extensionClass";
 	public static final String __JSON_CLASS_NAME = "class";
+
+    public enum JsonType {
+        config,
+        extensionClass
+    }
+
+    public List<JsonObject> getJsonObjects( JsonObject obj ) {
+        return getJsonObjects( obj, JsonType.config );
+    }
 	
-	public List<JsonObject> getConfigurationJsonObjects( JsonObject obj ) {
+	public List<JsonObject> getJsonObjects( JsonObject obj, JsonType type ) {
+        logger.debug( "Getting " + type + " Json objects" );
+
 		List<JsonObject> objects = new ArrayList<JsonObject>();
 		
-		JsonElement configElement = obj.get( __JSON_CONFIGURATION_NAME );
+		JsonElement configElement = obj.get( type.toString() );
 		
 		/**/
 		if( configElement != null ) {
@@ -633,7 +645,6 @@ public class SeventyEight {
 		
 		return objects;
 	}
-	
 
     /**********************/
     /*  TEMPORARY STUFF   */
