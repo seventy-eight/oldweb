@@ -31,6 +31,8 @@ public interface Node extends Parameterized<Node> {
      */
     public <E extends Edge> List<E> getEdges( EdgeType type, Direction direction );
 
+    public <E extends Edge> List<E> getEdges( EdgeType type, Direction direction, String nodeClass );
+
     /**
      * Get the {@link Edge}'s between this and the other {@link Node} with a certain {@link EdgeType} in a given {@link Direction}
      * @param other

@@ -64,6 +64,11 @@ public class OrientNode implements Node {
 
     @Override
     public List<OrientEdge> getEdges( EdgeType type, Direction direction ) {
+        return getEdges( type, direction, null );
+    }
+
+    @Override
+    public List<OrientEdge> getEdges( EdgeType type, Direction direction, String nodeClass ) {
         logger.debug( "Getting " + direction + " edges for " + this + " of type " + type );
 
         Set<OIdentifiable> in = null;
@@ -88,8 +93,10 @@ public class OrientNode implements Node {
             for( OIdentifiable e : in ) {
                 ODocument other = db.getInternalDatabase().getOutVertex( e );
 
-                OrientEdge edge = new OrientEdge( e, new OrientNode( db, other ), this );
-                es.add( edge );
+                if( nodeClass == null || ( other.containsField( "class" ) && other.field( "class").equals( nodeClass ) ) ) {
+                    OrientEdge edge = new OrientEdge( e, new OrientNode( db, other ), this );
+                    es.add( edge );
+                }
             }
         }
 
@@ -97,8 +104,10 @@ public class OrientNode implements Node {
             for( OIdentifiable e : out ) {
                 ODocument other = db.getInternalDatabase().getInVertex( e );
 
-                OrientEdge edge = new OrientEdge( e, this, new OrientNode( db, other ) );
-                es.add( edge );
+                if( nodeClass == null || ( other.containsField( "class" ) && other.field( "class").equals( nodeClass ) ) ) {
+                    OrientEdge edge = new OrientEdge( e, this, new OrientNode( db, other ) );
+                    es.add( edge );
+                }
             }
         }
 
