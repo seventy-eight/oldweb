@@ -57,6 +57,8 @@ public abstract class AbstractExtensionHub<T extends Describable> extends Hub {
                 DatabaseItem item = SeventyEight.getInstance().getDatabaseItem( edge.getTargetNode() );
                 logger.debug( "Removing " + item );
                 item.remove();
+                /* Removing edge */
+                edge.delete();
             } catch( Exception e ) {
                 logger.warn( e );
             }

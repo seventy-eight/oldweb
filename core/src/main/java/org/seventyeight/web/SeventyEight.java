@@ -90,7 +90,8 @@ public class SeventyEight {
 		owner,
 		contributor,
 		extension,
-		translation
+		translation,
+        data
 	}
 		
 	public enum GroupEdgeType implements EdgeType {

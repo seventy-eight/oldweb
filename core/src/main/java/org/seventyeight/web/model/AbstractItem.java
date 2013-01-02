@@ -260,6 +260,13 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
                 e.doSave( request, o );
                 logger.debug( "Describable saved" );
                 node.createEdge( e.getNode(), d.getRelationType() );
+
+                /**/
+                if( d.doRemoveDataItemOnConfigure() ) {
+                    logger.debug( "This should remove the data attached to this item" );
+                }
+
+                
             } catch( Exception e ) {
                 logger.warn( "Unable to get descriptor for " + o + ": " + e.getMessage() );
                 //ExceptionUtils.getRootCause( e ).printStackTrace();
@@ -291,5 +298,16 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
      */
     public List<AbstractExtensionHub> getExtensionsHubs() {
         return Collections.emptyList();
+    }
+
+
+    public AbstractDataItem getDataItem( Class<? extends AbstractDataItem> dataClass ) throws CouldNotLoadObjectException {
+        List<Edge> edges = node.getEdges( ResourceEdgeType.data, Direction.OUTBOUND, dataClass.getName() );
+
+        if( edges.size() == 0 ) {
+            return null;
+        } else {
+            return (AbstractDataItem) SeventyEight.getInstance().getDatabaseItem( edges.get( 0 ).getTargetNode() );
+        }
     }
 }

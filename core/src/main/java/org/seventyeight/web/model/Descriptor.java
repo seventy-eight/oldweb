@@ -97,4 +97,13 @@ public abstract class Descriptor<T extends Describable> {
     public EdgeType getRelationType() {
         return SeventyEight.ResourceEdgeType.extension;
     }
+
+    /**
+     * Determine whether to remove data items on configure.
+     * @return
+     */
+    public boolean doRemoveDataItemOnConfigure() {
+        return false;
+    }
+
 }
