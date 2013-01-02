@@ -4,6 +4,7 @@ import org.seventyeight.database.Database;
 import org.seventyeight.database.Edge;
 import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
+import org.seventyeight.web.exceptions.IllegalStateRuntimeException;
 
 /**
  * @author cwolfgang
@@ -40,5 +41,27 @@ public abstract class AbstractDatabaseItem implements DatabaseItem {
 
     @Override
     public void remove() {
+    }
+
+    /**
+     * Get a field
+     * @param key
+     * @param def
+     * @return
+     */
+    public <T> T getField( String key, T def ) {
+        if( node.get( key ) == null ) {
+            return def;
+        } else {
+            return (T) node.get( key );
+        }
+    }
+
+    public <T> T getField( String key ) throws IllegalStateRuntimeException {
+        if( node.get( key ) == null ) {
+            throw new IllegalStateRuntimeException( "Field " + key + " does not exist" );
+        } else {
+            return (T) node.get( key );
+        }
     }
 }

@@ -351,27 +351,6 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
 	}
 	*/
 	
-	/**
-	 * Get a field
-	 * @param key
-	 * @param def
-	 * @return
-	 */
-	public <T> T getField( String key, T def ) {
-		if( node.get( key ) == null ) {
-			return def;
-		} else {
-			return (T) node.get( key );
-		}
-	}
-	
-	public <T> T getField( String key ) throws IllegalStateRuntimeException {
-		if( node.get( key ) == null ) {
-			throw new IllegalStateRuntimeException( "Field " + key + " does not exist" );
-		} else {
-			return (T) node.get( key );
-		}
-	}
 
 	/*
 	public void getConfigurableExtensions() {
