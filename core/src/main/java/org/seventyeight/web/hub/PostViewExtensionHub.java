@@ -24,12 +24,7 @@ public class PostViewExtensionHub extends AbstractExtensionHub {
 
     @Override
     public String getDisplayName() {
-        return null;
-    }
-
-    @Override
-    public void doSave( ParameterRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
-        /* Currently no op */
+        return "Post view extension hub";
     }
 
     @Override

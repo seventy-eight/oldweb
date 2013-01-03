@@ -215,36 +215,56 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
 	}
 
 
-    public void handleJsonExtensionClass( Request request, JsonObject extensionClassData ) throws NoSuchExtensionException {
+    /**
+     * Get all extension classes for an item. Iterate over them, get the extension hub or create it.
+     * @param request
+     * @param jsonData
+     * @throws NoSuchExtensionException
+     */
+    public void handleJsonExtensionClass( Request request, JsonObject jsonData ) {
         logger.debug( "Handling extension class Json data" );
 
-        String className = extensionClassData.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
-        logger.debug( "Class is " + className );
+        List<JsonObject> objects = SeventyEight.getInstance().getJsonObjects( jsonData, SeventyEight.JsonType.extensionClass );
+        logger.debug( "I got " + objects.size() + " extension types" );
 
-        AbstractExtensionHub hub = null;
+        for( JsonObject obj : objects ) {
+            String className = obj.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
+            logger.debug( "Extension class name is " + className );
 
-        try {
-            Class<?> clazz = Class.forName( className );
-            logger.debug( "Extension class is " + clazz );
-            List<Edge> edges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND, clazz.getName() );
+            AbstractExtensionHub hub = null;
 
-            /* There should be only one */
-            if( edges.size() == 0 ) {
-                throw new IllegalStateException( "No extension node defined for " + className );
-            } else {
-                hub = getExtensionHub( edges.get( 0 ).getTargetNode() );
+            try {
+                Class<?> clazz = Class.forName( className );
+                logger.debug( "Extension class is " + clazz );
+                List<Edge> edges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND, "extensionClass", clazz.getName() );
+
+                /* There should be only one */
+                if( edges.size() == 0 ) {
+                    //throw new IllegalStateException( "No extension node defined for " + className );
+
+                } else {
+                    hub = getExtensionHub( edges.get( 0 ).getTargetNode() );
+
+                    /* Remove any configured extensions from this hub */
+                    hub.removeExtensions();
+                }
+
+
+
+                handleJsonConfig( hub, request, jsonData );
+
+            } catch( ClassNotFoundException e ) {
+                e.printStackTrace();
+            } catch( CouldNotLoadObjectException e ) {
+                logger.error( "Could not load " + className );
+                logger.error( e );
             }
-        } catch ( Exception e ) {
-            throw new NoSuchExtensionException( e.getMessage(), e );
+
         }
 
-        /* Remove any configured extensions from this hub */
-        hub.removeExtensions();
-
-        handleJsonConfig( request, extensionClassData );
     }
 
-    public void handleJsonConfig( Request request, JsonObject jsonData ) {
+    public void handleJsonConfig( AbstractExtensionHub hub, Request request, JsonObject jsonData ) {
         logger.debug( "Handling configuration Json data" );
 
         /* Get Json configuration objects */
@@ -266,7 +286,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
 
                 Describable e = d.newInstance( getDB() );
                 logger.debug( "Saving configurable " + e );
-                e.doSave( request, o );
+                e.save( request, o );
                 logger.debug( "Describable saved" );
                 node.createEdge( e.getNode(), d.getRelationType() );
 
