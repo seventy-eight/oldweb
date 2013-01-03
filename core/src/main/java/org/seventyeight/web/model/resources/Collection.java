@@ -34,8 +34,9 @@ public class Collection extends AbstractResource {
 		return null;
 	}
 
-	public void doSave( ParameterRequest request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
-		save( new ResourceSaveImpl( this, request, jsonData ) );
+    @Override
+    public Save getSaver( ParameterRequest request, JsonObject jsonData ) {
+		return new ResourceSaveImpl( this, request, jsonData );
 	}
 
 	public void addResource( long identifier, long position ) throws CouldNotLoadResourceException, TooManyException, NotFoundException {

@@ -22,9 +22,12 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
 	public AbstractItem( Node node, Locale locale ) {
         super( node );
 	}
-	
-	protected final void save( Save save ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+
+    @Override
+	public final void save( ParameterRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
 		logger.debug( "Begin saving" );
+
+        Save save = getSaver( request, json );
 		
 		save.before();
 		save.save();
@@ -39,7 +42,11 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
 		logger.debug( "End saving" );
 	}
 
-	protected abstract class Save {
+    public Save getSaver( ParameterRequest request, JsonObject json ) {
+        return new Save( this, request, json );
+    }
+
+	protected class Save {
 
 		protected AbstractItem item;
 		protected ParameterRequest request;
@@ -53,7 +60,9 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
 		
 		public void before() {}
 		
-		public abstract void save() throws InconsistentParameterException, ErrorWhileSavingException;
+		public void save() throws InconsistentParameterException, ErrorWhileSavingException {
+            /* Base implementation is a no op */
+        }
 		
 		public void after() {}
 		
@@ -266,7 +275,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
                     logger.debug( "This should remove the data attached to this item" );
                 }
 
-                
+
             } catch( Exception e ) {
                 logger.warn( "Unable to get descriptor for " + o + ": " + e.getMessage() );
                 //ExceptionUtils.getRootCause( e ).printStackTrace();

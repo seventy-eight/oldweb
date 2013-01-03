@@ -36,8 +36,9 @@ public class Image extends FileResource {
 		jpeg, png, gif
 	}
 
-	public void doSave( ParameterRequest request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
-		save( new ImageSaveImpl( this, request, jsonData ) );
+    @Override
+	public Save getSaver( ParameterRequest request, JsonObject jsonData ) {
+		return new ImageSaveImpl( this, request, jsonData );
 	}
 
 	public class ImageSaveImpl extends FileSaveImpl {

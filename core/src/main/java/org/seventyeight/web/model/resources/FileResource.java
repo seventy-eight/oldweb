@@ -30,8 +30,9 @@ public class FileResource extends AbstractResource {
 		super( node );
 	}
 
-	public void doSave( ParameterRequest request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
-		save( new FileSaveImpl( this, request, jsonData ) );
+    @Override
+    public Save getSaver( ParameterRequest request, JsonObject jsonData ) {
+		return new FileSaveImpl( this, request, jsonData );
 	}
 	
 	public class FileSaveImpl extends ResourceSaveImpl {

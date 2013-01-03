@@ -30,16 +30,16 @@ public class User extends AbstractResource {
 		super( node );
 	}
 
-	public void doSave( ParameterRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
-		save( new UserSaveImpl( this, request, jsonData ) );
+	public Save getSaver( ParameterRequest request, JsonObject jsonData ) {
+		return new UserSaveImpl( this, request, jsonData );
 	}
-	
+
 	public class UserSaveImpl extends ResourceSaveImpl {
 
 		public UserSaveImpl( AbstractResource resource, ParameterRequest request, JsonObject jsonData ) {
 			super( resource, request, jsonData );
 		}
-		
+
 		public void save() throws InconsistentParameterException, ErrorWhileSavingException {
 			super.save();
 			

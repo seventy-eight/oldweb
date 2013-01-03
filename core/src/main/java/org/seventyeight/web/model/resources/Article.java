@@ -17,8 +17,9 @@ public class Article extends AbstractResource {
 		super( node );
 	}
 
-	public void doSave( ParameterRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
-		save( new ArticleSaveImpl( this, request, jsonData ) );
+    @Override
+    public Save getSaver( ParameterRequest request, JsonObject jsonData ) {
+		return new ArticleSaveImpl( this, request, jsonData );
 	}
 	
 	public class ArticleSaveImpl extends ResourceSaveImpl {

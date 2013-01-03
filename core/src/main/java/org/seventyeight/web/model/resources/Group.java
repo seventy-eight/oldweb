@@ -34,8 +34,9 @@ public class Group extends AbstractResource {
 		super( node );
 	}
 
-	public void doSave( ParameterRequest request, JsonObject jsonData ) throws ResourceDoesNotExistException, ParameterDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
-		save( new GroupSaveImpl( this, request, jsonData ) );
+    @Override
+    public Save getSaver( ParameterRequest request, JsonObject jsonData ) {
+		return new GroupSaveImpl( this, request, jsonData );
 	}
 	
 	public class GroupSaveImpl extends ResourceSaveImpl {
