@@ -231,40 +231,43 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
             String className = obj.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
             logger.debug( "Extension class name is " + className );
 
-            AbstractExtensionHub hub = null;
+            //AbstractExtensionHub hub = null;
+            Node extensionNode = null;
 
             try {
                 Class<?> clazz = Class.forName( className );
                 logger.debug( "Extension class is " + clazz );
-                List<Edge> edges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND, "extensionClass", clazz.getName() );
+                List<Edge> edges = extensionNode.getEdges( ResourceEdgeType.extensionHub, Direction.OUTBOUND, SeventyEight.FIELD_EXTENSION_CLASS, clazz.getName() );
 
                 /* There should be only one */
                 if( edges.size() == 0 ) {
-                    //throw new IllegalStateException( "No extension node defined for " + className );
+                    /* Create new extension node, with extensionClass set */
+                    extensionNode = SeventyEight.getInstance().createNode( getDB(), null /* For now! */, new String[] { SeventyEight.FIELD_EXTENSION_CLASS }, new Object[] { className } );
 
+                    /* Create the relation from this to the extension node */
+                    this.getNode().createEdge( extensionNode, ResourceEdgeType.extensionHub );
                 } else {
-                    hub = getExtensionHub( edges.get( 0 ).getTargetNode() );
+                    //hub = getExtensionHub( edges.get( 0 ).getTargetNode() );
+                    extensionNode = edges.get( 0 ).getTargetNode();
 
                     /* Remove any configured extensions from this hub */
-                    hub.removeExtensions();
+                    //hub.removeExtensions();
+                    extensionNode.removeEdges( ResourceEdgeType.extension, Direction.OUTBOUND );
                 }
 
 
 
-                handleJsonConfig( hub, request, jsonData );
+                handleJsonConfig( extensionNode, request, obj );
 
             } catch( ClassNotFoundException e ) {
                 e.printStackTrace();
-            } catch( CouldNotLoadObjectException e ) {
-                logger.error( "Could not load " + className );
-                logger.error( e );
             }
 
         }
 
     }
 
-    public void handleJsonConfig( AbstractExtensionHub hub, Request request, JsonObject jsonData ) {
+    public void handleJsonConfig( Node hubNode, Request request, JsonObject jsonData ) {
         logger.debug( "Handling configuration Json data" );
 
         /* Get Json configuration objects */
@@ -285,12 +288,13 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
 
 
                 Describable e = d.newInstance( getDB() );
-                logger.debug( "Saving configurable " + e );
+                logger.debug( "Saving " + e );
                 e.save( request, o );
-                logger.debug( "Describable saved" );
-                node.createEdge( e.getNode(), d.getRelationType() );
 
-                /**/
+                logger.debug( "Creating relation from hub node to describable" );
+                node.createEdge( hubNode, d.getRelationType() );
+
+                /* Remove data!? */
                 if( d.doRemoveDataItemOnConfigure() ) {
                     logger.debug( "This should remove the data attached to this item" );
                 }

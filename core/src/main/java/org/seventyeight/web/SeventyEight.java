@@ -85,11 +85,14 @@ public class SeventyEight {
 	
 	private static final String SYSTEM_NODE = "system-node";
     private static final String SYSTEM_INSTALLED = "system-installed";
-	
+
+    public static final String FIELD_EXTENSION_CLASS = "extensionClass";
+
 	public enum ResourceEdgeType implements EdgeType {
 		owner,
 		contributor,
 		extension,
+        extensionHub,
 		translation,
         data
 	}
@@ -290,7 +293,24 @@ public class SeventyEight {
 
     public Node createNode( Database db, Class clazz ) {
         Node node = db.createNode();
-        node.set( "class", clazz.getName() ).save();
+        if( clazz != null ) {
+            node.set( "class", clazz.getName() ).save();
+        }
+
+        return node;
+    }
+
+    public Node createNode( Database db, Class clazz, String[] keys, Object[] values ) {
+        Node node = db.createNode();
+        if( clazz != null ) {
+            node.set( "class", clazz.getName() ).save();
+        }
+
+        if( keys != null ) {
+            for( int i = 0 ; i < keys.length ; i++ ) {
+                node.set( keys[i], values[i] );
+            }
+        }
 
         return node;
     }
