@@ -5,9 +5,7 @@ import java.net.URLDecoder;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import org.apache.log4j.Logger;
 
 import org.seventyeight.web.SeventyEight;
@@ -92,7 +90,7 @@ public class ResourceHelper {
 
             logger.debug( "r: " + r.getIdentifier() );
 
-            r.doSave( request, jo );
+            r.save( request, jo );
             //request.succeedTransaction();
 
             return r;
@@ -111,19 +109,25 @@ public class ResourceHelper {
      */
     public JsonObject getJsonFromRequest( Request request ) throws NoSuchJsonElementException {
         String json = request.getParameter( "json" );
-        logger.debug( "JSON: " + json );
+        //logger.debug( "JSON: " + json );
         if( json == null ) {
             throw new NoSuchJsonElementException( "Null" );
         }
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        System.out.println( gson.toJson( json ) );
+
         JsonParser parser = new JsonParser();
         JsonObject jo = (JsonObject) parser.parse( json );
-        logger.info( "JSON: " + request.getParameter( "json" ) );
+        return jo;
 
+        /*
         JsonElement e = jo.get( SeventyEight.__JSON_CONFIGURATION_NAME );
         if( e != null && e.isJsonObject() ) {
             return (JsonObject)e;
         } else {
             throw new NoSuchJsonElementException( "Could not find origin json configuration" );
         }
+        */
     }
 }

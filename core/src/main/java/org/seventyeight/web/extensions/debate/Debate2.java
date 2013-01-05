@@ -3,7 +3,10 @@ package org.seventyeight.web.extensions.debate;
 import com.google.gson.JsonObject;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.exceptions.*;
-import org.seventyeight.web.model.*;
+import org.seventyeight.web.model.AbstractItem;
+import org.seventyeight.web.model.Describable;
+import org.seventyeight.web.model.Descriptor;
+import org.seventyeight.web.model.ParameterRequest;
 import org.seventyeight.web.model.extensions.PostViewExtension;
 
 /**
@@ -11,9 +14,9 @@ import org.seventyeight.web.model.extensions.PostViewExtension;
  *         Date: 30-12-12
  *         Time: 21:54
  */
-public class Debate extends AbstractItem implements PostViewExtension, Describable {
+public class Debate2 extends AbstractItem implements PostViewExtension, Describable {
 
-    public Debate( Node node ) {
+    public Debate2( Node node ) {
         super( node );
     }
 
@@ -31,7 +34,7 @@ public class Debate extends AbstractItem implements PostViewExtension, Describab
     public final void save( ParameterRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
     }
 
-    public static class DebateDescriptor extends Descriptor<Debate> {
+    public static class DebateDescriptor extends Descriptor<Debate2> {
 
         @Override
         public String getDisplayName() {

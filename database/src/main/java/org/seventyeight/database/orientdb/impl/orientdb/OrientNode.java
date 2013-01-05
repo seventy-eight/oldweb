@@ -64,7 +64,7 @@ public class OrientNode implements Node {
 
     @Override
     public List<OrientEdge> getEdges( EdgeType type, Direction direction ) {
-        return getEdges( type, direction, null );
+        return getEdges( type, direction, null, null );
     }
 
     @Override

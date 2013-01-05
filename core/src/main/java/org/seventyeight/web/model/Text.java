@@ -8,6 +8,7 @@ import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight.ResourceEdgeType;
 
 import com.google.gson.JsonObject;
+import org.seventyeight.web.exceptions.*;
 
 public class Text extends AbstractSubItem implements Item {
 	private static Logger logger = Logger.getLogger( Text.class );
@@ -47,7 +48,7 @@ public class Text extends AbstractSubItem implements Item {
 	}
 
 	@Override
-	public void doSave( ParameterRequest request, JsonObject jsonData ) {
+    public final void save( ParameterRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
 		// TODO Auto-generated method stub
 	}
 

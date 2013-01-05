@@ -51,6 +51,8 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 		@Override
 		public void save() throws InconsistentParameterException, ErrorWhileSavingException {
 			super.save();
+
+            logger.debug( "[[SAVING RESOURCE]]" );
 			
 			String theme = request.getParameter( "theme" );
 			if( theme != null ) {

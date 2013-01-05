@@ -1,6 +1,6 @@
 <tr>
     <td style="width:100%" colspan="2">
-        <div title="config" style="width:100%">
+        <div title="config" style="width:100%;display: none" id="$class" data-enabled="0">
             CLASS= $class
             <input type="hidden" name="class" value="$class" />
             <table style="width:100%">

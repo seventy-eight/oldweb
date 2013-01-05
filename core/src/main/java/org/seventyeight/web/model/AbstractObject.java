@@ -53,7 +53,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 		
 		@Override
 		public void save() throws InconsistentParameterException, ErrorWhileSavingException {
-			logger.debug( "Saving Object" );
+            logger.debug( "[[SAVING OBJECT]]" );
 			
 			/* Try to get language */
 			String lang = request.getParameter( "language" );
@@ -77,17 +77,20 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 			logger.debug( "Title is " + title );
 			if( title != null ) {
 				setText( "title", title, language );
+                node.set( "title", title );
 			}
 			
 			String subtitle = request.getParameter( "subtitle" );
 			if( subtitle != null ) {
-				node.set( "subtitle", subtitle );
+				//node.set( "subtitle", subtitle );
+                node.set( "subtitle", subtitle );
 			}
 			
 			/* Setting description */
 			String description = request.getParameter( "description" );
 			if( description != null ) {
-				setText( "description", description, language );
+				//setText( "description", description, language );
+                node.set( "description", description );
 			}
 			
 			/* Access groups */

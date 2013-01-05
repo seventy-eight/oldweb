@@ -25,8 +25,8 @@ public abstract class AbstractExtension extends AbstractItem implements Extensio
 		return node;
 	}
 
-	public void doSave( ParameterRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
-		save( new ExtensionSave( this, request, jsonData ) );
+    public Save getSaver( ParameterRequest request, JsonObject jsonData ) {
+		return new ExtensionSave( this, request, jsonData );
 	}
 	
 	public class ExtensionSave extends Save {

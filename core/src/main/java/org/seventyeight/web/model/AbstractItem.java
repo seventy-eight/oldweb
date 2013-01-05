@@ -24,7 +24,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
 	}
 
     @Override
-	public final void save( ParameterRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+	public void save( ParameterRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
 		logger.debug( "Begin saving" );
 
         Save save = getSaver( request, json );
@@ -79,52 +79,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
 		public void handleExtensions() {
 			logger.debug( "Handling extensions" );
 			if( jsonData != null ) {
-				List<JsonObject> objects = SeventyEight.getInstance().getJsonObjects( jsonData );
-				logger.debug( "I got " + objects.size() + " configurations" );
-				
-				for( JsonObject o : objects ) {
-					logger.debug( "o: " + o );
-					try {
-						String cls = o.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
-						logger.debug( "Class is " + cls );
-						Class<?> clazz = Class.forName( cls );
-						logger.debug( "Class is " + clazz );
-						Descriptor<?> d = SeventyEight.getInstance().getDescriptor( clazz );
-						logger.debug( "Descriptor is " + d );
-						//List<ODocument> nodes = SeventyEight.getInstance().getNodeRelation( item, ResourceEdgeType.extension );
-
-                        AbstractExtensionHub hub = getExtensionHub( d );
-
-                        /* First remove the extensions */
-                        hub.removeExtensions();
-
-                        List<Edge> edges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND );
-						
-						logger.debug( "Extension nodes: " + edges.size() );
-						if( edges.size() > 0 ) {
-							logger.debug( "There were extensions defined" );
-							//for() {
-								
-							//}
-						} else {
-							logger.debug( "There were NO extensions defined" );
-							Describable e = d.newInstance( getDB() );
-							logger.debug( "Saving configurable " + e );
-							e.doSave( request, o );
-							logger.debug( "Describable saved" );
-
-                            //Hub hub = e.getHub();
-
-
-
-							//SeventyEight.getInstance().addNodeRelation( db, item, e, ResourceEdgeType.extension, false );
-                            node.createEdge( e.getNode(), d.getRelationType() );
-						}
-					} catch( Exception e ) {
-						logger.warn( "Unable to get descriptor for " + o + ": " + e.getMessage() );
-						//ExceptionUtils.getRootCause( e ).printStackTrace();
-					}
-				}
+                handleJsonExtensionClass( request, jsonData );
 			} else {
 				logger.debug( "Json data was null. Skipping" );
 			}
@@ -221,7 +176,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
      * @param jsonData
      * @throws NoSuchExtensionException
      */
-    public void handleJsonExtensionClass( Request request, JsonObject jsonData ) {
+    public void handleJsonExtensionClass( ParameterRequest request, JsonObject jsonData ) {
         logger.debug( "Handling extension class Json data" );
 
         List<JsonObject> objects = SeventyEight.getInstance().getJsonObjects( jsonData, SeventyEight.JsonType.extensionClass );
@@ -267,7 +222,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
 
     }
 
-    public void handleJsonConfig( Node hubNode, Request request, JsonObject jsonData ) {
+    public void handleJsonConfig( Node hubNode, ParameterRequest request, JsonObject jsonData ) {
         logger.debug( "Handling configuration Json data" );
 
         /* Get Json configuration objects */

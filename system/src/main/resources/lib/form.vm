@@ -27,15 +27,31 @@
     #set( $descriptors = $core.getExtensionDescriptors( $extensionClass ) )
     $descriptors
     <tr>
-        <td>
+        <td colspan="2" align="center" style="font-weight: bold; text-decoration: underline" id="snade">
+            #i18n( $extensionClass )
+        </td>
+    </tr>
+    <tr>
+        <td style="border-style: solid; width: 100%" colspan="2">
             <div title="extensionClass" style="width:100%">
                 <input type="hidden" name="class" value="$class" />
                 <table style="width:100%">
                     #foreach( $descriptor in $descriptors )
-                        #renderDescriptor( $descriptor )
+                        <!-- <input type="checkbox" name="yeah" onclick="Utils.toggleFormElement( '$descriptor.getClazz().getName()' );"> -->
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="yeah" onclick="Utils.toggleFormElement( '$descriptor.getClazz().getName()' );">
+
+                                    <table>
+                                        #renderDescriptor( $descriptor )
+                                    </table>
+
+                            </td>
+                        </tr>
                     #end
                 </table>
             </div>
+
         </td>
     </tr>
 #end

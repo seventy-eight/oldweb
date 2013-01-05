@@ -53,7 +53,7 @@ public class SeventyEightTest {
         parms.put( "password", "p" );
         parms.put( "password_again", "p" );
 
-        user.doSave( parms, null );
+        user.save( parms, null );
 
         assertThat( user.getUsername(), is( "wolle" ) );
 

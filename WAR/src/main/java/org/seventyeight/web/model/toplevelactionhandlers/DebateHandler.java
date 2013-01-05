@@ -49,7 +49,7 @@ public class DebateHandler implements TopLevelAction {
         ReplyHub hub = resource.getReplyHub();
         Descriptor<?> d = hub.getReplyDescriptor();
         Reply reply = (Reply) d.newInstance( request.getDB() );
-        reply.doSave( request, null );
+        reply.save( request, null );
 
         return reply;
     }

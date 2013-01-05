@@ -47,7 +47,9 @@ public class Group extends AbstractResource {
 		
 		public void save() throws InconsistentParameterException, ErrorWhileSavingException {
 			super.save();
-			
+
+            logger.debug( "[[SAVING GROUP]]" );
+
 			/* Save the list of members */
 			String[] users = request.getParameterValues( "users" );
 			if( users != null ) {

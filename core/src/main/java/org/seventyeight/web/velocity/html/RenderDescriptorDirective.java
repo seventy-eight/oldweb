@@ -76,6 +76,7 @@ public class RenderDescriptorDirective extends Directive {
             }
         } else {
             try {
+                logger.debug( "D IS " + d );
                 writer.write( d.getConfigurationPage( request, null ) );
             } catch( TemplateDoesNotExistException e ) {
                 logger.warn( e );

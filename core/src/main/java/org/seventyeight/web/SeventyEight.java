@@ -18,6 +18,7 @@ import org.seventyeight.web.debate.treelike.ReplyTreeHub;
 import org.seventyeight.web.debate.treelike.TreeReply;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.extensions.debate.Debate;
+import org.seventyeight.web.extensions.debate.Debate2;
 import org.seventyeight.web.handler.Dictionary;
 import org.seventyeight.web.handler.TemplateManager;
 import org.seventyeight.web.model.*;
@@ -173,6 +174,7 @@ public class SeventyEight {
         //addDescriptor( db, new TreeReply.ReplyDescriptor() );
 
         addDescriptor( db, new Debate.DebateDescriptor() );
+        addDescriptor( db, new Debate2.DebateDescriptor() );
 
         defaultLocale = new Locale( "english" );
 
@@ -626,7 +628,7 @@ public class SeventyEight {
 	 * JSON
 	 */
 	
-	//public static final String __JSON_CONFIGURATION_NAME = "config";
+	public static final String __JSON_CONFIGURATION_NAME = "config";
     //public static final String __JSON_EXTENSION_NAME = "extensionClass";
 	public static final String __JSON_CLASS_NAME = "class";
 

@@ -87,7 +87,7 @@ public class ResourceHandler implements TopLevelAction {
             } else {
                 logger.debug( "Configuring new " + type );
                 request.getContext().put( "url", "/resource/" + type + "/create" );
-                request.getContext().put( "class", descriptor.getClazz() );
+                request.getContext().put( "class", descriptor.getClazz().getName() );
                 request.getContext().put( "header", "Creating new " + type );
                 request.getContext().put( "descriptor", descriptor );
 
