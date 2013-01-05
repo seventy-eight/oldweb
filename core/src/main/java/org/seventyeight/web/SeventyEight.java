@@ -19,6 +19,7 @@ import org.seventyeight.web.debate.treelike.TreeReply;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.extensions.debate.Debate;
 import org.seventyeight.web.extensions.debate.Debate2;
+import org.seventyeight.web.extensions.debate.simple.SimpleDebate;
 import org.seventyeight.web.handler.Dictionary;
 import org.seventyeight.web.handler.TemplateManager;
 import org.seventyeight.web.model.*;
@@ -174,7 +175,9 @@ public class SeventyEight {
         //addDescriptor( db, new TreeReply.ReplyDescriptor() );
 
         addDescriptor( db, new Debate.DebateDescriptor() );
-        addDescriptor( db, new Debate2.DebateDescriptor() );
+        //addDescriptor( db, new Debate2.DebateDescriptor() );
+
+        addDescriptor( db, new SimpleDebate.SimpleDebateDescriptor() );
 
         defaultLocale = new Locale( "english" );
 
