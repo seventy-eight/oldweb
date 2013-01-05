@@ -34,7 +34,7 @@
     <tr>
         <td style="border-style: solid; width: 100%" colspan="2">
             <div title="extensionClass" style="width:100%">
-                <input type="hidden" name="class" value="$class" />
+                <input type="hidden" name="class" value="$extensionClass.getName()" />
                 <table style="width:100%">
                     #foreach( $descriptor in $descriptors )
                         <!-- <input type="checkbox" name="yeah" onclick="Utils.toggleFormElement( '$descriptor.getClazz().getName()' );"> -->

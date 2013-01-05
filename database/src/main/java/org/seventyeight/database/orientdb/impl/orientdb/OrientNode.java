@@ -55,7 +55,7 @@ public class OrientNode implements Node {
 
     @Override
     public OrientEdge createEdge( Node to, EdgeType type ) {
-        logger.debug( "Creating edge(" + type + ") from " + doc.getClassName() + " to " + ((OrientNode)to).getDocument().getClassName() );
+        logger.debug( "Creating edge(" + type + ") from " + doc + " to " + ((OrientNode)to).getDocument() );
 
         ODocument edge = db.getInternalDatabase().createEdge( doc, ((OrientNode)to).doc ).field( OGraphDatabase.LABEL, type.toString() ).save();
 

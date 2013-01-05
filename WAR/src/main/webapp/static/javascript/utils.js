@@ -89,7 +89,7 @@ Utils.getJsonFromForm = function( e, jsonData ) {
                         }
                         var j = jsonData[name].push( {} );
                         Utils.getJsonFromForm( childs[i], jsonData[name][j-1] );
-                        alert( JSON.stringify( jsonData[name][j-1] ) );
+                        //alert( JSON.stringify( jsonData[name][j-1] ) );
                     }
                     break;
             }

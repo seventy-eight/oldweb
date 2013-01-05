@@ -192,7 +192,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
             try {
                 Class<?> clazz = Class.forName( className );
                 logger.debug( "Extension class is " + clazz );
-                List<Edge> edges = extensionNode.getEdges( ResourceEdgeType.extensionHub, Direction.OUTBOUND, SeventyEight.FIELD_EXTENSION_CLASS, clazz.getName() );
+                List<Edge> edges = node.getEdges( ResourceEdgeType.extensionHub, Direction.OUTBOUND, SeventyEight.FIELD_EXTENSION_CLASS, clazz.getName() );
 
                 /* There should be only one */
                 if( edges.size() == 0 ) {
@@ -247,7 +247,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item 
                 e.save( request, o );
 
                 logger.debug( "Creating relation from hub node to describable" );
-                node.createEdge( hubNode, d.getRelationType() );
+                hubNode.createEdge( e.getNode(), d.getRelationType() );
 
                 /* Remove data!? */
                 if( d.doRemoveDataItemOnConfigure() ) {
