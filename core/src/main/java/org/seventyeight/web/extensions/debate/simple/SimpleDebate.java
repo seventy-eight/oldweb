@@ -21,7 +21,11 @@ public class SimpleDebate extends AbstractDebate {
         return null;
     }
 
-    public static class SimpleDebateDescriptor extends DebateDescriptor {
+    public static class SimpleDebateDescriptor extends DebateImplDescriptor {
 
+        @Override
+        public String getDisplayName() {
+            return "Simple debate";
+        }
     }
 }

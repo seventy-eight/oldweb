@@ -37,6 +37,8 @@ import org.seventyeight.web.model.themes.Default;
 import org.seventyeight.utils.Date;
 import org.seventyeight.web.util.Installer;
 
+import javax.swing.*;
+
 public class SeventyEight {
 	private static Logger logger = Logger.getLogger( SeventyEight.class );
 	private static SeventyEight instance;
@@ -431,7 +433,7 @@ public class SeventyEight {
     public void addExtension( Descriptor<?> descriptor ) {
         logger.debug( "Adding extension descriptor " + descriptor.getClazz() );
 
-        Class<?>[] interfaces = descriptor.getClazz().getInterfaces();
+        List<Class<?>> interfaces = getInterfaces( descriptor.getClazz() );
         for( Class<?> i : interfaces ) {
             logger.debug( "INTERFACE: " + i );
             List<Descriptor> list = null;
@@ -444,6 +446,18 @@ public class SeventyEight {
         }
     }
 
+    public List<Class<?>> getInterfaces( Class<?> clazz ) {
+        List<Class<?>> interfaces = new ArrayList<Class<?>>();
+        interfaces.addAll( Arrays.asList( clazz.getInterfaces() ) );
+
+        Class<?> s = clazz.getSuperclass();
+        if( s != null ) {
+            interfaces.addAll( getInterfaces( s ) );
+        }
+
+        return interfaces;
+    }
+
     public List<Descriptor> getExtensionDescriptors( String clazz ) throws ClassNotFoundException {
         return getExtensionDescriptors( Class.forName( clazz ) );
     }
@@ -454,6 +468,10 @@ public class SeventyEight {
         } else {
             return Collections.emptyList();
         }
+    }
+
+    public Map<Class, List<Descriptor>> getAllDescriptors() {
+        return descriptorList;
     }
 	
 	/**

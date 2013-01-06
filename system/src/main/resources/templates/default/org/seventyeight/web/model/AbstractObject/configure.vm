@@ -40,6 +40,14 @@
                                 <td>#inputtext( "description", $description )</td>
                             </tr>
 
+                            <!--
+                            <tr>
+                                <td>
+                                    $core.getAllDescriptors()
+                                </td>
+                            </tr>
+                            -->
+
 
                             <!--
                             <tr>

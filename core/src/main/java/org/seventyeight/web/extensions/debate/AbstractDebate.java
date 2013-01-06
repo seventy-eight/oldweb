@@ -66,6 +66,10 @@ public abstract class AbstractDebate extends Hub implements DebateInterface {
 
     public abstract Descriptor<?> getReplyDescriptor();
 
+    public static List<Descriptor> all() {
+        return SeventyEight.getInstance().getExtensionDescriptors( DebateInterface.class );
+    }
+
     @Override
     public String getDisplayName() {
         return "Reply Hub";
@@ -78,12 +82,7 @@ public abstract class AbstractDebate extends Hub implements DebateInterface {
         node.save();
     }
 
-    public static abstract class DebateDescriptor extends HubDescriptor {
-
-        @Override
-        public String getDisplayName() {
-            return "Debate Hub";
-        }
+    public static abstract class DebateImplDescriptor extends HubDescriptor {
 
         @Override
         public String getType() {

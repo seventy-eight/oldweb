@@ -6,6 +6,9 @@ import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.model.extensions.PostViewExtension;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author cwolfgang
  *         Date: 30-12-12
@@ -41,6 +44,14 @@ public class Debate extends AbstractItem implements PostViewExtension, Describab
         @Override
         public String getType() {
             return null;
+        }
+
+        public List<Descriptor> getDebates() {
+            return AbstractDebate.all();
+        }
+
+        public List<Descriptor> getDebates2() {
+            return Collections.EMPTY_LIST;
         }
     }
 }

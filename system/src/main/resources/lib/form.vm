@@ -27,7 +27,7 @@
     #set( $descriptors = $core.getExtensionDescriptors( $extensionClass ) )
     $descriptors
     <tr>
-        <td colspan="2" align="center" style="font-weight: bold; text-decoration: underline" id="snade">
+        <td colspan="2" align="center" style="font-weight: bold; text-decoration: underline">
             #i18n( $extensionClass )
         </td>
     </tr>
@@ -54,4 +54,12 @@
 
         </td>
     </tr>
+#end
+
+#macro( heteroRadio $descriptors )
+    $descriptors
+
+    #foreach( $descriptor in $descriptors )
+        #renderDescriptor( $descriptor );
+    #end
 #end

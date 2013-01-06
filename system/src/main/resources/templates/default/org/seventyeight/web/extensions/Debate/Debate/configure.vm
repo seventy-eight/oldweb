@@ -1,5 +1,7 @@
 <tr>
     <td>
-        DEBATE
+        DEBATE - $descriptor<br>
+        $descriptor.getDisplayName()<br>
+        #heteroRadio( $descriptor.getDebates() )
     </td>
 </tr>
