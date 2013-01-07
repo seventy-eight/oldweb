@@ -248,15 +248,6 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
         getDB().putToIndex( SeventyEight.INDEX_RESOURCES, node, getIdentifier() );
 	}
 
-    @Override
-    public List<AbstractExtensionHub> getExtensionsHubs() {
-        List<AbstractExtensionHub> hubs = new LinkedList<AbstractExtensionHub>();
-
-        List<Edge> edges = node.getEdges( PostViewExtensionHub.ExtensionRelation.postViewExtension, Direction.OUTBOUND );
-
-        return hubs;
-    }
-
 
     /**
      * Get a resource hub {@link Node} identified by type

@@ -225,6 +225,9 @@ public class TemplateManager {
             }
 
 			logger.debug( "Using the template file: " + t.getName() );
+            if( context.containsKey( "item" )) {
+                logger.fatal( "[ITEM] "  + context.get( "item" ) );
+            }
 
             context.put( "core", SeventyEight.getInstance() );
             context.put( "theme", theme );

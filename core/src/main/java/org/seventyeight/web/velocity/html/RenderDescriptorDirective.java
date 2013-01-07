@@ -7,12 +7,8 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.directive.Directive;
 import org.apache.velocity.runtime.parser.node.Node;
-import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.TemplateDoesNotExistException;
-import org.seventyeight.web.model.AbstractItem;
-import org.seventyeight.web.model.AbstractResource;
-import org.seventyeight.web.model.Descriptor;
-import org.seventyeight.web.model.Request;
+import org.seventyeight.web.model.*;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -36,7 +32,7 @@ public class RenderDescriptorDirective extends Directive {
 	public boolean render( InternalContextAdapter context, Writer writer, Node node ) throws IOException, ResourceNotFoundException, ParseErrorException, MethodInvocationException {
         logger.debug( "Rendering descriptor" );
 		Descriptor d = null;
-        AbstractItem item = null;
+        AbstractExtensibleItem item = null;
 		
 		try {
 			if( node.jjtGetChild( 0 ) != null ) {
@@ -46,7 +42,7 @@ public class RenderDescriptorDirective extends Directive {
 			}
 
             if( node.jjtGetChild( 1 ) != null ) {
-                item = (AbstractItem) node.jjtGetChild( 1 ).value( context );
+                item = (AbstractExtensibleItem) node.jjtGetChild( 1 ).value( context );
             } else {
                 throw new IOException( "Argument not an item" );
             }
@@ -60,7 +56,7 @@ public class RenderDescriptorDirective extends Directive {
         if( item != null ) {
             logger.fatal( "ITEM IS " + item );
             /* get the extension node */
-            List<org.seventyeight.database.Node> nodes = item.getExtensionNodes( d.getClazz() );
+            List<org.seventyeight.database.Node> nodes = item.getExtensionClassNodes( d.getClazz() );
 
             logger.debug( nodes );
 

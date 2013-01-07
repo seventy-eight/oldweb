@@ -96,7 +96,7 @@ public class SeventyEight {
 		owner,
 		contributor,
 		extension,
-        extensionHub,
+        extensionClass,
 		translation,
         data
 	}

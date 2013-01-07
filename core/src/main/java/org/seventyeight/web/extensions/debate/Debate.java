@@ -14,7 +14,7 @@ import java.util.List;
  *         Date: 30-12-12
  *         Time: 21:54
  */
-public class Debate extends AbstractItem implements PostViewExtension, Describable {
+public class Debate extends AbstractExtensibleItem implements PostViewExtension, Describable {
 
     public Debate( Node node ) {
         super( node );
