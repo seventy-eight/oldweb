@@ -83,17 +83,16 @@ public abstract class Descriptor<T extends Describable> {
         c.put( "class", getClazz().getName() );
         c.put( "disabled", true );
 
-        logger.fatal( "NODE IS " + node );
-        request.getContext().remove( "item" );
-        request.getContext().put( "item", null );
-
-        T instance = null;
-        try {
-            instance = getInstance( node );
-            c.put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( instance, "configure.vm" ) );
-        } catch( UnableToInstantiateObjectException e ) {
-            /* instance == null || node == null */
-            logger.warn( e );
+        if( node != null ) {
+            try {
+                T instance = getInstance( node );
+                c.put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( instance, "configure.vm" ) );
+            } catch( UnableToInstantiateObjectException e ) {
+                /* instance == null || node == null */
+                logger.warn( e );
+                c.put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClass( getClazz(), "configure.vm" ) );
+            }
+        } else {
             c.put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClass( getClazz(), "configure.vm" ) );
         }
 

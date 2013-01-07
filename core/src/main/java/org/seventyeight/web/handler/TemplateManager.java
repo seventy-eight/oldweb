@@ -176,8 +176,6 @@ public class TemplateManager {
             //this.locale = request.getLocale();
             this.context = request.getContext();
             this.db = request.getDB();
-
-            context.remove( "item" );
         }
 
         public Renderer setContext( VelocityContext context ) {
@@ -216,7 +214,6 @@ public class TemplateManager {
             }
 			/* Resolve template */
 			Template t = null;
-			logger.debug( "Rendering " + template + " - " + theme );
 			try {
 				t = getTemplate( theme, template );
 			} catch( TemplateDoesNotExistException e ) {
@@ -226,11 +223,7 @@ public class TemplateManager {
                 logger.error( e );
             }
 
-			logger.debug( "Using the template file: " + t.getName() );
-            if( context.containsKey( "item" )) {
-                logger.fatal( "[ITEM] "  + context.get( "item" ) );
-                //Thread.dumpStack();
-            }
+			logger.debug( "[Rendering] " + t.getName() );
 
             context.put( "core", SeventyEight.getInstance() );
             context.put( "theme", theme );
