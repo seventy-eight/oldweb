@@ -1,6 +1,8 @@
 package org.seventyeight.web.extensions.debate;
 
 import com.google.gson.JsonObject;
+import org.apache.log4j.Logger;
+import org.seventyeight.database.Database;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
@@ -15,6 +17,8 @@ import java.util.List;
  *         Time: 21:54
  */
 public class Debate extends AbstractExtensibleItem implements PostViewExtension, Describable {
+
+    private static Logger logger = Logger.getLogger( Debate.class );
 
     public Debate( Node node ) {
         super( node );
@@ -50,8 +54,11 @@ public class Debate extends AbstractExtensibleItem implements PostViewExtension,
             return AbstractDebate.all();
         }
 
-        public List<Descriptor> getDebates2() {
-            return Collections.EMPTY_LIST;
+        @Override
+        public Debate newInstance( Database db ) throws UnableToInstantiateObjectException {
+            logger.fatal( "NEWING DEBATE" );
+            return super.newInstance( db );
+
         }
     }
 }

@@ -176,6 +176,8 @@ public class TemplateManager {
             //this.locale = request.getLocale();
             this.context = request.getContext();
             this.db = request.getDB();
+
+            context.remove( "item" );
         }
 
         public Renderer setContext( VelocityContext context ) {
@@ -227,6 +229,7 @@ public class TemplateManager {
 			logger.debug( "Using the template file: " + t.getName() );
             if( context.containsKey( "item" )) {
                 logger.fatal( "[ITEM] "  + context.get( "item" ) );
+                //Thread.dumpStack();
             }
 
             context.put( "core", SeventyEight.getInstance() );

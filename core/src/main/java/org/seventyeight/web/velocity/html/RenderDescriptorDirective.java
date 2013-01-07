@@ -69,7 +69,7 @@ public class RenderDescriptorDirective extends Directive {
                 }
             }
         } else {
-            logger.fatal( "ITEM IS NULL!" );
+            logger.fatal( "ITEM IS NULL! " + context.get( "item" ) );
             try {
                 writer.write( d.getConfigurationPage( request, null ) );
             } catch( TemplateDoesNotExistException e ) {

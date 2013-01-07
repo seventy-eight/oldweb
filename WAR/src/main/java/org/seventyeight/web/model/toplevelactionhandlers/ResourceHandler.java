@@ -104,7 +104,7 @@ public class ResourceHandler implements TopLevelAction {
                     }
 
                     /* Options */
-
+                    logger.fatal( "NU ER VI HER " + request.getContext().get( "item" ) );
                     request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClass( descriptor.getClazz(), "configure.vm" ) );
                     response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
                 } catch( TemplateDoesNotExistException e ) {
