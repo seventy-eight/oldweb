@@ -1,7 +1,8 @@
 <tr>
     <td>
         DEBATE - $descriptor<br>
+        ITEM - $item<br>
         $descriptor.getDisplayName()<br>
-        #heteroRadio( $descriptor.getDebates() )
+        #heteroRadio( $item, $descriptor.getDebates() )
     </td>
 </tr>

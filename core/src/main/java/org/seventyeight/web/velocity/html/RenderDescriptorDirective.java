@@ -9,6 +9,7 @@ import org.apache.velocity.runtime.directive.Directive;
 import org.apache.velocity.runtime.parser.node.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.TemplateDoesNotExistException;
+import org.seventyeight.web.model.AbstractItem;
 import org.seventyeight.web.model.AbstractResource;
 import org.seventyeight.web.model.Descriptor;
 import org.seventyeight.web.model.Request;
@@ -35,9 +36,7 @@ public class RenderDescriptorDirective extends Directive {
 	public boolean render( InternalContextAdapter context, Writer writer, Node node ) throws IOException, ResourceNotFoundException, ParseErrorException, MethodInvocationException {
         logger.debug( "Rendering descriptor" );
 		Descriptor d = null;
-        AbstractResource r = null;
-		
-		logger.debug( "LINE: " + node.getLine() );
+        AbstractItem item = null;
 		
 		try {
 			if( node.jjtGetChild( 0 ) != null ) {
@@ -47,7 +46,7 @@ public class RenderDescriptorDirective extends Directive {
 			}
 
             if( node.jjtGetChild( 1 ) != null ) {
-                r = (AbstractResource) node.jjtGetChild( 1 ).value( context );
+                item = (AbstractItem) node.jjtGetChild( 1 ).value( context );
             } else {
                 throw new IOException( "Argument not an item" );
             }
@@ -55,14 +54,13 @@ public class RenderDescriptorDirective extends Directive {
             logger.debug( e );
 		}
 
-        logger.debug( "1" );
-
         Request request = (Request) context.get( "request" );
 
         /* Already configured descriptor */
-        if( r != null ) {
+        if( item != null ) {
+            logger.fatal( "ITEM IS " + item );
             /* get the extension node */
-            List<org.seventyeight.database.Node> nodes = r.getExtensionNodes( d.getClazz() );
+            List<org.seventyeight.database.Node> nodes = item.getExtensionNodes( d.getClazz() );
 
             logger.debug( nodes );
 
@@ -75,8 +73,8 @@ public class RenderDescriptorDirective extends Directive {
                 }
             }
         } else {
+            logger.fatal( "ITEM IS NULL!" );
             try {
-                logger.debug( "D IS " + d );
                 writer.write( d.getConfigurationPage( request, null ) );
             } catch( TemplateDoesNotExistException e ) {
                 logger.warn( e );

@@ -1,6 +1,11 @@
+#set( $disabledStyle = "" )
+#if( $disabled )
+    #set( $disabledStyle = "display: none" )
+#end
+
 <tr>
     <td style="width:100%" colspan="2">
-        <div title="config" style="width:100%;$disabled" id="$class">
+        <div title="config" style="width:100%;$disabledStyle" id="$class">
             CLASS= $class
             <input type="hidden" name="class" value="$class" />
             <table style="width:100%">

@@ -40,8 +40,7 @@
                         <!-- <input type="checkbox" name="yeah" onclick="Utils.toggleFormElement( '$descriptor.getClazz().getName()' );"> -->
                         <tr>
                             <td>
-                                <input type="checkbox" name="yeah" onclick="Utils.toggleFormElement( '$descriptor.getClazz().getName()' );">
-
+                                <input type="checkbox" name="toggled" onclick="Utils.toggleFormElement( '$descriptor.getClazz().getName()' );">
                                     <table>
                                         #renderDescriptor( $descriptor )
                                     </table>
@@ -56,7 +55,8 @@
     </tr>
 #end
 
-#macro( heteroRadio $descriptors )
+#macro( heteroRadio $item $descriptors )
+    ITEM= $item<br>
     $descriptors
 
     #foreach( $descriptor in $descriptors )

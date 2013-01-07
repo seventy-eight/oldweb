@@ -2,6 +2,7 @@ package org.seventyeight.web.model;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -80,6 +81,7 @@ public abstract class Descriptor<T extends Describable> {
     public String getConfigurationPage( Request request, Node node ) throws TemplateDoesNotExistException {
         VelocityContext c = new VelocityContext();
         c.put( "class", getClazz().getName() );
+        c.put( "disabled", true );
 
         T instance = null;
         try {
@@ -88,8 +90,11 @@ public abstract class Descriptor<T extends Describable> {
         } catch( UnableToInstantiateObjectException e ) {
             /* instance == null || node == null */
             logger.warn( e );
+            request.getContext().remove( "item" );
             c.put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClass( getClazz(), "configure.vm" ) );
         }
+
+        logger.fatal( Arrays.asList( request.getContext().getKeys() ) );
 
         return SeventyEight.getInstance().getTemplateManager().getRenderer( request ).setContext( c ).render( "org/seventyeight/web/model/descriptorpage.vm" );
     }
