@@ -22,7 +22,7 @@
 </tr>
 #end
 
-#macro( configureExtensions $extensionClass )
+#macro( configureExtensions $extensionClass $item )
 
     #set( $descriptors = $core.getExtensionDescriptors( $extensionClass ) )
     $descriptors
@@ -41,9 +41,10 @@
                         <tr>
                             <td>
                                 <input type="checkbox" name="toggled" onclick="Utils.toggleFormElement( '$descriptor.getClazz().getName()' );">
-                                    <table>
-                                        #renderDescriptor( $descriptor )
-                                    </table>
+                                ITEM======$item
+                                <table>
+                                    #renderDescriptor( $descriptor $item )
+                                </table>
 
                             </td>
                         </tr>
@@ -60,6 +61,6 @@
     $descriptors
 
     #foreach( $descriptor in $descriptors )
-        #renderDescriptor( $descriptor );
+        #renderDescriptor( $descriptor $item );
     #end
 #end

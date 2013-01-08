@@ -78,14 +78,27 @@ public abstract class Descriptor<T extends Describable> {
         /* Default implementation is a no op */
     }
 
+    public boolean enabledByDefault() {
+        return false;
+    }
+
     public String getConfigurationPage( Request request, Node node ) throws TemplateDoesNotExistException {
         VelocityContext c = new VelocityContext();
         c.put( "class", getClazz().getName() );
-        c.put( "disabled", true );
+
+        /**/
+        if( node == null ) {
+            if( enabledByDefault() ) {
+                c.put( "enabled", true );
+            } else {
+                c.put( "enabled", false );
+            }
+        }
 
         if( node != null ) {
             try {
                 T instance = getInstance( node );
+                c.put( "enabled", true );
                 c.put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( instance, "configure.vm" ) );
             } catch( UnableToInstantiateObjectException e ) {
                 /* instance == null || node == null */
