@@ -33,6 +33,7 @@ public class RenderDescriptorDirective extends Directive {
         logger.debug( "Rendering descriptor" );
 		Descriptor d = null;
         AbstractExtensibleItem item = null;
+        Boolean expanded = false;
 		
 		try {
 			if( node.jjtGetChild( 0 ) != null ) {
@@ -46,6 +47,13 @@ public class RenderDescriptorDirective extends Directive {
             } else {
                 throw new IOException( "Argument not an item" );
             }
+
+            if( node.jjtGetChild( 2 ) != null ) {
+                expanded = (Boolean)node.jjtGetChild( 2 ).value( context );
+            } else {
+                throw new IOException( "Argument not boolean" );
+            }
+
 		} catch( Exception e ) {
             logger.debug( e );
 		}
@@ -70,8 +78,9 @@ public class RenderDescriptorDirective extends Directive {
             }
         } else {
             logger.fatal( "ITEM IS NULL! " + context.get( "item" ) );
+            logger.fatal( "EXPANDEND: " + expanded );
             try {
-                writer.write( d.getConfigurationPage( request, null ) );
+                writer.write( d.getConfigurationPage( request, null, expanded ) );
             } catch( TemplateDoesNotExistException e ) {
                 logger.warn( e );
                 writer.write( e.getMessage() );
