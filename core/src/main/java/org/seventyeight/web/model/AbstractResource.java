@@ -243,7 +243,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
         getDB().removeNodeFromIndex( SeventyEight.INDEX_RESOURCE_TYPES, node );
 
         /* Update the type index */
-        getDB().putToIndex( SeventyEight.INDEX_RESOURCE_TYPES, node, getDescriptor().getType(), getCreated() );
+        getDB().putToIndex( SeventyEight.INDEX_RESOURCE_TYPES, node, ((ResourceDescriptor)getDescriptor()).getType(), getCreated() );
 
         getDB().putToIndex( SeventyEight.INDEX_RESOURCES, node, getIdentifier() );
 	}

@@ -35,11 +35,6 @@ public class UserDecal extends AbstractExtension implements Portrait, Describabl
 		public String getDisplayName() {
 			return "User decal";
 		}
-		
-		@Override
-		public String getType() {
-			return "userDecal";
-		}
 	}
 
 	@Override

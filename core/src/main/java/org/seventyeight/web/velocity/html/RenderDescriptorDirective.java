@@ -32,7 +32,7 @@ public class RenderDescriptorDirective extends Directive {
 	public boolean render( InternalContextAdapter context, Writer writer, Node node ) throws IOException, ResourceNotFoundException, ParseErrorException, MethodInvocationException {
         logger.debug( "Rendering descriptor" );
 		Descriptor d = null;
-        AbstractExtensibleItem item = null;
+        AbstractItem item = null;
         Boolean expanded = false;
 		
 		try {
@@ -43,7 +43,7 @@ public class RenderDescriptorDirective extends Directive {
 			}
 
             if( node.jjtGetChild( 1 ) != null ) {
-                item = (AbstractExtensibleItem) node.jjtGetChild( 1 ).value( context );
+                item = (AbstractItem) node.jjtGetChild( 1 ).value( context );
             } else {
                 throw new IOException( "Argument not an item" );
             }

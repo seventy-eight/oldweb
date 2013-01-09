@@ -39,11 +39,5 @@ public class ReplyTreeHub extends ReplyHub implements ReplyHubExtension {
         public String getDisplayName() {
             return "Reply Tree Hub";
         }
-
-        @Override
-        public String getType() {
-            return "replyTreeHub";
-        }
-
     }
 }

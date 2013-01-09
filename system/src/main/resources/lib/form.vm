@@ -70,7 +70,7 @@
                         <td rowspan="$size" valign="top"><input type="radio" name="$name" value=""></td>
                         <td>$descriptor.getDisplayName()</td>
                     </tr>
-                    #renderDescriptor( $descriptor $item true );
+                    #renderDescriptor( $descriptor $item false );
                 </table>
             #end
         </td>

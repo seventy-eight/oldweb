@@ -43,6 +43,8 @@ public abstract class ResourceDescriptor<T extends AbstractResource> extends Des
         return true;
     }
 
+    public abstract String getType();
+
     @Override
     public EdgeType getRelationType() {
         return ResourceDescriptorRelation.resource;

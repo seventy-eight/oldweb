@@ -21,7 +21,7 @@ import org.seventyeight.web.model.resources.User;
 import com.google.gson.JsonObject;
 
 
-public abstract class AbstractObject extends AbstractExtensibleItem implements Ownable, Describable {
+public abstract class AbstractObject extends AbstractItem implements Ownable, Describable {
 
 	private static Logger logger = Logger.getLogger( AbstractObject.class );
 

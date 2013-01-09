@@ -29,11 +29,6 @@ public class UserAvatar extends AbstractExtension implements UserExtension, Desc
 		public String getDisplayName() {
 			return "User avatar";
 		}
-		
-		@Override
-		public String getType() {
-			return "userAvatar";
-		}
 	}
 
 	@Override

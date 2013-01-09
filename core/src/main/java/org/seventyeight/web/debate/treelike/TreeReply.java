@@ -69,10 +69,5 @@ public class TreeReply extends AbstractItem implements Reply, Describable {
         public String getDisplayName() {
             return "Tree Reply";
         }
-
-        @Override
-        public String getType() {
-            return "";
-        }
     }
 }

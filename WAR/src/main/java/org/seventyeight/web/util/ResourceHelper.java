@@ -13,6 +13,7 @@ import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.AbstractResource;
 import org.seventyeight.web.model.Descriptor;
 import org.seventyeight.web.model.Request;
+import org.seventyeight.web.model.ResourceDescriptor;
 
 public class ResourceHelper {
 	
@@ -96,7 +97,7 @@ public class ResourceHelper {
             return r;
         } catch( Exception e ) {
             //request.failTransaction();
-            throw new ResourceNotCreatedException( descriptor.getType(), e );
+            throw new ResourceNotCreatedException( ((ResourceDescriptor)descriptor).getType(), e );
         }
     }
 

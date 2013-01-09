@@ -85,11 +85,6 @@ public abstract class AbstractDebate extends Hub implements DebateInterface {
     public static abstract class DebateImplDescriptor extends HubDescriptor {
 
         @Override
-        public String getType() {
-            return "debateHub";
-        }
-
-        @Override
         public void configureIndex( Database db ) {
             logger.debug( "Configuring " + INDEX_REPLIES );
             // identifier, time

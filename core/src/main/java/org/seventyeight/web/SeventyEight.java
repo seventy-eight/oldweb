@@ -17,6 +17,7 @@ import org.seventyeight.web.debate.ReplyHub;
 import org.seventyeight.web.debate.treelike.ReplyTreeHub;
 import org.seventyeight.web.debate.treelike.TreeReply;
 import org.seventyeight.web.exceptions.*;
+import org.seventyeight.web.extensions.Copyright.Copyright;
 import org.seventyeight.web.extensions.debate.Debate;
 import org.seventyeight.web.extensions.debate.Debate2;
 import org.seventyeight.web.extensions.debate.simple.SimpleDebate;
@@ -70,6 +71,16 @@ public class SeventyEight {
 	private Node systemNode = null;
     private User anonymous;
 
+
+    /**
+     * A map of descriptors keyed by their extension class
+     */
+    private Map<Class<?>, Descriptor<?>> descriptors = new HashMap<Class<?>, Descriptor<?>>();
+
+    /**
+     * A map of interfaces corresponding to specific {@link Descriptor}s<br />
+     * This is used to map an extension class/interface to those {@link Describable}s {@link Descriptor}s implementing them.
+     */
     private Map<Class, List<Descriptor>> descriptorList = new HashMap<Class, List<Descriptor>>();
 
     /**
@@ -121,12 +132,7 @@ public class SeventyEight {
     private SessionManager sessionManager;
 	private AbstractTheme defaultTheme = new Default();
 	private I18N i18n;
-	
-	/**
-	 * A map of descriptors
-	 */
-	private Map<Class<?>, Descriptor<?>> descriptors = new HashMap<Class<?>, Descriptor<?>>();
-	
+
 	/**
 	 * A map of resource types and their descriptors
 	 */
@@ -180,6 +186,7 @@ public class SeventyEight {
         //addDescriptor( db, new Debate2.DebateDescriptor() );
 
         addDescriptor( db, new SimpleDebate.SimpleDebateDescriptor() );
+        addDescriptor( db, new Copyright.CopyrightDescriptor() );
 
         defaultLocale = new Locale( "english" );
 
@@ -392,7 +399,7 @@ public class SeventyEight {
         this.descriptors.put( descriptor.getClazz(), descriptor );
 
         if( descriptor instanceof ResourceDescriptor ) {
-            this.resourceTypes.put( descriptor.getType(), (ResourceDescriptor<?>) descriptor );
+            this.resourceTypes.put( ((ResourceDescriptor)descriptor).getType(), (ResourceDescriptor<?>) descriptor );
         }
 
         addExtension( descriptor );

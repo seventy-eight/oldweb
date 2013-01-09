@@ -81,11 +81,6 @@ public abstract class ReplyHub extends Hub {
         }
 
         @Override
-        public String getType() {
-            return "replyHub";
-        }
-
-        @Override
         public void configureIndex( Database db ) {
             logger.debug( "Configuring " + INDEX_REPLIES );
             // identifier, time

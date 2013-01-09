@@ -27,7 +27,6 @@ public abstract class Descriptor<T extends Describable> {
 	}
 	
 	public abstract String getDisplayName();
-	public abstract String getType();
 
 	public T newInstance( Database db ) throws UnableToInstantiateObjectException {
 		logger.debug( "New instance for " + clazz );

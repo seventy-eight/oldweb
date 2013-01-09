@@ -16,7 +16,7 @@ import java.util.List;
  *         Date: 30-12-12
  *         Time: 21:54
  */
-public class Debate extends AbstractExtensibleItem implements PostViewExtension, Describable {
+public class Debate extends AbstractItem implements PostViewExtension, Describable {
 
     private static Logger logger = Logger.getLogger( Debate.class );
 
@@ -43,11 +43,6 @@ public class Debate extends AbstractExtensibleItem implements PostViewExtension,
         @Override
         public String getDisplayName() {
             return "Debate";
-        }
-
-        @Override
-        public String getType() {
-            return null;
         }
 
         public List<Descriptor> getDebates() {

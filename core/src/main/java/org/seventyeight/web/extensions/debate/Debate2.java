@@ -40,10 +40,5 @@ public class Debate2 extends AbstractItem implements PostViewExtension, Describa
         public String getDisplayName() {
             return "Debate";
         }
-
-        @Override
-        public String getType() {
-            return null;
-        }
     }
 }
