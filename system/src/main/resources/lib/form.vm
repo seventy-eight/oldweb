@@ -56,6 +56,42 @@
     </tr>
 #end
 
+#macro( dropdownExtensions $extensionClass $item )
+
+    #set( $descriptors = $core.getExtensionDescriptors( $extensionClass ) )
+    $descriptors
+    <tr>
+        <td colspan="2" align="center" style="font-weight: bold; text-decoration: underline">
+            #i18n( $extensionClass )
+        </td>
+    </tr>
+    <tr>
+        <td style="border-style: solid; width: 100%" colspan="2">
+            <div title="extensionClass" style="width:100%">
+                <input type="hidden" name="class" value="$extensionClass.getName()" />
+
+                <div style="width:100%" id="target-$extensionClass.getName()">
+
+                </div>
+
+                <select id="dd-$extensionClass.getName()">
+                    #foreach( $descriptor in $descriptors )
+                        <option value="$descriptor.getDisplayName()">$descriptor.getDisplayName()</option>
+                    #end
+                </select>
+                <!-- <button onclick="$('#' + Utils.jqEscape( 'target-$extensionClass.getName()' ) ).append( '<p>1</p>' ); return false;">Add</button> -->
+                <button onclick="$('#' + Utils.jqEscape( 'target-$extensionClass.getName()' ) ).append( $('#' + Utils.jqEscape( 'dd-$extensionClass.getName()' ) ).val() + '<br />' ); return false;">Add</button>
+                <!-- <button onclick="$('#' + Utils.jqEscape( 'target-$extensionClass.getName()' ).append($('#' + Utils.jqEscape( 'dd-$extensionClass.getName()' ) ).val())">Add</button> -->
+                <!-- <button onclick="$('#target-$extensionClass.getName()').append($('#dd-$extensionClass.getName()').val())">Add</button> -->
+                <!-- <button onclick="alert($('#dd-$extensionClass.getName()').val()); return false;">Add</button> -->
+                <!-- <button onclick="alert($('#' + Utils.jqEscape( dd-$extensionClass.getName() )).html()); return false;">Add</button> -->
+                <!-- <button onclick="alert($('#' + Utils.jqEscape( 'dd-$extensionClass.getName()' ) ).val()); return false;">Add</button> -->
+
+            </div>
+        </td>
+    </tr>
+#end
+
 #macro( heteroRadio $item $descriptors $name )
     ITEM= $item<br>
     $descriptors
