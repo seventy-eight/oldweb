@@ -65,7 +65,7 @@
                             -->
 
                             #foreach( $class in $descriptor.getExtensionClasses() )
-                                #dropdownExtensions( $class $item )
+                                #configureExtensions( $class $item )
                             #end
 
 

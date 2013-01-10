@@ -3,11 +3,14 @@
     #set( $collapsedStyle = "display: none" )
 #end
 
+#set( $locked = false )
+
 <tr>
     <td style="width:100%" colspan="2">
         <div title="config" style="width:100%;$collapsedStyle" id="$class">
             CLASS= $class
             <input type="hidden" name="class" value="$class" />
+            <input type="hidden" name="locked" value="$locked" />
             <table style="width:100%">
                 $content
             </table>

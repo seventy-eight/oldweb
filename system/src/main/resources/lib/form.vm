@@ -40,7 +40,7 @@
                         <!-- <input type="checkbox" name="yeah" onclick="Utils.toggleFormElement( '$descriptor.getClazz().getName()' );"> -->
                         <tr>
                             <td>
-                                <input type="checkbox" name="toggled" onclick="Utils.toggleFormElement( '$descriptor.getClazz().getName()' );">
+                                <input type="checkbox" name="toggled" onchange="Utils.toggleFormElement( '$descriptor.getClazz().getName()' );">
                                 $descriptor.getDisplayName()
                                 <table style="width: 100%">
                                     #renderDescriptor( $descriptor $item )
@@ -79,13 +79,7 @@
                         <option value="$descriptor.getDisplayName()">$descriptor.getDisplayName()</option>
                     #end
                 </select>
-                <!-- <button onclick="$('#' + Utils.jqEscape( 'target-$extensionClass.getName()' ) ).append( '<p>1</p>' ); return false;">Add</button> -->
                 <button onclick="$('#' + Utils.jqEscape( 'target-$extensionClass.getName()' ) ).append( $('#' + Utils.jqEscape( 'dd-$extensionClass.getName()' ) ).val() + '<br />' ); return false;">Add</button>
-                <!-- <button onclick="$('#' + Utils.jqEscape( 'target-$extensionClass.getName()' ).append($('#' + Utils.jqEscape( 'dd-$extensionClass.getName()' ) ).val())">Add</button> -->
-                <!-- <button onclick="$('#target-$extensionClass.getName()').append($('#dd-$extensionClass.getName()').val())">Add</button> -->
-                <!-- <button onclick="alert($('#dd-$extensionClass.getName()').val()); return false;">Add</button> -->
-                <!-- <button onclick="alert($('#' + Utils.jqEscape( dd-$extensionClass.getName() )).html()); return false;">Add</button> -->
-                <!-- <button onclick="alert($('#' + Utils.jqEscape( 'dd-$extensionClass.getName()' ) ).val()); return false;">Add</button> -->
 
             </div>
         </td>
@@ -103,7 +97,7 @@
             #foreach( $descriptor in $descriptors )
                 <table style="border-style: solid; width: 100%" colspan="2">
                     <tr>
-                        <td rowspan="$size" valign="top"><input type="radio" name="$name" value=""></td>
+                        <td rowspan="$size" valign="top"><input type="radio" name="$name" value="" onchange="Utils.toggleFormElement( '$descriptor.getClazz().getName()' );"></td>
                         <td>$descriptor.getDisplayName()</td>
                     </tr>
                     #renderDescriptor( $descriptor $item false );
