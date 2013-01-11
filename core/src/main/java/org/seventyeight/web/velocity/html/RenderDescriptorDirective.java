@@ -64,7 +64,7 @@ public class RenderDescriptorDirective extends Directive {
         if( item != null ) {
             logger.fatal( "ITEM IS " + item );
             /* get the extension node */
-            List<org.seventyeight.database.Node> nodes = item.getExtensionClassNodes( d.getClazz() );
+            List<org.seventyeight.database.Node> nodes = item.getExtensionsNodes( d.getClazz() );
 
             logger.debug( nodes );
 

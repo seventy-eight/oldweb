@@ -101,13 +101,13 @@ public class SeventyEight {
 	private static final String SYSTEM_NODE = "system-node";
     private static final String SYSTEM_INSTALLED = "system-installed";
 
-    public static final String FIELD_EXTENSION_CLASS = "extensionClass";
+    public static final String FIELD_EXTENSION_CLASS = "extensions";
 
 	public enum ResourceEdgeType implements EdgeType {
 		owner,
 		contributor,
 		extension,
-        extensionClass,
+        extensions,
 		translation,
         data
 	}
@@ -657,7 +657,7 @@ public class SeventyEight {
 	 */
 	
 	public static final String __JSON_CONFIGURATION_NAME = "config";
-    //public static final String __JSON_EXTENSION_NAME = "extensionClass";
+    //public static final String __JSON_EXTENSION_NAME = "extensions";
 	public static final String __JSON_CLASS_NAME = "class";
 
     public enum JsonType {

@@ -3,6 +3,7 @@ package org.seventyeight.web.model;
 import java.util.*;
 
 import org.apache.log4j.Logger;
+import org.omg.CORBA.PUBLIC_MEMBER;
 import org.seventyeight.database.*;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.SeventyEight.ResourceEdgeType;
@@ -147,15 +148,15 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
             try {
                 Class<?> clazz = Class.forName( className );
                 logger.debug( "Extension class is " + clazz );
-                List<Edge> edges = node.getEdges( SeventyEight.ResourceEdgeType.extensionClass, Direction.OUTBOUND, SeventyEight.FIELD_EXTENSION_CLASS, clazz.getName() );
+                List<Edge> edges = node.getEdges( SeventyEight.ResourceEdgeType.extensions, Direction.OUTBOUND, SeventyEight.FIELD_EXTENSION_CLASS, clazz.getName() );
 
                 /* There should be only one */
                 if( edges.size() == 0 ) {
-                    /* Create new extension node, with extensionClass set */
+                    /* Create new extension node, with extensions set */
                     extensionNode = SeventyEight.getInstance().createNode( getDB(), null /* For now! */, new String[] { SeventyEight.FIELD_EXTENSION_CLASS }, new Object[] { className } );
 
                     /* Create the relation from this to the extension node */
-                    this.getNode().createEdge( extensionNode, SeventyEight.ResourceEdgeType.extensionClass );
+                    this.getNode().createEdge( extensionNode, SeventyEight.ResourceEdgeType.extensions );
                 } else {
                     //hub = getExtensionHub( edges.get( 0 ).getTargetNode() );
                     extensionNode = edges.get( 0 ).getTargetNode();
@@ -217,16 +218,30 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 
 
     @Override
-    public List<Node> getExtensionClassNodes( Class<?> extensionClass ) {
-        List<Edge> edges = node.getEdges( SeventyEight.ResourceEdgeType.extensionClass, Direction.OUTBOUND );
+    public Node getExtensionsNode() {
+        List<Edge> edges = node.getEdges( SeventyEight.ResourceEdgeType.extensions, Direction.OUTBOUND );
 
-        List<Node> nodes = new LinkedList<Node>();
+        if( edges.size() == 1 ) {
+            return edges.get( 0 ).getTargetNode();
+        } else if( edges.size() == 0 ) {
+            return null;
+        } else {
+            throw new IllegalStateException( "Too many extension nodes defined(" + edges.size() + ")" );
+        }
+    }
 
-        for( Edge edge : edges ) {
-            Node node = edge.getTargetNode();
-            String clazzStr = (String) node.get( "class" );
-            clazzStr.equals( extensionClass.getName() );
-            nodes.add( node );
+    public List<Node> getExtensionsNodes( Class<?> extensionClass ) {
+        Node node = getExtensionsNode();
+
+        List<Node> nodes = new ArrayList<Node>();
+
+        if( node != null ) {
+            List<Edge> edges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND, "extensionClass", extensionClass.getName() );
+            for( Edge edge : edges ) {
+                nodes.add( edge.getTargetNode() );
+            }
+        } else {
+            logger.debug( "No extensions node" );
         }
 
         return nodes;

@@ -12,10 +12,9 @@ import java.util.List;
 public interface Extensible {
 
     /**
-     * Get a {@link List} of extension classes defined for this object. <br />
-     * Typically, only one is defined
-     * @param extensionClass
+     * Get the {@link Node} containing all the {@link Item}s extensions defined for this object. <br />
+     * If there's no {@link Node} defined, null is returned.
      * @return
      */
-    public List<Node> getExtensionClassNodes( Class<?> extensionClass );
+    public Node getExtensionsNode();
 }

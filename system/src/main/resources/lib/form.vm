@@ -33,25 +33,15 @@
     </tr>
     <tr>
         <td style="border-style: solid; width: 100%" colspan="2">
-            <div title="extensionClass" style="width:100%">
-                <input type="hidden" name="class" value="$extensionClass.getName()" />
-                <table style="width:100%">
-                    #foreach( $descriptor in $descriptors )
-                        <!-- <input type="checkbox" name="yeah" onclick="Utils.toggleFormElement( '$descriptor.getClazz().getName()' );"> -->
-                        <tr>
-                            <td>
-                                <input type="checkbox" name="toggled" onchange="Utils.toggleFormElement( '$descriptor.getClazz().getName()' );">
-                                $descriptor.getDisplayName()
-                                <table style="width: 100%">
-                                    #renderDescriptor( $descriptor $item )
-                                </table>
-
-                            </td>
-                        </tr>
-                    #end
+            #foreach( $descriptor in $descriptors )
+                <!-- <input type="checkbox" name="yeah" onclick="Utils.toggleFormElement( '$descriptor.getId()' );"> -->
+                <input type="checkbox" name="toggled" onchange="Utils.toggleFormElement( '$descriptor.getId()' );">
+                $descriptor.getDisplayName()
+                <table style="width: 100%">
+                    #renderDescriptor( $descriptor $item )
                 </table>
-            </div>
 
+            #end
         </td>
     </tr>
 #end

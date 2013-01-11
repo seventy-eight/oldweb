@@ -65,10 +65,22 @@ public abstract class Descriptor<T extends Describable> {
     public List<Class> getExtensionClasses() {
         return Collections.emptyList();
     }
-	
+
+    /**
+     * Get the class of the {@link Descriptor}s {@link Describable}.
+     * @return
+     */
 	public Class<? extends Describable> getClazz() {
 		return clazz;
 	}
+
+    public String getId() {
+        return getClazz().getName();
+    }
+
+    public String getJsonId() {
+        return getId().replace( '.', '-' );
+    }
 
     /**
      * When instantiated the descriptor can configure an index
