@@ -27,14 +27,14 @@ public abstract class ResourceDescriptor<T extends AbstractResource> extends Des
 	public T newInstance( Database db ) throws UnableToInstantiateObjectException {
 		logger.debug( "New instance of resource" );
 		T instance = super.newInstance( db );
-		//SeventyEight.getInstance().GetIdentifier( (AbstractResource) instance );
-        SeventyEight.getInstance().setIdentifier( instance );
+
+        //SeventyEight.getInstance().setIdentifier( instance );
 		instance.setCreated( new Date() );
         instance.getNode().set( "type", getType() );
         instance.getNode().save();
 
         /* Update index */
-        instance.updateIndexes();
+        //instance.updateIndexes();
 
 		return instance;
 	}

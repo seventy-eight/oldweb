@@ -1,0 +1,16 @@
+adwad
+
+<table>
+    #set( $descriptors = $core.getResourceDescriptors() )
+    $descriptors.sortAlphabetically()
+    #foreach( $descriptor in  $descriptors )
+    <tr>
+        <td>
+            $descriptor.getDisplayName()
+        </td>
+    </tr>
+    #end
+
+
+
+</table>

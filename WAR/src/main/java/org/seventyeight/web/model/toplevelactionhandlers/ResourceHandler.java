@@ -52,10 +52,25 @@ public class ResourceHandler implements TopLevelAction {
     @Override
     public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
         String[] parts = request.getRequestParts();
-        logger.debug( "Handling resource: " + Arrays.asList( parts ) );
 
         Method method = null;
-        String requestMethod = parts[3];
+        String requestMethod = parts[2];
+
+        // (0)/(1)handler/(2)method/...
+
+        /* Create method, a list of descriptors and, in the future a list of descriptor templates */
+        if( requestMethod.equalsIgnoreCase( "create" ) ) {
+            try {
+                request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( SeventyEight.getInstance(), "createResource.vm" ) );
+                response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
+            } catch( Exception e ) {
+                throw new ActionHandlerException( e );
+            }
+            return;
+            /* Get a resource */
+        } else if( requestMethod.equalsIgnoreCase( "get" ) ) {
+
+        }
 
         /* Special case */
         if( requestMethod.equalsIgnoreCase( "create" ) ) {

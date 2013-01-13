@@ -37,6 +37,7 @@ import org.seventyeight.web.model.resources.User;
 import org.seventyeight.web.model.themes.Default;
 import org.seventyeight.utils.Date;
 import org.seventyeight.web.util.Installer;
+import org.seventyeight.web.util.ResourceDescriptorList;
 
 import javax.swing.*;
 
@@ -432,6 +433,10 @@ public class SeventyEight {
 			return null;
 		}
 	}
+
+    public Collection<ResourceDescriptor<?>> getResourceDescriptors() {
+        return new ResourceDescriptorList( resourceTypes.values() );
+    }
 
     public void addExtension( Extension extension ) {
 
