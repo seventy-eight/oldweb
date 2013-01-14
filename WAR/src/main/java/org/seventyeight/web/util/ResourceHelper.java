@@ -1,5 +1,6 @@
 package org.seventyeight.web.util;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
@@ -64,6 +65,40 @@ public class ResourceHelper {
         }
 
         return r;
+    }
+
+    public void configureResource( Request request, HttpServletResponse response, AbstractResource resource, ResourceDescriptor descriptor ) throws ActionHandlerException {
+        logger.debug( "Configuring " + resource );
+
+        //ResourceDescriptor descriptor = (ResourceDescriptor) resource.getDescriptor();
+
+        request.getContext().put( "url", "/resource/" + resource.getIdentifier() );
+        request.getContext().put( "class", descriptor.getClazz().getName() );
+        request.getContext().put( "header", "Configuring " + resource.getDisplayName() );
+        request.getContext().put( "descriptor", descriptor );
+
+        /* Required javascrips */
+        request.getContext().put( "javascript", descriptor.getRequiredJavascripts() );
+
+        try {
+            /* Special dual side */
+            try {
+                request.getContext().put( "dualSide", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClassNoRecursive( descriptor.getClazz(), "dualSide.vm" ) );
+            } catch ( TemplateDoesNotExistException e ) {
+                /* No op */
+                logger.debug( "Dual side not defined" );
+            }
+
+            /* Options */
+            logger.fatal( "NU ER VI HER " + request.getContext().get( "item" ) );
+            request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( resource, "configure.vm" ) );
+            response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
+        } catch( TemplateDoesNotExistException e ) {
+            /* This solution does not work */
+            logger.warn( e );
+        } catch( IOException e ) {
+            throw new ActionHandlerException( e );
+        }
     }
 
     public AbstractResource createResource( Descriptor descriptor, Request request, HttpServletResponse response ) throws ResourceNotCreatedException {

@@ -85,15 +85,15 @@
     <tr>
         <td style="width: 100%">
             #foreach( $descriptor in $descriptors )
-                <table style="border-style: solid; width: 100%" colspan="2">
+                <table style="border-style: solid; width: 100%;" colspan="2">
                     <tr>
-                        <td rowspan="$size" valign="top"><input type="radio" name="$name" value="" onchange="Utils.toggleFormElement( '$descriptor.getClazz().getName()' );"></td>
+                        <td rowspan="$size" valign="top"><input type="radio" name="$name" value="$descriptor.getId()" onchange="Utils.toggleFormElement( '$descriptor.getClazz().getName()' );"></td>
                         <td>$descriptor.getDisplayName()</td>
                     </tr>
                     #if( $doRender )
                         #renderDescriptor( $descriptor $item false );
                     #else
-                        $descriptor.getDisplayName()
+
                     #end
 
                 </table>

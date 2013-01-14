@@ -232,6 +232,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 
     public List<Node> getExtensionsNodes( Class<?> extensionClass ) {
         Node node = getExtensionsNode();
+        logger.debug( "Extensions node " + node );
 
         List<Node> nodes = new ArrayList<Node>();
 

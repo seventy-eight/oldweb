@@ -27,8 +27,7 @@ public class ResourceHandler implements TopLevelAction {
 
 	/**
 	 * The default behavior. Parts is of the form:
-	 * (0)/(1)handler/(2)rid/(3)method/(4...) or
-	 * (0)/(1)handler/(2)type/(3)method/(4...)
+	 * (0)/(1)handler/(2)rid/(3)method/(4...)
 	 * 
 	 */
 
@@ -55,22 +54,6 @@ public class ResourceHandler implements TopLevelAction {
 
         Method method = null;
         String requestMethod = parts[2];
-
-        // (0)/(1)handler/(2)method/...
-
-        /* Create method, a list of descriptors and, in the future a list of descriptor templates */
-        if( requestMethod.equalsIgnoreCase( "create" ) ) {
-            try {
-                request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( SeventyEight.getInstance(), "createResource.vm" ) );
-                response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
-            } catch( Exception e ) {
-                throw new ActionHandlerException( e );
-            }
-            return;
-            /* Get a resource */
-        } else if( requestMethod.equalsIgnoreCase( "get" ) ) {
-
-        }
 
         /* Special case */
         if( requestMethod.equalsIgnoreCase( "create" ) ) {

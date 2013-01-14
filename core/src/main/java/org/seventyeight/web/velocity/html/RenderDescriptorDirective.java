@@ -76,6 +76,18 @@ public class RenderDescriptorDirective extends Directive {
                     writer.write( e.getMessage() );
                 }
             }
+
+            if( nodes.size() == 0 ) {
+                logger.fatal( "NO NODES" );
+                logger.fatal( "EXPANDEND: " + expanded );
+                try {
+                    writer.write( d.getConfigurationPage( request, null, expanded ) );
+                } catch( TemplateDoesNotExistException e ) {
+                    logger.warn( e );
+                    writer.write( e.getMessage() );
+                }
+            }
+
         } else {
             logger.fatal( "ITEM IS NULL! " + context.get( "item" ) );
             logger.fatal( "EXPANDEND: " + expanded );

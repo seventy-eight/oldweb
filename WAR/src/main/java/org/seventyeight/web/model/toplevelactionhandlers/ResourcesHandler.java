@@ -9,6 +9,7 @@ import org.seventyeight.web.model.AbstractResource;
 import org.seventyeight.web.model.Request;
 import org.seventyeight.web.model.ResourceDescriptor;
 import org.seventyeight.web.model.TopLevelAction;
+import org.seventyeight.web.util.ResourceHelper;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,6 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 public class ResourcesHandler implements TopLevelAction {
 
     private static Logger logger = Logger.getLogger( ResourcesHandler.class );
+
+    private ResourceHelper helper = new ResourceHelper();
 
     @Override
     public void prepare( Request request ) {
@@ -35,17 +38,22 @@ public class ResourcesHandler implements TopLevelAction {
 
             /* Instantiating the new resource */
             if( request.isRequestPost() ) {
-                String type = request.getValue( "type" );
+                String className = request.getValue( "className" );
 
-                if( type == null ) {
-                    throw new ActionHandlerException( "No type given" );
+                if( className == null ) {
+                    throw new ActionHandlerException( "No className given" );
                 }
 
-                /* Get the resource descriptor from the type name */
-                ResourceDescriptor<?> descriptor = (ResourceDescriptor<?>) SeventyEight.getInstance().getDescriptorFromResourceType( type );
+                /* Get the resource descriptor from the className name */
+                ResourceDescriptor<?> descriptor = null;
+                try {
+                    descriptor = (ResourceDescriptor<?>) SeventyEight.getInstance().getResourceDescriptor( className );
+                } catch( ClassNotFoundException e ) {
+                    throw new ActionHandlerException( e );
+                }
 
                 if( descriptor == null ) {
-                    throw new ActionHandlerException( new MissingDescriptorException( "Could not find descriptor for " + type ) );
+                    throw new ActionHandlerException( new MissingDescriptorException( "Could not find descriptor for " + className ) );
                 }
 
                 /* First of all we need to create the resource node */
@@ -55,12 +63,14 @@ public class ResourcesHandler implements TopLevelAction {
                     r = (AbstractResource) descriptor.newInstance( request.getDB() );
                     String title = request.getValue( "title", "" );
                     r.setTitle( title, null );
+                    r.getNode().save();
                 } catch( UnableToInstantiateObjectException e ) {
                     throw new ActionHandlerException( e );
                 }
                 logger.debug( "RESOURCE IS " + r );
 
                 /* Now the configuration page must be displayed */
+                helper.configureResource( request, response, r, descriptor );
 
             } else { /* Displaying the list of resource types */
                 try {

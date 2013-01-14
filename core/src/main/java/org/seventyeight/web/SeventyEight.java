@@ -434,6 +434,14 @@ public class SeventyEight {
 		}
 	}
 
+    public Descriptor<?> getResourceDescriptor( String clazz ) throws ClassNotFoundException {
+        return getResourceDescriptor( Class.forName( clazz ) );
+    }
+
+    public Descriptor<?> getResourceDescriptor( Class<?> clazz ) {
+        return descriptors.get( clazz );
+    }
+
     public Collection<ResourceDescriptor<?>> getResourceDescriptors() {
         return new ResourceDescriptorList( resourceTypes.values() );
     }

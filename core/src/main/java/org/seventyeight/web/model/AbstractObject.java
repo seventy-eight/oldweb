@@ -264,9 +264,16 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 		//SeventyEight.getInstance().removeOutEdges( db, this, type );
         node.removeEdges( type, Direction.OUTBOUND );
 	}
-	
+
+    public void setTitle( String title ) {
+        setTitle( title, null );
+    }
+
 	public void setTitle( String title, Locale locale ) {
-		setText( "title", title, locale.getLanguage() );
+        if( locale != null ) {
+		    setText( "title", title, locale.getLanguage() );
+        }
+        node.set( "title", title );
 	}
 
 	public String getTitle() {
@@ -274,8 +281,8 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 			Text t = getText( locale.getLanguage(), "title" );
 			return t.getText();
 		} catch( TextNodeDoesNotExistException e ) {
-			logger.warn( "Could not get title for " + locale.getLanguage() );
-			return "???";
+			logger.debug( "Could not get title for " + locale.getLanguage() );
+			return node.get( "title", "" );
 		}
 	}
 	
