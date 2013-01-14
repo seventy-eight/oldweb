@@ -11,6 +11,8 @@ import org.seventyeight.web.exceptions.*;
 
 import com.google.gson.JsonObject;
 
+import javax.servlet.http.HttpServletResponse;
+
 
 public abstract class AbstractItem extends AbstractDatabaseItem implements Item, Extensible {
 
@@ -216,6 +218,9 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         }
     }
 
+    public void doConfigurationSubmit( ParameterRequest request, JsonObject jsonData ) throws ErrorWhileSavingException, ParameterDoesNotExistException, IncorrectTypeException, ResourceDoesNotExistException, InconsistentParameterException {
+        save( request, jsonData );
+    }
 
     @Override
     public Node getExtensionsNode() {

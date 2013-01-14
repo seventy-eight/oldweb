@@ -1,7 +1,14 @@
-$subchildcontent
+<table style="width:100%;border-collapse: collapse;">
+    <tr>
+        <td align="right"><a href="/db/browse/resource/$item.getIdentifier()">Browse</a></td>
+    </tr>
 
-$item.getDisplayName()
+    <tr>
+        <td align="center">
+            $subchildcontent
 
-<!-- Comments -->
-$item.isDebatable()
+            $item.getDisplayName()
+        </td>
+    </tr>
 
+</table>

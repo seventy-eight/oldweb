@@ -16,6 +16,7 @@ import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
 
 import com.google.gson.JsonObject;
+import org.seventyeight.web.util.ClassUtils;
 import org.seventyeight.web.util.ResourceHelper;
 
 //@TopLevelActionHandlerType
@@ -43,7 +44,11 @@ public class ResourceHandler implements TopLevelAction {
             parts2[0] = request.getRequestParts()[0];
             parts2[1] = request.getRequestParts()[1];
             parts2[2] = request.getRequestParts()[2];
-            parts2[3] = "view";
+            if( request.isRequestPost() ) {
+                parts2[3] = "configurationSubmit";
+            } else {
+                parts2[3] = "view";
+            }
             request.setRequestParts( parts2 );
         }
     }
@@ -53,26 +58,45 @@ public class ResourceHandler implements TopLevelAction {
         String[] parts = request.getRequestParts();
 
         Method method = null;
-        String requestMethod = parts[2];
+        String requestMethod = parts[3];
 
-        /* Special case */
-        if( requestMethod.equalsIgnoreCase( "create" ) ) {
-            String type = parts[2];
-            logger.debug( "[Create] " + type );
+        logger.debug( "NEW PARTS: " + Arrays.asList( request.getRequestParts() ) );
 
-            ResourceDescriptor<?> descriptor = (ResourceDescriptor<?>) SeventyEight.getInstance().getDescriptorFromResourceType( type );
+        /* Get the resource */
+        AbstractResource r = null;
+        try {
+            r = helper.getResource( request, response );
+        } catch( Exception e ) {
+            throw new ActionHandlerException( e );
+        }
 
-            if( descriptor == null ) {
-                throw new ActionHandlerException( new MissingDescriptorException( "Could not find descriptor for " + type ) );
-            }
+        request.getContext().put( "title", r.getTitle() );
+        request.getContext().put( "url", "/resource/" + r.getIdentifier() );
+        request.getContext().put( "header", r.getTitle() );
+
+        /* Check authentication */
+        if( !request.hasAccess( r ) ) {
+            //throw new
+        }
+
+        JsonObject jsonData = null;
+        try {
+            jsonData = helper.getJsonFromRequest( request );
+        } catch( Exception e ) {
+            logger.warn( e.getMessage() );
+        }
+
+        /* Try implementation of method */
+        if( parts.length == 4 ) {
 
             if( request.isRequestPost() ) {
-                logger.debug( "Creating new " + type );
-                logger.debug( "Parameters: " + request.getParameterMap() );
-                AbstractResource r = null;
+                logger.debug( "This is a POST request" );
+
                 try {
-                    r = helper.createResource( descriptor, request, response );
-                } catch( ResourceNotCreatedException e ) {
+                    method = getRequestMethod( r, requestMethod, request.isRequestPost() );
+                    method.invoke( r, request, jsonData );
+
+                } catch( Exception e ) {
                     throw new ActionHandlerException( e );
                 }
 
@@ -82,113 +106,39 @@ public class ResourceHandler implements TopLevelAction {
                 } catch( Exception e ) {
                     throw new ActionHandlerException( e );
                 }
-            } else {
-                logger.debug( "Configuring new " + type );
-                request.getContext().put( "url", "/resource/" + type + "/create" );
-                request.getContext().put( "class", descriptor.getClazz().getName() );
-                request.getContext().put( "header", "Creating new " + type );
-                request.getContext().put( "descriptor", descriptor );
 
-                /* Required javascrips */
-                request.getContext().put( "javascript", descriptor.getRequiredJavascripts() );
+            } else {
+                logger.debug( "This is a GET request" );
 
                 try {
-                    /* Special dual side */
-                    try {
-                        request.getContext().put( "dualSide", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClassNoRecursive( descriptor.getClazz(), "dualSide.vm" ) );
-                    } catch ( TemplateDoesNotExistException e ) {
-                        /* No op */
-                        logger.debug( "Dual side not defined" );
-                    }
-
-                    /* Options */
-                    logger.fatal( "NU ER VI HER " + request.getContext().get( "item" ) );
-                    request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClass( descriptor.getClazz(), "configure.vm" ) );
-                    response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
-                } catch( TemplateDoesNotExistException e ) {
-                    /* This solution does not work */
+                    method = getRequestMethod( r, requestMethod, request.isRequestPost() );
+                    method.invoke( method, request, response );
+                } catch( Exception e ) {
+                    logger.warn( "Unable to execute " + requestMethod );
                     logger.warn( e );
-                } catch( IOException e ) {
-                    throw new ActionHandlerException( e );
                 }
-            }
 
-        } else {
 
-            /* Get the resource */
-            AbstractResource r = null;
-            try {
-                r = helper.getResource( request, response );
-            } catch( Exception e ) {
-                throw new ActionHandlerException( e );
-            }
-
-            request.getContext().put( "url", "/resource/" + r.getIdentifier() );
-            request.getContext().put( "header", "Editing " + r.getTitle() );
-
-            /* Check authentication */
-            if( !request.hasAccess( r ) ) {
-                //throw new
-            }
-
-            /* Put the title */
-            request.getContext().put( "title", r.getTitle() );
-
-            /* Try implementation of method */
-            if( parts.length == 4 ) {
-
-                if( request.isRequestPost() ) {
-                    logger.debug( "This is a POST request" );
-
+                /* Try view file */
+                if( method == null ) {
+                    logger.debug( "Locating template" );
                     try {
-                        method = getRequestMethod( r, requestMethod, request.isRequestPost() );
-                        method.invoke( method, request, null );
-
-                    } catch( Exception e ) {
-                        throw new ActionHandlerException( e );
-                    }
-
-                    /* When POST, view the resource */
-                    try {
-                        viewResource( r, request, response );
-                    } catch( Exception e ) {
-                        throw new ActionHandlerException( e );
-                    }
-
-                } else {
-                    logger.debug( "This is a GET request" );
-
-                    try {
-                        method = getRequestMethod( r, requestMethod, request.isRequestPost() );
-                        method.invoke( method, request, response );
-                    } catch( Exception e ) {
-                        logger.warn( "Unable to execute " + requestMethod );
+                        request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( r, requestMethod + ".vm" ) );
+                        response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
+                    } catch( TemplateDoesNotExistException e ) {
+                        /* This solution does not work */
                         logger.warn( e );
+                    } catch( IOException e ) {
+                        throw new ActionHandlerException( e );
                     }
-
-
-                    /* Try view file */
-                    if( method == null ) {
-                        logger.debug( "Locating template" );
-                        try {
-                            request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( r, requestMethod + ".vm" ) );
-                            response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
-                        } catch( TemplateDoesNotExistException e ) {
-                            /* This solution does not work */
-                            logger.warn( e );
-                        } catch( IOException e ) {
-                            throw new ActionHandlerException( e );
-                        }
-                    }
-
-
                 }
 
-                return;
-            } else {
-                requestMethod = "";
-                throw new ActionHandlerException( "NOT IMPLEMENTED YET!" );
             }
+
+            return;
+        } else {
+            requestMethod = "";
+            throw new ActionHandlerException( "NOT IMPLEMENTED YET!" );
         }
     }
 
@@ -201,7 +151,8 @@ public class ResourceHandler implements TopLevelAction {
         String m = "do" + method.substring( 0, 1 ).toUpperCase() + method.substring( 1, method.length() );
         logger.debug( "Method: " + method + " = " + m );
         if( post ) {
-            return resource.getClass().getDeclaredMethod( m, ParameterRequest.class, JsonObject.class );
+            //return resource.getClass().getDeclaredMethod( m, ParameterRequest.class, JsonObject.class );
+            return ClassUtils.getEnheritedMethod( resource.getClass(), m, ParameterRequest.class, JsonObject.class );
         } else {
             return resource.getClass().getDeclaredMethod( m, Request.class, HttpServletResponse.class );
         }
