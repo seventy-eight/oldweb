@@ -35,6 +35,11 @@ public class ResourcesHandler implements TopLevelAction {
 
             /* Instantiating the new resource */
             if( request.isRequestPost() ) {
+                String type = request.getValue( "type" );
+
+                if( type == null ) {
+                    throw new ActionHandlerException( "No type given" );
+                }
 
                 /* Get the resource descriptor from the type name */
                 ResourceDescriptor<?> descriptor = (ResourceDescriptor<?>) SeventyEight.getInstance().getDescriptorFromResourceType( type );

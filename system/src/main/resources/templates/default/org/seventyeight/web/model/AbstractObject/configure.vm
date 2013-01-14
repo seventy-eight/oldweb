@@ -65,7 +65,7 @@
                             -->
 
                             #foreach( $class in $descriptor.getExtensionClasses() )
-                                #configureExtensions( $class $item )
+                                #configureExtensions( $class $item true )
                             #end
 
 

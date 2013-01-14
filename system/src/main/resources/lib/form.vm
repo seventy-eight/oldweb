@@ -76,7 +76,7 @@
     </tr>
 #end
 
-#macro( heteroRadio $item $descriptors $name )
+#macro( heteroRadio $item $descriptors $name $doRender )
     ITEM= $item<br>
     $descriptors
 
@@ -90,7 +90,12 @@
                         <td rowspan="$size" valign="top"><input type="radio" name="$name" value="" onchange="Utils.toggleFormElement( '$descriptor.getClazz().getName()' );"></td>
                         <td>$descriptor.getDisplayName()</td>
                     </tr>
-                    #renderDescriptor( $descriptor $item false );
+                    #if( $doRender )
+                        #renderDescriptor( $descriptor $item false );
+                    #else
+                        $descriptor.getDisplayName()
+                    #end
+
                 </table>
             #end
         </td>

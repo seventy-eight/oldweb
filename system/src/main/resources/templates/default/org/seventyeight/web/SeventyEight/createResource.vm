@@ -1,6 +1,9 @@
+<form action="/resources/create" method="post">
+
 <table>
     #set( $descriptors = $core.getResourceDescriptors() )
     $descriptors.sortAlphabetically()
+    <!--
     #foreach( $descriptor in  $descriptors )
     <tr>
         <td>
@@ -8,7 +11,10 @@
         </td>
     </tr>
     #end
-
+    -->
+    #heteroRadio( "" $descriptors "type" )
 
 
 </table>
+
+</form>

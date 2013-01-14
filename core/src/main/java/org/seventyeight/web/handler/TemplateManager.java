@@ -223,6 +223,7 @@ public class TemplateManager {
                 logger.error( e );
             }
 
+            logger.debug( "TEMPLATE " + t );
 			logger.debug( "[Rendering] " + t.getName() );
 
             context.put( "core", SeventyEight.getInstance() );

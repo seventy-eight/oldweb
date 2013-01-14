@@ -88,6 +88,7 @@ public class DatabaseContextListener implements ServletContextListener {
             /* Adding action handlers */
             //GraphDragon.getInstance().addActionHandler( "system", new SystemHandler() );
             SeventyEight.getInstance().addTopLevelAction( "resource", new ResourceHandler() );
+            SeventyEight.getInstance().addTopLevelAction( "resources", new ResourcesHandler() );
             SeventyEight.getInstance().addTopLevelAction( "static", new StaticFileHandler() );
             SeventyEight.getInstance().addTopLevelAction( "upload", new UploadHandler() );
 
