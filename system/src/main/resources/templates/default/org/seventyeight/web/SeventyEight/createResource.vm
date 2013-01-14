@@ -1,5 +1,3 @@
-adwad
-
 <table>
     #set( $descriptors = $core.getResourceDescriptors() )
     $descriptors.sortAlphabetically()
