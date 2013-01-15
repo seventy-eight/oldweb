@@ -4,7 +4,6 @@ import org.seventyeight.database.Direction;
 import org.seventyeight.database.Edge;
 import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
-import org.seventyeight.utils.Date;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.CouldNotLoadObjectException;
 import org.seventyeight.web.exceptions.HubException;
@@ -22,8 +21,9 @@ public abstract class Hub extends AbstractItem implements Describable {
         super( node );
     }
 
+
     public AbstractResource getResource() throws CouldNotLoadObjectException {
-        List<Edge> edges = node.getEdges( HubDescriptor.HubRelation.hub, Direction.INBOUND );
+        List<Edge> edges = node.getEdges( SeventyEight.ResourceEdgeType.extension, Direction.INBOUND );
 
         if( edges.size() == 1 ) {
             return (AbstractResource) SeventyEight.getInstance().getDatabaseItem( edges.get( 0 ).getSourceNode() );

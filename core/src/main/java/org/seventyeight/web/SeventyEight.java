@@ -180,7 +180,7 @@ public class SeventyEight {
         addDescriptor( db, new Article.ArticleDescriptor() );
         addDescriptor( db, new FileResource.FileDescriptor() );
 
-        //addDescriptor( db, new ReplyTreeHub.ReplyTreeHubDescriptor() );
+        //addDescriptor( db, new ReplyTreeHub.ReplyTreeExtensionDescriptor() );
         //addDescriptor( db, new TreeReply.ReplyDescriptor() );
 
         addDescriptor( db, new Debate.DebateDescriptor() );

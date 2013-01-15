@@ -33,7 +33,7 @@ public class ReplyTreeHub extends ReplyHub implements ReplyHubExtension {
         return SeventyEight.getInstance().getDescriptor( TreeReply.class );
     }
 
-    public static class ReplyTreeHubDescriptor extends ReplyHubDescriptor {
+    public static class ReplyTreeExtensionDescriptor extends ReplyExtensionDescriptor {
 
         @Override
         public String getDisplayName() {

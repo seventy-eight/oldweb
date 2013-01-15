@@ -35,8 +35,8 @@ public class DebateHandler implements TopLevelAction {
             if( request.getRequestParts()[2].equals( "reply" ) ) {
                 if( request.getRequestParts()[3].equals( "create" ) ) {
                     try {
-                        Reply reply = createReply( request, resource );
-                        resource.reply( reply );
+                        //Reply reply = createReply( request, resource );
+                        //resource.reply( reply );
                     } catch( Exception e ) {
                         throw new ActionHandlerException( e );
                     }
@@ -45,7 +45,9 @@ public class DebateHandler implements TopLevelAction {
         }
     }
 
+    /*
     protected Reply createReply( Request request, AbstractResource resource ) throws CouldNotLoadObjectException, UnableToInstantiateObjectException, ErrorWhileSavingException, ParameterDoesNotExistException, IncorrectTypeException, ResourceDoesNotExistException, InconsistentParameterException, NoSuchHubException {
+
         ReplyHub hub = resource.getReplyHub();
         Descriptor<?> d = hub.getReplyDescriptor();
         Reply reply = (Reply) d.newInstance( request.getDB() );
@@ -53,6 +55,7 @@ public class DebateHandler implements TopLevelAction {
 
         return reply;
     }
+    */
 
     @Override
     public String getName() {

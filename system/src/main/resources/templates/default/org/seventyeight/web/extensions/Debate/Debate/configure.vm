@@ -3,6 +3,6 @@
         DEBATE - $descriptor<br>
         ITEM - $item<br>
         $descriptor.getDisplayName()<br>
-        #heteroRadio( $item, $descriptor.getDebates(), "debateClass" )
+        #heteroRadio( $item, $descriptor.getDebates(), "debateClass", true )
     </td>
 </tr>

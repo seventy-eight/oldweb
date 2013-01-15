@@ -72,17 +72,18 @@ public abstract class AbstractDebate extends Hub implements DebateInterface {
 
     @Override
     public String getDisplayName() {
-        return "Reply Hub";
+        return "Debate";
     }
 
     @Override
-    public final void save( ParameterRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
-        node.set( "type", Debatable.HUB_DEBATE );
+    public void save( ParameterRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+        //node.set( "type", Debatable.HUB_DEBATE );
+        super.save( request, json );
 
-        node.save();
+        //node.save();
     }
 
-    public static abstract class DebateImplDescriptor extends HubDescriptor {
+    public static abstract class DebateImplDescriptor extends ExtensionDescriptor {
 
         @Override
         public void configureIndex( Database db ) {

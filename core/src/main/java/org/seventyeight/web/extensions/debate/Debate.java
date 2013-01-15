@@ -38,11 +38,12 @@ public class Debate extends AbstractItem implements PostViewExtension, Describab
 
     @Override
     public final void save( ParameterRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
-        //super.save( request, json );
+        super.save( request, json );
         logger.debug( "JSON: " + json );
         String dobj = json.get( "debateClass" ).toString();
         logger.debug( "Debate class "  + dobj );
 
+        /*
         Descriptor descriptor = null;
         try {
             descriptor = SeventyEight.getInstance().getDescriptor( dobj );
@@ -56,6 +57,7 @@ public class Debate extends AbstractItem implements PostViewExtension, Describab
         if( edges.size() == 0 ) {
 
         } else {
+            logger.debug( "Removing existing extension" );
             Node enode = edges.get( 0 ).getTargetNode();
             enode.remove();
             edges.get( 0 ).remove();
@@ -63,9 +65,13 @@ public class Debate extends AbstractItem implements PostViewExtension, Describab
 
         try {
             instance = descriptor.newInstance( getDB() );
+            instance.save( request, null );
         } catch( UnableToInstantiateObjectException e ) {
             throw new ErrorWhileSavingException( e );
         }
+
+        node.createEdge( instance.getNode(), SeventyEight.ResourceEdgeType.extension );
+        */
     }
 
     public static class DebateDescriptor extends Descriptor<Debate> {

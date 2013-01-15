@@ -73,7 +73,7 @@ public abstract class ReplyHub extends Hub {
         node.save();
     }
 
-    public static abstract class ReplyHubDescriptor extends HubDescriptor {
+    public static abstract class ReplyExtensionDescriptor extends ExtensionDescriptor {
 
         @Override
         public String getDisplayName() {

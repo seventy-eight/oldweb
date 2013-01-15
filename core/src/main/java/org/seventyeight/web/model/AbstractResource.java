@@ -2,7 +2,6 @@ package org.seventyeight.web.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -15,14 +14,12 @@ import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.debate.exceptions.ReplyException;
 import org.seventyeight.web.debate.ReplyHub;
 import org.seventyeight.web.exceptions.*;
-import org.seventyeight.web.hub.PostViewExtensionHub;
-import org.seventyeight.web.model.extensions.PostViewExtension;
 import org.seventyeight.web.model.resources.User;
 
 import com.google.gson.JsonObject;
 
 
-public abstract class AbstractResource extends AbstractObject implements Portraitable, Debatable {
+public abstract class AbstractResource extends AbstractObject implements Portraitable {
 	
 	private static Logger logger = Logger.getLogger( AbstractResource.class );
 
@@ -255,75 +252,4 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 	}
 
 
-    /**
-     * Get a resource hub {@link Node} identified by type
-     * @param type Type of hub
-     * @return The hub {@link Node}
-     * @throws NoSuchHubException
-     */
-    public Hub getHub( String type ) throws NoSuchHubException, CouldNotLoadObjectException {
-        List<Edge> edges = node.getEdges( HubDescriptor.HubRelation.hub, Direction.OUTBOUND );
-        for( Edge edge : edges ) {
-            Node hubNode = edge.getTargetNode();
-            if( hubNode.get( "type", "" ).equals( type ) ) {
-                //return new Hub( hubNode );
-                return (Hub) SeventyEight.getInstance().getDatabaseItem( hubNode );
-            }
-        }
-
-        throw new NoSuchHubException( "The resource hub " + type + " does not exist" );
-    }
-
-    /*
-    public Hub createHub( Class<? extends Hub> clazz, String type ) throws CouldNotLoadObjectException {
-        logger.debug( "Creating a " + clazz + " hub for " + this );
-
-        Node node = SeventyEight.getInstance().createNode( getDB(), clazz );
-        node.set( "type", type );
-        Hub hub = (Hub) SeventyEight.getInstance().getDatabaseItem( node );
-        this.createRelation( hub, SeventyEight.HubRelation.resourceHubRelation );
-
-        return hub;
-    }
-    */
-
-    public ReplyHub getReplyHub() throws NoSuchHubException, CouldNotLoadObjectException {
-        ReplyHub hub = (ReplyHub) getHub( HUB_DEBATE );
-        return hub;
-    }
-
-    @Override
-    public boolean isDebatable() {
-        return node.get( "debatable", false );
-    }
-
-    @Override
-    public void reply( Reply reply ) throws ReplyException {
-        logger.debug( "Replying to " + this );
-
-        ReplyHub hub = null;
-        try {
-            hub = getReplyHub();
-            hub.addReply( reply );
-        } catch( Exception e ) {
-            throw new ReplyException( "Could not reply", e );
-        }
-
-    }
-
-    @Override
-    public List<Reply> getReplies( int offset, int number ) {
-        try {
-            ReplyHub hub = getReplyHub();
-            return hub.getReplies( offset, number );
-        } catch( Exception e ) {
-            logger.debug( "Hub not found, ergo none! " + e.getMessage() );
-            return Collections.EMPTY_LIST;
-        }
-    }
-
-    @Override
-    public List<Reply> getReplies() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
 }

@@ -127,6 +127,7 @@ public abstract class Descriptor<T extends Describable> {
                 c.put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClass( getClazz(), "configure.vm" ) );
             }
         } else {
+            logger.debug( "Preparing EMPTY " + getClazz() );
             c.put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClass( getClazz(), "configure.vm" ) );
         }
 
