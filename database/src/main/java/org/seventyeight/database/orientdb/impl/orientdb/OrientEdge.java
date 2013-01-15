@@ -43,7 +43,7 @@ public class OrientEdge implements Edge {
     }
 
     @Override
-    public void delete() {
+    public void remove() {
         logger.debug( "Removing the edge " + this );
         ((OrientNode) source ).getDB().getInternalDatabase().removeEdge( edge );
     }

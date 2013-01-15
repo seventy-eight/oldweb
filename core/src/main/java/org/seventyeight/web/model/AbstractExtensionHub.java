@@ -6,8 +6,6 @@ import org.seventyeight.database.Edge;
 import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
-import org.seventyeight.web.exceptions.CouldNotLoadObjectException;
-import org.seventyeight.web.model.extensions.PostViewExtension;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -58,7 +56,7 @@ public abstract class AbstractExtensionHub<T extends Describable> extends Hub {
                 logger.debug( "Removing " + item );
                 item.remove();
                 /* Removing edge */
-                edge.delete();
+                edge.remove();
             } catch( Exception e ) {
                 logger.warn( e );
             }

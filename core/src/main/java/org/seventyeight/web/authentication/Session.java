@@ -1,6 +1,5 @@
 package org.seventyeight.web.authentication;
 
-import java.util.Iterator;
 import java.util.List;
 
 import com.google.gson.JsonObject;
@@ -53,7 +52,7 @@ public class Session extends AbstractItem {
 		//Iterator<Relationship> i = node.getRelationships( SessionEdge.OPEN_SESSION ).iterator();
 
         for( Edge e : edges ) {
-            e.delete();
+            e.remove();
         }
 	}
 	

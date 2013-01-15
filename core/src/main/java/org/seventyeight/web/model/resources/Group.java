@@ -8,12 +8,7 @@ import org.seventyeight.database.*;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.ErrorWhileSavingException;
 import org.seventyeight.web.exceptions.InconsistentParameterException;
-import org.seventyeight.web.exceptions.IncorrectTypeException;
-import org.seventyeight.web.exceptions.ParameterDoesNotExistException;
-import org.seventyeight.web.exceptions.ResourceDoesNotExistException;
-import org.seventyeight.web.exceptions.UnableToInstantiateObjectException;
 import org.seventyeight.web.model.AbstractResource;
-import org.seventyeight.web.model.Extension;
 import org.seventyeight.web.model.ParameterRequest;
 import org.seventyeight.web.model.ResourceDescriptor;
 
@@ -100,7 +95,7 @@ public class Group extends AbstractResource {
 		for( Edge edge : edges ) {
 			if( edge.getTargetNode().equals( user.getNode() ) ) {
 				logger.debug( "Deleting node " + edge );
-				edge.delete();
+				edge.remove();
 				return true;
 			}
 		}

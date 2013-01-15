@@ -52,7 +52,7 @@ public class OrientDBRule implements TestRule {
         try {
             path = File.createTempFile( "SEVENTYEIGHT", "web" );
 
-            if( !path.delete() ) {
+            if( !path.remove() ) {
                 System.out.println( path + " could not be deleted" );
             }
 

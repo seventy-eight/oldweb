@@ -13,5 +13,5 @@ package org.seventyeight.database;
 public interface Edge extends Parameterized<Edge> {
     public <T extends Node> T getSourceNode();
     public <T extends Node> T getTargetNode();
-    public void delete();
+    public void remove();
 }

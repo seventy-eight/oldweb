@@ -2424,7 +2424,7 @@ org.cometd.Cometd = function(name)
 
         // Pushing onto an array appends at the end and returns the id associated with the element increased by 1.
         // Note that if:
-        // a.push('a'); var hb=a.push('b'); delete a[hb-1]; var hc=a.push('c');
+        // a.push('a'); var hb=a.push('b'); remove a[hb-1]; var hc=a.push('c');
         // then:
         // hc==3, a.join()=='a',,'c', a.length==3
         var subscriptionID = subscriptions.push(subscription) - 1;

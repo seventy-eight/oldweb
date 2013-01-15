@@ -1,6 +1,5 @@
 package org.seventyeight.web.extensions.debate;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Database;
@@ -12,7 +11,6 @@ import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.model.extensions.PostViewExtension;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -60,7 +58,7 @@ public class Debate extends AbstractItem implements PostViewExtension, Describab
         } else {
             Node enode = edges.get( 0 ).getTargetNode();
             enode.remove();
-            edges.get( 0 ).delete();
+            edges.get( 0 ).remove();
         }
 
         try {

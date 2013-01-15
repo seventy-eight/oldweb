@@ -113,7 +113,7 @@ public class Collection extends AbstractResource {
          * Delete all
          */
         for( Edge e : edges ) {
-            e.delete();
+            e.remove();
         }
 	}
 	
