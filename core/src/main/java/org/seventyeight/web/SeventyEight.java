@@ -417,6 +417,10 @@ public class SeventyEight {
 			return null;
 		}
 	}
+
+    public Descriptor<?> getDescriptor( String className ) throws ClassNotFoundException {
+        return getDescriptor( Class.forName( className ) );
+    }
 	
 	/**
 	 * Given a resource type name, get its descriptor

@@ -41,7 +41,12 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 
         logger.debug( "Handling extensions" );
         if( jsonData != null ) {
-            handleJsonExtensionClass( request, jsonData );
+            //handleJsonExtensionClass( request, jsonData );
+
+            /* Get the extensions node */
+            Node enode = getExtensionsNode();
+
+            handleJsonConfig( enode, request, jsonData );
         } else {
             logger.debug( "Json data was null. Skipping" );
         }
@@ -178,12 +183,26 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         }
     }
 
-    public void handleJsonConfig( Node hubNode, ParameterRequest request, JsonObject jsonData ) {
+    public void handleJsonConfig( Node extensionsNode, ParameterRequest request, JsonObject jsonData ) {
         logger.debug( "Handling configuration Json data" );
 
         /* Get Json configuration objects */
         List<JsonObject> objects = SeventyEight.getInstance().getJsonObjects( jsonData );
         logger.debug( "I got " + objects.size() + " configurations" );
+
+        List<Edge> extensionEdges = extensionsNode.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND );
+
+        Map<String, Node> nodeMap = new HashMap<String, Node>();
+
+        /* Prepare the nodes */
+        for( Edge edge : extensionEdges ) {
+            Node node = edge.getTargetNode();
+            String className = node.get( "class" );
+
+            if( className != null ) {
+                nodeMap.put( className, node );
+            }
+        }
 
         for( JsonObject o : objects ) {
             logger.debug( "o: " + o );
@@ -197,13 +216,23 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
                 Descriptor<?> d = SeventyEight.getInstance().getDescriptor( clazz );
                 logger.debug( "Descriptor is " + d );
 
+                Describable e = null;
 
-                Describable e = d.newInstance( getDB() );
+                /* Determine existence */
+                if( nodeMap.containsKey( cls ) ) {
+                    Node enode = nodeMap.get( cls );
+                    e = (Describable) SeventyEight.getInstance().getDatabaseItem( enode );
+                } else {
+                    e = d.newInstance( getDB() );
+
+                    logger.debug( "Creating relation from hub node to describable" );
+                    extensionsNode.createEdge( e.getNode(), d.getRelationType() );
+
+                }
+
                 logger.debug( "Saving " + e );
                 e.save( request, o );
 
-                logger.debug( "Creating relation from hub node to describable" );
-                hubNode.createEdge( e.getNode(), d.getRelationType() );
 
                 /* Remove data!? */
                 if( d.doRemoveDataItemOnConfigure() ) {
@@ -229,7 +258,9 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         if( edges.size() == 1 ) {
             return edges.get( 0 ).getTargetNode();
         } else if( edges.size() == 0 ) {
-            return null;
+            Node enode = getDB().createNode().set( "description", "This is an extensions node, containing all extension relations to " + this );
+            node.createEdge( enode, ResourceEdgeType.extensions );
+            return enode;
         } else {
             throw new IllegalStateException( "Too many extension nodes defined(" + edges.size() + ")" );
         }

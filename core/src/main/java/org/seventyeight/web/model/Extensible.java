@@ -13,7 +13,7 @@ public interface Extensible {
 
     /**
      * Get the {@link Node} containing all the {@link Item}s extensions defined for this object. <br />
-     * If there's no {@link Node} defined, null is returned.
+     * If there's no {@link Node} defined, a new is created.
      * @return
      */
     public Node getExtensionsNode();
