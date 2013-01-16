@@ -180,6 +180,49 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         }
     }
 
+    public Describable handleJsonConfiguration( Node extensionsNode, ParameterRequest request, JsonObject jsonData ) throws DescribableException {
+        try {
+            /* Get Json configuration object class name */
+            String cls = jsonData.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
+            logger.debug( "Configuration class is " + cls );
+
+            Class<?> clazz = Class.forName( cls );
+            Descriptor<?> d = SeventyEight.getInstance().getDescriptor( clazz );
+            logger.debug( "Descriptor is " + d );
+
+            Describable e = null;
+
+            List<Edge> edges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND, SeventyEight.__JSON_CLASS_NAME, cls );
+
+            /* Determine existence */
+            if( edges.size() > 0 ) {
+                Node enode = edges.get( 0 ).getTargetNode();
+                e = (Describable) SeventyEight.getInstance().getDatabaseItem( enode );
+            } else {
+                e = d.newInstance( getDB() );
+
+                logger.debug( "Creating relation from hub node to describable" );
+                extensionsNode.createEdge( e.getNode(), d.getRelationType() );
+
+            }
+
+            logger.debug( "Saving describable: " + e );
+            e.save( request, jsonData );
+
+
+            /* Remove data!? */
+            if( d.doRemoveDataItemOnConfigure() ) {
+                logger.debug( "This should remove the data attached to this item" );
+            }
+
+            return e;
+
+        } catch( Exception e ) {
+            logger.warn( "Unable to get describable for " + jsonData + ": " + e.getMessage() );
+            throw new DescribableException( "Cannot get descriable", e );
+        }
+    }
+
     /**
      * Given a {@link JsonObject} return a {@link Describable}. The nodeMap determines whether to instantiate or not.
      * @param extensionsNode

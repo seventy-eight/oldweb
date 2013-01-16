@@ -43,6 +43,14 @@ public class Debate extends AbstractItem implements PostViewExtension, Describab
         String dobj = json.get( "debateClass" ).toString();
         logger.debug( "Debate class "  + dobj );
 
+        List<JsonObject> config = SeventyEight.getInstance().getJsonObjects( json );
+
+        try {
+            Describable d = handleJsonConfiguration( getExtensionsNode(), request, config.get( 0 ) );
+        } catch( DescribableException e ) {
+            throw new ErrorWhileSavingException( e );
+        }
+
         /*
         Descriptor descriptor = null;
         try {
