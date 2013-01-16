@@ -3,15 +3,12 @@ package org.seventyeight.web.model;
 import java.util.*;
 
 import org.apache.log4j.Logger;
-import org.omg.CORBA.PUBLIC_MEMBER;
 import org.seventyeight.database.*;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.SeventyEight.ResourceEdgeType;
 import org.seventyeight.web.exceptions.*;
 
 import com.google.gson.JsonObject;
-
-import javax.servlet.http.HttpServletResponse;
 
 
 public abstract class AbstractItem extends AbstractDatabaseItem implements Item, Extensible {
@@ -289,7 +286,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
      * @param node
      * @return
      */
-    public static List<Node> getExtensionNodes( Node node ) {
+    public static List<Node> getExtensionNodes( Node node, Class<?> extensionClass ) {
         List<Edge> edges = node.getEdges( SeventyEight.ResourceEdgeType.extension, Direction.OUTBOUND );
 
         List<Node> nodes = new LinkedList<Node>();
@@ -299,6 +296,16 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         }
 
         return nodes;
+    }
+
+
+    public abstract class Viewer {
+
+    }
+
+    public void view( Viewer viewer ) {
+
+        /* Run any  */
     }
 
 }

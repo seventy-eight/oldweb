@@ -1,13 +1,13 @@
 <table style="width:100%;border-collapse: collapse;">
     <tr>
-        <td align="right"><a href="/db/browse/resource/$item.getIdentifier()">Browse</a></td>
+        <td style="width: 20%"></td>
+        <td style="width: 60%" align="center" class="header">$item.getDisplayName()</td>
+        <td style="width: 20%" align="right"><a href="/db/browse/resource/$item.getIdentifier()">Browse</a></td>
     </tr>
 
     <tr>
-        <td align="center">
+        <td align="center" colspan="3">
             $subchildcontent
-
-            $item.getDisplayName()
         </td>
     </tr>
 
