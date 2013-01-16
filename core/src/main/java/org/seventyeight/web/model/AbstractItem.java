@@ -43,7 +43,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
             /* Get the extensions node */
             Node enode = getExtensionsNode();
 
-            handleJsonConfig( enode, request, jsonData );
+            handleJsonConfigurations( enode, request, jsonData );
         } else {
             logger.debug( "Json data was null. Skipping" );
         }
@@ -172,7 +172,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 
 
 
-                handleJsonConfig( extensionNode, request, obj );
+                handleJsonConfigurations( extensionNode, request, obj );
 
             } catch( ClassNotFoundException e ) {
                 e.printStackTrace();
@@ -180,18 +180,70 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         }
     }
 
-    public void handleJsonConfig( Node extensionsNode, ParameterRequest request, JsonObject jsonData ) {
-        logger.debug( "Handling configuration Json data" );
+    /**
+     * Given a {@link JsonObject} return a {@link Describable}. The nodeMap determines whether to instantiate or not.
+     * @param extensionsNode
+     * @param request
+     * @param jsonData
+     * @param nodeMap Can be null
+     * @return
+     */
+    public Describable handleJsonConfiguration( Node extensionsNode, ParameterRequest request, JsonObject jsonData, Map<String, Node> nodeMap ) throws DescribableException {
+        logger.debug( "Json data: " + jsonData );
+
+        try {
+            /* Get Json configuration object class name */
+            String cls = jsonData.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
+            logger.debug( "Configuration class is " + cls );
+
+            Class<?> clazz = Class.forName( cls );
+            Descriptor<?> d = SeventyEight.getInstance().getDescriptor( clazz );
+            logger.debug( "Descriptor is " + d );
+
+            Describable e = null;
+
+            /* Determine existence */
+            if( nodeMap != null && nodeMap.containsKey( cls ) ) {
+                Node enode = nodeMap.get( cls );
+                e = (Describable) SeventyEight.getInstance().getDatabaseItem( enode );
+            } else {
+                e = d.newInstance( getDB() );
+
+                logger.debug( "Creating relation from hub node to describable" );
+                extensionsNode.createEdge( e.getNode(), d.getRelationType() );
+
+            }
+
+            logger.debug( "Saving describable: " + e );
+            e.save( request, jsonData );
+
+
+            /* Remove data!? */
+            if( d.doRemoveDataItemOnConfigure() ) {
+                logger.debug( "This should remove the data attached to this item" );
+            }
+
+            return e;
+
+        } catch( Exception e ) {
+            logger.warn( "Unable to get describable for " + jsonData + ": " + e.getMessage() );
+            throw new DescribableException( "Cannot get descriable", e );
+        }
+    }
+
+    public void handleJsonExtensionClass( Node extensionsNode, ParameterRequest request, JsonObject extensionConfiguration ) {
+        String extensionClassName = extensionConfiguration.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
+        logger.debug( "Extension class name is " + extensionClassName );
 
         /* Get Json configuration objects */
-        List<JsonObject> objects = SeventyEight.getInstance().getJsonObjects( jsonData );
-        logger.debug( "I got " + objects.size() + " configurations" );
+        List<JsonObject> configs = SeventyEight.getInstance().getJsonObjects( extensionConfiguration );
+        logger.debug( "I got " + configs.size() + " configurations" );
 
-        List<Edge> extensionEdges = extensionsNode.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND );
+        /* Prepare existing configuration nodes */
+        List<Edge> extensionEdges = extensionsNode.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND, SeventyEight.FIELD_EXTENSION_CLASS, extensionClassName );
 
         Map<String, Node> nodeMap = new HashMap<String, Node>();
 
-        /* Prepare the nodes */
         for( Edge edge : extensionEdges ) {
             Node node = edge.getTargetNode();
             String className = node.get( "class" );
@@ -201,46 +253,30 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
             }
         }
 
-        for( JsonObject o : objects ) {
-            logger.debug( "o: " + o );
+        for( JsonObject c : configs ) {
             try {
-                /* Get Json configuration object class name */
-                String cls = o.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
-                logger.debug( "Class is " + cls );
-
-                Class<?> clazz = Class.forName( cls );
-                logger.debug( "Class is " + clazz );
-                Descriptor<?> d = SeventyEight.getInstance().getDescriptor( clazz );
-                logger.debug( "Descriptor is " + d );
-
-                Describable e = null;
-
-                /* Determine existence */
-                if( nodeMap.containsKey( cls ) ) {
-                    Node enode = nodeMap.get( cls );
-                    e = (Describable) SeventyEight.getInstance().getDatabaseItem( enode );
-                } else {
-                    e = d.newInstance( getDB() );
-
-                    logger.debug( "Creating relation from hub node to describable" );
-                    extensionsNode.createEdge( e.getNode(), d.getRelationType() );
-
-                }
-
-                logger.debug( "Saving " + e );
-                e.save( request, o );
-
-
-                /* Remove data!? */
-                if( d.doRemoveDataItemOnConfigure() ) {
-                    logger.debug( "This should remove the data attached to this item" );
-                }
-
-
-            } catch( Exception e ) {
-                logger.warn( "Unable to get descriptor for " + o + ": " + e.getMessage() );
-                //ExceptionUtils.getRootCause( e ).printStackTrace();
+                handleJsonConfiguration( extensionsNode, request, c, nodeMap );
+            } catch( DescribableException e ) {
+                logger.error( e );
             }
+        }
+    }
+
+    /**
+     *
+     * @param extensionsNode
+     * @param request
+     * @param jsonData
+     */
+    public void handleJsonConfigurations( Node extensionsNode, ParameterRequest request, JsonObject jsonData ) {
+
+        logger.debug( "Handling extension class Json data" );
+
+        List<JsonObject> extensionsObjects = SeventyEight.getInstance().getJsonObjects( jsonData, SeventyEight.JsonType.extensionClass );
+        logger.debug( "I got " + extensionsObjects.size() + " extension types" );
+
+        for( JsonObject obj : extensionsObjects ) {
+            handleJsonExtensionClass( extensionsNode, request, obj );
         }
     }
 

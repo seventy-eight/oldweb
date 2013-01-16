@@ -38,7 +38,7 @@ public class Debate extends AbstractItem implements PostViewExtension, Describab
 
     @Override
     public final void save( ParameterRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
-        super.save( request, json );
+        //super.save( request, json );
         logger.debug( "JSON: " + json );
         String dobj = json.get( "debateClass" ).toString();
         logger.debug( "Debate class "  + dobj );
