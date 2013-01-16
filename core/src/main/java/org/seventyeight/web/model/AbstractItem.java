@@ -180,48 +180,21 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         }
     }
 
+    /**
+     * 
+     * @param extensionsNode
+     * @param request
+     * @param jsonData
+     * @return
+     * @throws DescribableException
+     */
     public Describable handleJsonConfiguration( Node extensionsNode, ParameterRequest request, JsonObject jsonData ) throws DescribableException {
-        try {
-            /* Get Json configuration object class name */
-            String cls = jsonData.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
-            logger.debug( "Configuration class is " + cls );
+        String cls = jsonData.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
+        List<Edge> edges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND, SeventyEight.__JSON_CLASS_NAME, cls );
 
-            Class<?> clazz = Class.forName( cls );
-            Descriptor<?> d = SeventyEight.getInstance().getDescriptor( clazz );
-            logger.debug( "Descriptor is " + d );
-
-            Describable e = null;
-
-            List<Edge> edges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND, SeventyEight.__JSON_CLASS_NAME, cls );
-
-            /* Determine existence */
-            if( edges.size() > 0 ) {
-                Node enode = edges.get( 0 ).getTargetNode();
-                e = (Describable) SeventyEight.getInstance().getDatabaseItem( enode );
-            } else {
-                e = d.newInstance( getDB() );
-
-                logger.debug( "Creating relation from hub node to describable" );
-                extensionsNode.createEdge( e.getNode(), d.getRelationType() );
-
-            }
-
-            logger.debug( "Saving describable: " + e );
-            e.save( request, jsonData );
-
-
-            /* Remove data!? */
-            if( d.doRemoveDataItemOnConfigure() ) {
-                logger.debug( "This should remove the data attached to this item" );
-            }
-
-            return e;
-
-        } catch( Exception e ) {
-            logger.warn( "Unable to get describable for " + jsonData + ": " + e.getMessage() );
-            throw new DescribableException( "Cannot get descriable", e );
-        }
+        return handleJsonConfiguration( extensionsNode, request, jsonData, ( edges.size() > 0 ? edges.get( 0 ).getTargetNode() : null ) );
     }
+
 
     /**
      * Given a {@link JsonObject} return a {@link Describable}. The nodeMap determines whether to instantiate or not.
@@ -232,8 +205,15 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
      * @return
      */
     public Describable handleJsonConfiguration( Node extensionsNode, ParameterRequest request, JsonObject jsonData, Map<String, Node> nodeMap ) throws DescribableException {
-        logger.debug( "Json data: " + jsonData );
+        String cls = jsonData.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
+        if( nodeMap != null && nodeMap.containsKey( cls ) ) {
+            return handleJsonConfiguration( extensionsNode, request, jsonData, nodeMap.get( cls ) );
+        } else {
+            return handleJsonConfiguration( extensionsNode, request, jsonData, (Node) null );
+        }
+    }
 
+    public Describable handleJsonConfiguration( Node extensionsNode, ParameterRequest request, JsonObject jsonData, Node enode ) throws DescribableException {
         try {
             /* Get Json configuration object class name */
             String cls = jsonData.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
@@ -246,8 +226,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
             Describable e = null;
 
             /* Determine existence */
-            if( nodeMap != null && nodeMap.containsKey( cls ) ) {
-                Node enode = nodeMap.get( cls );
+            if( enode != null ) {
                 e = (Describable) SeventyEight.getInstance().getDatabaseItem( enode );
             } else {
                 e = d.newInstance( getDB() );
@@ -273,6 +252,8 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
             throw new DescribableException( "Cannot get descriable", e );
         }
     }
+
+
 
     public void handleJsonExtensionClass( Node extensionsNode, ParameterRequest request, JsonObject extensionConfiguration ) {
         String extensionClassName = extensionConfiguration.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
