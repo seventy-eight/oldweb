@@ -102,7 +102,7 @@ public class SeventyEight {
 	private static final String SYSTEM_NODE = "system-node";
     private static final String SYSTEM_INSTALLED = "system-installed";
 
-    public static final String FIELD_EXTENSION_CLASS = "extensions";
+    public static final String FIELD_EXTENSION_CLASS = "extensionClass";
 
 	public enum ResourceEdgeType implements EdgeType {
 		owner,

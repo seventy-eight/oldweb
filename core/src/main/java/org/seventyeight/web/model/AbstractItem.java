@@ -181,7 +181,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
     }
 
     /**
-     * 
+     *
      * @param extensionsNode
      * @param request
      * @param jsonData
@@ -279,7 +279,9 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 
         for( JsonObject c : configs ) {
             try {
-                handleJsonConfiguration( extensionsNode, request, c, nodeMap );
+                Describable d = handleJsonConfiguration( extensionsNode, request, c, nodeMap );
+                /**/
+                d.getNode().set( SeventyEight.FIELD_EXTENSION_CLASS, extensionClassName ).save();
             } catch( DescribableException e ) {
                 logger.error( e );
             }
