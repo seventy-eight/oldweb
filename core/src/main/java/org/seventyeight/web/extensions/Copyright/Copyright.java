@@ -1,7 +1,7 @@
 package org.seventyeight.web.extensions.Copyright;
 
 import org.seventyeight.database.Node;
-import org.seventyeight.web.extensions.PostViewDecorator;
+import org.seventyeight.web.extensions.AbstractResourceExtension;
 import org.seventyeight.web.model.Descriptor;
 
 /**
@@ -9,7 +9,7 @@ import org.seventyeight.web.model.Descriptor;
  *         Date: 09-01-13
  *         Time: 12:53
  */
-public class Copyright extends PostViewDecorator {
+public class Copyright extends AbstractResourceExtension {
 
     public Copyright( Node node ) {
         super( node );

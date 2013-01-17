@@ -5,6 +5,6 @@ package org.seventyeight.web.model.extensions;
  *         Date: 29-12-12
  *         Time: 22:01
  */
-public interface PostViewExtension {
+public interface ResourceExtension {
 
 }

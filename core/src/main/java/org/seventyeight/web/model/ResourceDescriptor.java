@@ -6,7 +6,7 @@ import org.seventyeight.database.EdgeType;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.UnableToInstantiateObjectException;
 import org.seventyeight.utils.Date;
-import org.seventyeight.web.model.extensions.PostViewExtension;
+import org.seventyeight.web.model.extensions.ResourceExtension;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,7 +55,7 @@ public abstract class ResourceDescriptor<T extends AbstractResource> extends Des
     public List<Class> getExtensionClasses() {
         List<Class> classes = new ArrayList<Class>(1);
 
-        classes.add( PostViewExtension.class );
+        classes.add( ResourceExtension.class );
 
         return classes;
     }

@@ -3,13 +3,11 @@ package org.seventyeight.web.extensions.debate;
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Database;
-import org.seventyeight.database.Direction;
-import org.seventyeight.database.Edge;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
-import org.seventyeight.web.model.extensions.PostViewExtension;
+import org.seventyeight.web.model.extensions.ResourceExtension;
 
 import java.util.List;
 
@@ -18,7 +16,7 @@ import java.util.List;
  *         Date: 30-12-12
  *         Time: 21:54
  */
-public class Debate extends AbstractItem implements PostViewExtension, Describable {
+public class Debate extends AbstractItem implements ResourceExtension, Describable {
 
     private static Logger logger = Logger.getLogger( Debate.class );
 

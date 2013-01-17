@@ -7,14 +7,14 @@ import org.seventyeight.web.model.AbstractItem;
 import org.seventyeight.web.model.Describable;
 import org.seventyeight.web.model.Descriptor;
 import org.seventyeight.web.model.ParameterRequest;
-import org.seventyeight.web.model.extensions.PostViewExtension;
+import org.seventyeight.web.model.extensions.ResourceExtension;
 
 /**
  * @author cwolfgang
  *         Date: 30-12-12
  *         Time: 21:54
  */
-public class Debate2 extends AbstractItem implements PostViewExtension, Describable {
+public class Debate2 extends AbstractItem implements ResourceExtension, Describable {
 
     public Debate2( Node node ) {
         super( node );
