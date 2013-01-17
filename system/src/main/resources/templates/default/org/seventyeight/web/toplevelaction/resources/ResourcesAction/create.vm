@@ -1,0 +1,34 @@
+<form action="/resources/create" method="post">
+
+    <table style="width: ; border-collapse: collapse;">
+
+        <tr>
+            <td>
+                Title
+                <input type="text" name="title">
+            </td>
+        </tr>
+
+        #set( $descriptors = $core.getResourceDescriptors() )
+        $descriptors.sortAlphabetically()
+        <!--
+    #foreach( $descriptor in  $descriptors )
+    <tr>
+        <td>
+            $descriptor.getDisplayName()
+        </td>
+    </tr>
+    #end
+    -->
+        #heteroRadio( "" $descriptors "className" )
+
+        <tr>
+            <td align="center">
+                <input type="submit" value="Create">
+            </td>
+        </tr>
+
+
+    </table>
+
+</form>

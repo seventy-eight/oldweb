@@ -3,10 +3,7 @@ package org.seventyeight.web.toplevelaction.resources;
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
 import org.seventyeight.web.exceptions.ActionHandlerException;
-import org.seventyeight.web.model.Action;
-import org.seventyeight.web.model.Actionable;
-import org.seventyeight.web.model.Request;
-import org.seventyeight.web.model.TopLevelAction;
+import org.seventyeight.web.model.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,7 +21,7 @@ public class ResourcesAction implements TopLevelAction, Actionable {
         return false;
     }
 
-    public void doCreate( Request request, JsonObject jsonData ) {
+    public void doCreate( ParameterRequest request, JsonObject jsonData ) {
         logger.fatal( "YAY, resources!!!" );
     }
 

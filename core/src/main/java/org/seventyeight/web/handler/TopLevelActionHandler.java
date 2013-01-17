@@ -29,6 +29,10 @@ public class TopLevelActionHandler {
 
     public void execute( TopLevelAction topAction, Request request, HttpServletResponse response ) throws ActionHandlerException {
 
+        if( topAction.execute( request, response ) ) {
+            return;
+        }
+
         /* Check for action first, start a first(2) */
         int i = 2;
         int l = request.getRequestParts().length;
@@ -64,15 +68,17 @@ public class TopLevelActionHandler {
             if( i == l - 1 ) {
                 /* We came to an end */
 
-                /* First try to find a view */
-                try {
-                    request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( lastAction, method + ".vm" ) );
-                    response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
-                    return;
-                } catch( TemplateDoesNotExistException e ) {
-                    logger.warn( e );
-                } catch( IOException e ) {
-                    throw new ActionHandlerException( e );
+                if( !request.isRequestPost() ) {
+                    /* First try to find a view, if not a POST */
+                    try {
+                        request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( lastAction, method + ".vm" ) );
+                        response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
+                        return;
+                    } catch( TemplateDoesNotExistException e ) {
+                        logger.warn( e );
+                    } catch( IOException e ) {
+                        throw new ActionHandlerException( e );
+                    }
                 }
 
                 /* Then try to find a method */
@@ -89,15 +95,18 @@ public class TopLevelActionHandler {
     }
 
     private void executeMethod( Action action, Request request, HttpServletResponse response, String actionMethod ) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchJsonElementException {
-        if( request.getRequestParts().length == 2 ) {
-            Method method = getRequestMethod( action, actionMethod, request.isRequestPost() );
+        Method method = getRequestMethod( action, actionMethod, request.isRequestPost() );
 
-            if( request.isRequestPost() ) {
-                JsonObject json = JsonUtils.getJsonFromRequest( request );
-                method.invoke( method, request, json );
-            } else {
-                method.invoke( method, request, response );
+        if( request.isRequestPost() ) {
+            JsonObject json = null;
+            try {
+                json = JsonUtils.getJsonFromRequest( request );
+            } catch ( Exception e ) {
+                logger.debug( e.getMessage() );
             }
+            method.invoke( action, request, json );
+        } else {
+            method.invoke( action, request, response );
         }
     }
 
