@@ -39,7 +39,7 @@ public class ThemeFileHandler implements TopLevelAction {
 	}
 
     @Override
-    public Action getAction( String subSpace ) {
+    public Action getAction( Request request, String subSpace ) {
         return null;
     }
 

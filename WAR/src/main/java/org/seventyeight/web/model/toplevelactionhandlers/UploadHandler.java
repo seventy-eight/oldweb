@@ -1,14 +1,11 @@
 package org.seventyeight.web.model.toplevelactionhandlers;
 
 import org.apache.log4j.Logger;
-import org.seventyeight.database.Database;
 import org.seventyeight.database.Node;
 import org.seventyeight.utils.Date;
 import org.seventyeight.web.SeventyEight;
-import org.seventyeight.web.authentication.Session;
 import org.seventyeight.web.exceptions.ActionHandlerException;
 import org.seventyeight.web.exceptions.ResourceNotCreatedException;
-import org.seventyeight.web.exceptions.TemplateDoesNotExistException;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.model.resources.FileResource;
 import org.seventyeight.web.util.ResourceHelper;
@@ -21,10 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -111,7 +105,7 @@ public class UploadHandler implements TopLevelAction {
     }
 
     @Override
-    public Action getAction( String subSpace ) {
+    public Action getAction( Request request, String subSpace ) {
         return null;
     }
 

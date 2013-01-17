@@ -1,10 +1,8 @@
 package org.seventyeight.web.model.toplevelactionhandlers;
 
-import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Direction;
 import org.seventyeight.database.Node;
-import org.seventyeight.database.orientdb.impl.orientdb.OrientDatabase;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.AbstractResource;
@@ -14,7 +12,6 @@ import org.seventyeight.web.model.TopLevelAction;
 import org.seventyeight.web.util.ResourceHelper;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
@@ -30,7 +27,7 @@ public class DatabaseBrowser implements TopLevelAction {
     private ResourceHelper helper = new ResourceHelper();
 
     @Override
-    public Action getAction( String subSpace ) {
+    public Action getAction( Request request, String subSpace ) {
         return null;
     }
 

@@ -63,7 +63,7 @@ public class ResourcesAction implements TopLevelAction, Actionable {
     }
 
     @Override
-    public Action getAction( String subSpace ) {
+    public Action getAction( Request request, String subSpace ) {
         return null;
     }
 

@@ -2,7 +2,6 @@ package org.seventyeight.web.model.toplevelactionhandlers;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.URLDecoder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,7 +39,7 @@ public class StaticFileHandler implements TopLevelAction {
 	}
 
     @Override
-    public Action getAction( String subSpace ) {
+    public Action getAction( Request request, String subSpace ) {
         return null;
     }
 

@@ -45,9 +45,10 @@ public class TopLevelActionHandler {
             lastAction = action;
 
             if( action instanceof Actionable ) {
-                action = ((Actionable)action).getAction( method );
+                action = ((Actionable)action).getAction( request, method );
             } else {
-                /* Was actionable, break */
+                /* Was not actionable, break */
+                action = null;
                 break;
             }
 
@@ -56,6 +57,8 @@ public class TopLevelActionHandler {
                 break;
             }
         }
+
+        logger.debug( "[Action method] " + method + " -> " + action + "/" + lastAction );
 
         if( action != null ) {
             /* Last sub space was an action, call its index method */
@@ -83,6 +86,7 @@ public class TopLevelActionHandler {
 
                 /* Then try to find a method */
                 try {
+                    logger.debug( "Action: " + lastAction + " -> " + method );
                     executeMethod( lastAction, request, response, method );
                 } catch( Exception e ) {
                     throw new ActionHandlerException( e );

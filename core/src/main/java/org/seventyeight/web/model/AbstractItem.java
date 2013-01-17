@@ -1,5 +1,6 @@
 package org.seventyeight.web.model;
 
+import java.io.IOException;
 import java.util.*;
 
 import org.apache.log4j.Logger;
@@ -9,6 +10,8 @@ import org.seventyeight.web.SeventyEight.ResourceEdgeType;
 import org.seventyeight.web.exceptions.*;
 
 import com.google.gson.JsonObject;
+
+import javax.servlet.http.HttpServletResponse;
 
 
 public abstract class AbstractItem extends AbstractDatabaseItem implements Item, Extensible, Action {
@@ -306,8 +309,11 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         }
     }
 
-    public void doConfigurationSubmit( ParameterRequest request, JsonObject jsonData ) throws ErrorWhileSavingException, ParameterDoesNotExistException, IncorrectTypeException, ResourceDoesNotExistException, InconsistentParameterException {
+    public void doConfigurationSubmit( Request request, HttpServletResponse response, JsonObject jsonData ) throws ErrorWhileSavingException, ParameterDoesNotExistException, IncorrectTypeException, ResourceDoesNotExistException, InconsistentParameterException, TemplateDoesNotExistException, IOException {
         save( request, jsonData );
+
+        request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( this, "index.vm" ) );
+        response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
     }
 
     @Override
