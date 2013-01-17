@@ -104,7 +104,7 @@ public class TopLevelActionHandler {
             } catch ( Exception e ) {
                 logger.debug( e.getMessage() );
             }
-            method.invoke( action, request, json );
+            method.invoke( action, request, response, json );
         } else {
             method.invoke( action, request, response );
         }
@@ -115,7 +115,7 @@ public class TopLevelActionHandler {
         logger.debug( "Method: " + method + " = " + m );
         if( post ) {
             //return resource.getClass().getDeclaredMethod( m, ParameterRequest.class, JsonObject.class );
-            return ClassUtils.getEnheritedMethod( action.getClass(), m, ParameterRequest.class, JsonObject.class );
+            return ClassUtils.getEnheritedMethod( action.getClass(), m, Request.class, HttpServletResponse.class, JsonObject.class );
         } else {
             return action.getClass().getDeclaredMethod( m, Request.class, HttpServletResponse.class );
         }
