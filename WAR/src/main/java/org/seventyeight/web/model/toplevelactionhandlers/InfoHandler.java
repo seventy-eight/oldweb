@@ -11,18 +11,6 @@ import javax.servlet.http.HttpServletResponse;
  *         Date: 07-01-13
  *         Time: 22:03
  */
-public class InfoHandler implements TopLevelAction {
+public class InfoHandler {
 
-    @Override
-    public void prepare( Request request ) {
-    }
-
-    @Override
-    public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
-    }
-
-    @Override
-    public String getName() {
-        return "info";
-    }
 }

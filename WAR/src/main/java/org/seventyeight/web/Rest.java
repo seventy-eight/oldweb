@@ -114,10 +114,7 @@ public class Rest extends HttpServlet {
 
     public void parseRequest( TopLevelAction action, Request request, HttpServletResponse response ) throws ActionHandlerDoesNotExistException, ActionHandlerException {
         logger.debug( "Parsing request" );
-        String[] parts = request.getRequestParts();
-
-        action.prepare( request );
-        action.execute( request, response );
+        SeventyEight.getInstance().getTopLevelActionHandler().execute( action, request, response );
     }
 
     private void generateException( Request request, PrintWriter writer, Throwable e, String message ) {

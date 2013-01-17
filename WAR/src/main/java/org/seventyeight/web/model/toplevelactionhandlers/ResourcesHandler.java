@@ -18,17 +18,17 @@ import javax.servlet.http.HttpServletResponse;
  *         Date: 14-01-13
  *         Time: 08:55
  */
-public class ResourcesHandler implements TopLevelAction {
+public class ResourcesHandler {
 
     private static Logger logger = Logger.getLogger( ResourcesHandler.class );
 
     private ResourceHelper helper = new ResourceHelper();
 
-    @Override
+    //@Override
     public void prepare( Request request ) {
     }
 
-    @Override
+    //@Override
     public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
         String[] parts = request.getRequestParts();
         String requestMethod = parts[2];
@@ -84,7 +84,6 @@ public class ResourcesHandler implements TopLevelAction {
         }
     }
 
-    @Override
     public String getName() {
         return "resources";
     }

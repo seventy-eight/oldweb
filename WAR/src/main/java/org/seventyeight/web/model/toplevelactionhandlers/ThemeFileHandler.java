@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.ActionHandlerException;
 import org.seventyeight.web.model.AbstractTheme;
+import org.seventyeight.web.model.Action;
 import org.seventyeight.web.model.Request;
 import org.seventyeight.web.model.TopLevelAction;
 import org.seventyeight.web.util.FileHelper;
@@ -22,13 +23,15 @@ public class ThemeFileHandler implements TopLevelAction {
 	private static Logger logger = Logger.getLogger( ThemeFileHandler.class );
 
     @Override
-    public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
+    public boolean execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
         FileHelper fh = new FileHelper();
         try {
             fh.getFile( request, response, new GetThemeFile( request.getTheme() ), true );
         } catch( IOException e ) {
             throw new ActionHandlerException( e );
         }
+
+        return true;
     }
 
     public String getName() {
@@ -36,12 +39,11 @@ public class ThemeFileHandler implements TopLevelAction {
 	}
 
     @Override
-    public void prepare( Request request ) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public Action getAction( String subSpace ) {
+        return null;
     }
 
-
-     private class GetThemeFile implements GetFile {
+    private class GetThemeFile implements GetFile {
 
          AbstractTheme theme;
 

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.ActionHandlerException;
+import org.seventyeight.web.model.Action;
 import org.seventyeight.web.model.Request;
 import org.seventyeight.web.model.TopLevelAction;
 import org.seventyeight.web.util.FileHelper;
@@ -23,13 +24,15 @@ public class StaticFileHandler implements TopLevelAction {
 	private static Logger logger = Logger.getLogger( StaticFileHandler.class );
 
     @Override
-    public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
+    public boolean execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
         FileHelper fh = new FileHelper();
         try {
             fh.getFile( request, response, new S(), true );
         } catch( IOException e ) {
             throw new ActionHandlerException( e );
         }
+
+        return true;
     }
 
     public String getName() {
@@ -37,12 +40,11 @@ public class StaticFileHandler implements TopLevelAction {
 	}
 
     @Override
-    public void prepare( Request request ) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public Action getAction( String subSpace ) {
+        return null;
     }
 
-
-     private class S implements GetFile {
+    private class S implements GetFile {
 
          public File getFile( HttpServletRequest request, HttpServletResponse response ) throws IOException {
              // Get requested file by path info.

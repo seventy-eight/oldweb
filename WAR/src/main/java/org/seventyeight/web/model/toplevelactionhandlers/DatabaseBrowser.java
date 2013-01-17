@@ -8,6 +8,7 @@ import org.seventyeight.database.orientdb.impl.orientdb.OrientDatabase;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.AbstractResource;
+import org.seventyeight.web.model.Action;
 import org.seventyeight.web.model.Request;
 import org.seventyeight.web.model.TopLevelAction;
 import org.seventyeight.web.util.ResourceHelper;
@@ -29,12 +30,12 @@ public class DatabaseBrowser implements TopLevelAction {
     private ResourceHelper helper = new ResourceHelper();
 
     @Override
-    public void prepare( Request request ) {
-
+    public Action getAction( String subSpace ) {
+        return null;
     }
 
     @Override
-    public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
+    public boolean execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
         request.getContext().put( "outbound", Direction.OUTBOUND );
         request.getContext().put( "inbound", Direction.INBOUND );
 
@@ -75,9 +76,10 @@ public class DatabaseBrowser implements TopLevelAction {
         } catch( Exception e ) {
             throw new ActionHandlerException( e );
         }
+
+        return true;
     }
 
-    @Override
     public String getName() {
         return "db";
     }

@@ -9,8 +9,15 @@ import javax.servlet.http.HttpServletResponse;
  *         Date: 02-12-12
  *         Time: 16:00
  */
-public interface TopLevelAction extends Action {
-    public void prepare( Request request );
-    public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException;
+public interface TopLevelAction extends Action, Actionable {
     public String getName();
+
+    /**
+     * If true is returned, default handling should not be executed.
+     * @param request
+     * @param response
+     * @return
+     * @throws ActionHandlerException
+     */
+    public boolean execute( Request request, HttpServletResponse response ) throws ActionHandlerException;
 }

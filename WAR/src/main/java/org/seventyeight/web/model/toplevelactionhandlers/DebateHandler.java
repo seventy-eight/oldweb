@@ -12,14 +12,14 @@ import javax.servlet.http.HttpServletResponse;
  *         Date: 21-12-12
  *         Time: 13:24
  */
-public class DebateHandler implements TopLevelAction {
+public class DebateHandler  {
 
-    @Override
+
     public void prepare( Request request ) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    @Override
+
     public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
         long rid = Long.parseLong( (String) request.getValue( "identifier" ) );
 
@@ -57,7 +57,7 @@ public class DebateHandler implements TopLevelAction {
     }
     */
 
-    @Override
+
     public String getName() {
         return "debate";
     }

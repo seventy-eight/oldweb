@@ -9,10 +9,7 @@ import org.seventyeight.web.authentication.Session;
 import org.seventyeight.web.exceptions.ActionHandlerException;
 import org.seventyeight.web.exceptions.ResourceNotCreatedException;
 import org.seventyeight.web.exceptions.TemplateDoesNotExistException;
-import org.seventyeight.web.model.AbstractResource;
-import org.seventyeight.web.model.Request;
-import org.seventyeight.web.model.ResourceDescriptor;
-import org.seventyeight.web.model.TopLevelAction;
+import org.seventyeight.web.model.*;
 import org.seventyeight.web.model.resources.FileResource;
 import org.seventyeight.web.util.ResourceHelper;
 
@@ -51,10 +48,6 @@ public class UploadHandler implements TopLevelAction {
     private ResourceHelper helper = new ResourceHelper();
     private ResourceDescriptor descriptor = (ResourceDescriptor) SeventyEight.getInstance().getDescriptor( FileResource.class );
 
-    @Override
-    public void prepare( Request request ) {
-    }
-
     /*
 
     (0) / (1) upload handler / (2) type
@@ -68,7 +61,7 @@ public class UploadHandler implements TopLevelAction {
      */
 
     @Override
-    public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
+    public boolean execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
 
         System.out.println( request.getParameterMap() );
 
@@ -113,6 +106,13 @@ public class UploadHandler implements TopLevelAction {
                 }
             }
         }
+
+        return true;
+    }
+
+    @Override
+    public Action getAction( String subSpace ) {
+        return null;
     }
 
     private void upload( Request request, HttpServletResponse response ) throws IOException, ServletException, ResourceNotCreatedException {

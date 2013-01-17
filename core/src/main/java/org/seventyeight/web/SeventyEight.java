@@ -23,6 +23,7 @@ import org.seventyeight.web.extensions.debate.Debate2;
 import org.seventyeight.web.extensions.debate.simple.SimpleDebate;
 import org.seventyeight.web.handler.Dictionary;
 import org.seventyeight.web.handler.TemplateManager;
+import org.seventyeight.web.handler.TopLevelActionHandler;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.model.Locale;
 
@@ -118,6 +119,8 @@ public class SeventyEight {
 		writeAccess,
 		reviewAccess
 	}
+
+    private TopLevelActionHandler topLevelActionHandler = new TopLevelActionHandler();
 
 	/* Paths */
 	private File path;
@@ -615,6 +618,9 @@ public class SeventyEight {
         }
     }
 
+    public TopLevelActionHandler getTopLevelActionHandler() {
+        return topLevelActionHandler;
+    }
 
     /*
       * Basic getters

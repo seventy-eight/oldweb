@@ -1,0 +1,102 @@
+package org.seventyeight.web.handler;
+
+import com.google.gson.JsonObject;
+import org.apache.log4j.Logger;
+import org.seventyeight.web.exceptions.ActionHandlerException;
+import org.seventyeight.web.model.*;
+import org.seventyeight.web.util.ClassUtils;
+import org.seventyeight.web.util.JsonUtils;
+
+import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+/**
+ * @author cwolfgang
+ *         Date: 17-01-13
+ *         Time: 14:10
+ */
+public class TopLevelActionHandler {
+
+    private static Logger logger = Logger.getLogger( TopLevelActionHandler.class );
+
+    // (0)/(1)handler/(2)first((3)second/(n)last
+    // n is either an actions index or an action method
+
+    public void execute( TopLevelAction topAction, Request request, HttpServletResponse response ) throws ActionHandlerException {
+
+        /* Check for action first, start a first(2) */
+        int i = 2;
+        int l = request.getRequestParts().length;
+        Action action = topAction;
+        Action lastAction = null;
+        String method = "index";
+        for( ; i < l ; i++ ) {
+            method = request.getRequestParts()[i];
+
+            lastAction = action;
+
+            if( action instanceof Actionable ) {
+                action = ((Actionable)action).getAction( method );
+            } else {
+                /* Was actionable, break */
+                break;
+            }
+
+            /* If null, break */
+            if( action == null ) {
+                break;
+            }
+        }
+
+        if( action != null ) {
+            /* Last sub space was an action, call its index method */
+            executeMethod( action, request, response, "index" );
+        } else {
+            if( i == l - 1 ) {
+                /* We came to an end */
+                executeMethod( lastAction, request, response, method );
+            } else {
+                throw new ActionHandlerException( method + " not defined for " + lastAction );
+            }
+        }
+
+    }
+
+    private void executeMethod( Action action, Request request, HttpServletResponse response, String actionMethod ) throws ActionHandlerException {
+        if( request.getRequestParts().length == 2 ) {
+            Method method = null;
+            try {
+                method = getRequestMethod( action, actionMethod, request.isRequestPost() );
+            } catch( NoSuchMethodException e ) {
+                throw new ActionHandlerException( e );
+            }
+
+            if( request.isRequestPost() ) {
+                try {
+                    JsonObject json = JsonUtils.getJsonFromRequest( request );
+                    method.invoke( method, request, json );
+                } catch( Exception e ) {
+                    throw new ActionHandlerException( e );
+                }
+            } else {
+                try {
+                    method.invoke( method, request, response );
+                } catch( Exception e ) {
+                    throw new ActionHandlerException( e );
+                }
+            }
+        }
+    }
+
+    private Method getRequestMethod( Action action, String method, boolean post ) throws NoSuchMethodException {
+        String m = "do" + method.substring( 0, 1 ).toUpperCase() + method.substring( 1, method.length() );
+        logger.debug( "Method: " + method + " = " + m );
+        if( post ) {
+            //return resource.getClass().getDeclaredMethod( m, ParameterRequest.class, JsonObject.class );
+            return ClassUtils.getEnheritedMethod( action.getClass(), m, ParameterRequest.class, JsonObject.class );
+        } else {
+            return action.getClass().getDeclaredMethod( m, Request.class, HttpServletResponse.class );
+        }
+    }
+}

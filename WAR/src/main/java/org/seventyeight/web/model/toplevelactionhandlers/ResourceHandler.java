@@ -20,7 +20,7 @@ import org.seventyeight.web.util.ClassUtils;
 import org.seventyeight.web.util.ResourceHelper;
 
 //@TopLevelActionHandlerType
-public class ResourceHandler implements TopLevelAction {
+public class ResourceHandler {
 
 	private Logger logger = Logger.getLogger( ResourceHandler.class );
 
@@ -36,7 +36,7 @@ public class ResourceHandler implements TopLevelAction {
 		return "resource";
 	}
 
-    @Override
+    //@Override
     public void prepare( Request request ) {
         /*  */
         if( request.getRequestParts().length == 3 ) {
@@ -53,7 +53,7 @@ public class ResourceHandler implements TopLevelAction {
         }
     }
 
-    @Override
+    //@Override
     public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
         String[] parts = request.getRequestParts();
 
