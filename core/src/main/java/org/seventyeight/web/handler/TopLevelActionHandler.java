@@ -2,12 +2,16 @@ package org.seventyeight.web.handler;
 
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
+import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.ActionHandlerException;
+import org.seventyeight.web.exceptions.NoSuchJsonElementException;
+import org.seventyeight.web.exceptions.TemplateDoesNotExistException;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.util.ClassUtils;
 import org.seventyeight.web.util.JsonUtils;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -51,11 +55,32 @@ public class TopLevelActionHandler {
 
         if( action != null ) {
             /* Last sub space was an action, call its index method */
-            executeMethod( action, request, response, "index" );
+            try {
+                executeMethod( action, request, response, "index" );
+            } catch( Exception e ) {
+                throw new ActionHandlerException( e );
+            }
         } else {
             if( i == l - 1 ) {
                 /* We came to an end */
-                executeMethod( lastAction, request, response, method );
+
+                /* First try to find a view */
+                try {
+                    request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( lastAction, method + ".vm" ) );
+                    response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
+                    return;
+                } catch( TemplateDoesNotExistException e ) {
+                    logger.warn( e );
+                } catch( IOException e ) {
+                    throw new ActionHandlerException( e );
+                }
+
+                /* Then try to find a method */
+                try {
+                    executeMethod( lastAction, request, response, method );
+                } catch( Exception e ) {
+                    throw new ActionHandlerException( e );
+                }
             } else {
                 throw new ActionHandlerException( method + " not defined for " + lastAction );
             }
@@ -63,28 +88,15 @@ public class TopLevelActionHandler {
 
     }
 
-    private void executeMethod( Action action, Request request, HttpServletResponse response, String actionMethod ) throws ActionHandlerException {
+    private void executeMethod( Action action, Request request, HttpServletResponse response, String actionMethod ) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchJsonElementException {
         if( request.getRequestParts().length == 2 ) {
-            Method method = null;
-            try {
-                method = getRequestMethod( action, actionMethod, request.isRequestPost() );
-            } catch( NoSuchMethodException e ) {
-                throw new ActionHandlerException( e );
-            }
+            Method method = getRequestMethod( action, actionMethod, request.isRequestPost() );
 
             if( request.isRequestPost() ) {
-                try {
-                    JsonObject json = JsonUtils.getJsonFromRequest( request );
-                    method.invoke( method, request, json );
-                } catch( Exception e ) {
-                    throw new ActionHandlerException( e );
-                }
+                JsonObject json = JsonUtils.getJsonFromRequest( request );
+                method.invoke( method, request, json );
             } else {
-                try {
-                    method.invoke( method, request, response );
-                } catch( Exception e ) {
-                    throw new ActionHandlerException( e );
-                }
+                method.invoke( method, request, response );
             }
         }
     }

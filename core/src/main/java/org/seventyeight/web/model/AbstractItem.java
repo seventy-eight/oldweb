@@ -11,7 +11,7 @@ import org.seventyeight.web.exceptions.*;
 import com.google.gson.JsonObject;
 
 
-public abstract class AbstractItem extends AbstractDatabaseItem implements Item, Extensible {
+public abstract class AbstractItem extends AbstractDatabaseItem implements Item, Extensible, Action {
 
 	private static Logger logger = Logger.getLogger( AbstractItem.class );
 
