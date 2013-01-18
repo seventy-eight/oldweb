@@ -349,6 +349,10 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         return nodes;
     }
 
+    public void getContributingViews( String view ) {
+
+    }
+
     /**
      * Given a {@link Node} get all outbound extension {@link Edge}s outbound {@link Node}s.
      * @param node

@@ -3,7 +3,6 @@ package org.seventyeight.web;
 import org.apache.log4j.Logger;
 import org.seventyeight.database.orientdb.impl.orientdb.OrientDBManager;
 import org.seventyeight.web.model.toplevelactionhandlers.*;
-import org.seventyeight.web.services.InformationService;
 import org.seventyeight.web.toplevelaction.resources.ResourceAction;
 import org.seventyeight.web.toplevelaction.resources.ResourcesAction;
 
@@ -80,7 +79,7 @@ public class DatabaseContextListener implements ServletContextListener {
                 gd.getPlugins( plugins );
 
                 logger.info( "Loading templates" );
-                gd.getTemplateManager().getTemplates( paths );
+                gd.getTemplateManager().setTemplateDirectories( paths );
                 logger.debug( gd.getTemplateManager().toString() );
                 gd.getTemplateManager().initialize();
             } catch( IOException e ) {

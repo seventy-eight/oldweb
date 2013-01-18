@@ -76,7 +76,7 @@ public class TemplateManager {
 		this.paths = "";
 	}
 	
-	public void getTemplates( List<File> directories ) {
+	public void setTemplateDirectories( List<File> directories ) {
 		for( File dir : directories ) {
 			logger.debug( "[Template directory] " + dir );
 			this.paths += dir.toString() + ", ";
@@ -380,7 +380,11 @@ public class TemplateManager {
 		
 		return list;
 	}
-	
+
+    public static String getUrlFromClass( Class<?> clazz ) {
+        return getUrlFromClass( clazz.getName() );
+    }
+
 	/**
 	 * Given an object and the velocity method, get the url of the file.
 	 * @param object - Some object
@@ -401,6 +405,10 @@ public class TemplateManager {
 		return clazz.replace( '.', '/' ).replace( '$', '/' ) + "/" + method;
 	}
 
+
+    public static String getUrlFromClass( String clazz ) {
+        return clazz.replace( '.', '/' ).replace( '$', '/' );
+    }
 
 	
 	public String toString() {

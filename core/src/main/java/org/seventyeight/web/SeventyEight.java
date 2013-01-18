@@ -473,6 +473,10 @@ public class SeventyEight {
         }
     }
 
+    private void getViewsFromClass( Class<?> clazz ) {
+        String path = TemplateManager.getUrlFromClass( clazz );
+    }
+
     public List<Class<?>> getInterfaces( Class<?> clazz ) {
         List<Class<?>> interfaces = new ArrayList<Class<?>>();
         interfaces.addAll( Arrays.asList( clazz.getInterfaces() ) );

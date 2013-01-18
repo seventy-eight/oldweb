@@ -30,7 +30,7 @@ public class TemplateTest {
 
         AbstractTheme theme = new Default();
 
-        m.getTemplates( ts );
+        m.setTemplateDirectories( ts );
         m.initialize();
 
         VelocityContext vc = new VelocityContext();
