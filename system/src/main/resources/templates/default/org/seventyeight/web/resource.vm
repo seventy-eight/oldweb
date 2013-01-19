@@ -1,0 +1,15 @@
+<table>
+    <tr>
+        HEADER $item
+    </tr>
+
+    <tr>
+        $content
+    </tr>
+
+    <tr>
+        <td>
+            footer
+        </td>
+    </tr>
+</table>

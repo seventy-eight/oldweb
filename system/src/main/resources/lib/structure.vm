@@ -1,0 +1,2 @@
+#macro( viewResource $resource $template )
+#end

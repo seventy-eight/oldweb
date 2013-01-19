@@ -44,7 +44,7 @@ public class ViewDirective extends Directive {
 			}
 			
 			Request request = (Request) context.get( "request" );
-            writer.write( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( obj, "view.vm" ) );
+            writer.write( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( obj, "index.vm" ) );
 			
 		} catch( Exception e ) {
             writer.write( e.getMessage() );

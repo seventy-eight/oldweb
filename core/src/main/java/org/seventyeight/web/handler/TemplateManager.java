@@ -124,6 +124,7 @@ public class TemplateManager {
 				                                       + "org.seventyeight.web.velocity.html.ResourcePreviewDirective,"
 				                                       + "org.seventyeight.web.velocity.html.ResourceSelectorDirective,"
                                                        + "org.seventyeight.web.velocity.html.RenderDescriptorDirective,"
+                                                       + "org.seventyeight.web.velocity.html.RenderObject,"
 				                                       + "org.seventyeight.web.velocity.html.FileInputDirective" );
 
         String l = getListAsCommaString( libsList );
