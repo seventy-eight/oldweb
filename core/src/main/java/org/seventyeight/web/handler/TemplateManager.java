@@ -264,28 +264,22 @@ public class TemplateManager {
          * @throws TemplateDoesNotExistException
          */
         public String renderObject( Object object, String method ) throws TemplateDoesNotExistException {
-            Template template = getTemplate( theme, object, method );
+            return renderObject( object, method, true );
+        }
 
+        public String renderObject( Object object, String method, boolean trySuper ) throws TemplateDoesNotExistException {
+            Template template = getTemplate( theme, object, method, trySuper );
             context.put( "item", object );
             return render( template );
         }
+
 
         public String renderClass( Class clazz, String method ) throws TemplateDoesNotExistException {
-            Template template = getTemplateFile( theme, clazz, method );
-            return render( template );
+            return renderClass( clazz, method, true );
         }
 
-        /**
-         * Render a specific object given the class, given as "item" in the context
-         * @param clazz
-         * @param object
-         * @param method
-         * @return
-         * @throws TemplateDoesNotExistException
-         */
-        public String renderObject( Class<?> clazz, Object object, String method ) throws TemplateDoesNotExistException {
-            Template template = getTemplateFile( theme, clazz, method );
-            context.put( "item", object );
+        public String renderClass( Class clazz, String method, boolean trySuper ) throws TemplateDoesNotExistException {
+            Template template = getTemplateFile( theme, clazz, method, trySuper );
             return render( template );
         }
 
@@ -295,16 +289,21 @@ public class TemplateManager {
      * Given a class, get the corresponding list of templates
      * @param object
      * @param method
+     * @param trySuper If true, try objects super classes
      * @return
      */
-	public Template getTemplate( AbstractTheme theme, Object object, String method ) throws TemplateDoesNotExistException {
+	public Template getTemplate( AbstractTheme theme, Object object, String method, boolean trySuper ) throws TemplateDoesNotExistException {
 		/* Resolve template */
 		Class<?> clazz = object.getClass();
 		while( clazz != Object.class && clazz != null ) {
             try {
                 return getTemplate( theme, getUrlFromClass( clazz.getCanonicalName(), method ) );
             } catch( TemplateDoesNotExistException e ) {
-                clazz = clazz.getSuperclass();
+                if( trySuper ) {
+                    clazz = clazz.getSuperclass();
+                } else {
+                    break;
+                }
             }
 		}
 		
@@ -317,16 +316,21 @@ public class TemplateManager {
      * Given a class, get the corresponding list of templates
      * @param clazz
      * @param method
+     * @param trySuper If true, try objects super classes
      * @return
      */
-	public Template getTemplateFile( AbstractTheme theme, Class<?> clazz, String method ) throws TemplateDoesNotExistException {
+	public Template getTemplateFile( AbstractTheme theme, Class<?> clazz, String method, boolean trySuper ) throws TemplateDoesNotExistException {
 		/* Resolve template */
 		int cnt = 0;
 		while( clazz != Object.class && clazz != null ) {
             try {
                 return getTemplate( theme, getUrlFromClass( clazz.getCanonicalName(), method ) );
             } catch( TemplateDoesNotExistException e ) {
-                clazz = clazz.getSuperclass();
+                if( trySuper ) {
+                    clazz = clazz.getSuperclass();
+                } else {
+                    break;
+                }
             }
 		}
 
