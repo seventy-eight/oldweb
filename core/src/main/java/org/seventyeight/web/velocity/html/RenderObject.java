@@ -68,13 +68,13 @@ public class RenderObject extends Directive {
         } else {
             if( container == null ) {
                 try {
-                    writer.write( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( obj, template + ".vm" ) );
+                    writer.write( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( obj, template + ".vm", false ) );
                 } catch( TemplateDoesNotExistException e ) {
                     e.printStackTrace();
                 }
             } else {
                 try {
-                    request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( obj, template + ".vm" ) );
+                    request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( obj, template + ".vm", false ) );
                     writer.write( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( container + ".vm" ) );
                 } catch( TemplateDoesNotExistException e ) {
                     e.printStackTrace();
