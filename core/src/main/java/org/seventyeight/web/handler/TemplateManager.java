@@ -37,16 +37,22 @@ public class TemplateManager {
 
     private List<String> libsList = new LinkedList<String>();
 
-	public Template getTemplate( AbstractTheme theme, String template ) throws TemplateDoesNotExistException {
-		
+	private Template _getTemplate( AbstractTheme theme, String template ) throws TemplateDoesNotExistException {
 		try {
-		    Template t = engine.getTemplate( theme.getName() + "/" + template );
-		
-		    return t;
+		    return engine.getTemplate( theme.getName() + "/" + template );
 		} catch( ResourceNotFoundException e ) {
 			throw new TemplateDoesNotExistException( "The template " + template + " for " + theme.getName() + " does not exist" );
 		}
 	}
+
+    public Template getTemplate( AbstractTheme theme, String template ) throws TemplateDoesNotExistException {
+        try {
+            return _getTemplate( theme, template );
+        } catch( TemplateDoesNotExistException e ) {
+            /* If it goes wrong, try the default theme */
+            return _getTemplate( SeventyEight.getInstance().getDefaultTheme(), template );
+        }
+    }
 	
 	public void addTemplatePath( File path ) {
 		this.paths += path.toString() + ", ";
@@ -156,8 +162,8 @@ public class TemplateManager {
 		return engine;
 	}
 	
-	public Renderer getRenderer() {
-		return new Renderer();
+	public Renderer getRenderer( AbstractTheme theme ) {
+		return new Renderer( theme );
 	}
 
     public Renderer getRenderer( Request request ) {
@@ -171,7 +177,10 @@ public class TemplateManager {
         private VelocityContext context;
         private Database db;
 
-        public Renderer() {}
+        public Renderer( AbstractTheme theme ) {
+            this.theme = theme;
+        }
+
         public Renderer( Request request ) {
             this.theme = request.getTheme();
             //this.locale = request.getLocale();
@@ -201,31 +210,26 @@ public class TemplateManager {
             return this;
         }
 
-        /*
-		public String get() {
-			return writer.toString();
-		}
-		*/
 
 		public String render( String template ) throws TemplateDoesNotExistException {
-            StringWriter writer = new StringWriter();
-
-            if( theme == null ) {
-                theme  = SeventyEight.getInstance().getDefaultTheme();
-            }
-			/* Resolve template */
-			Template t = null;
-			try {
-				t = getTemplate( theme, template );
-			} catch( TemplateDoesNotExistException e ) {
-				/* If it goes wrong, try the default theme */
-				t = getTemplate( SeventyEight.getInstance().getDefaultTheme(), template );
-			} catch( Exception e ) {
+            /* Resolve template */
+            Template t = null;
+            try {
+                t = getTemplate( theme, template );
+            } catch( TemplateDoesNotExistException e ) {
+                /* If it goes wrong, try the default theme */
+                t = getTemplate( SeventyEight.getInstance().getDefaultTheme(), template );
+            } catch( Exception e ) {
                 logger.error( e );
             }
 
-            logger.debug( "TEMPLATE " + t );
-			logger.debug( "[Rendering] " + t.getName() );
+            return render( t );
+        }
+
+        public String render( Template template ) {
+            StringWriter writer = new StringWriter();
+
+			logger.debug( "[Rendering] " + template.getName() );
 
             context.put( "core", SeventyEight.getInstance() );
             context.put( "theme", theme );
@@ -233,7 +237,7 @@ public class TemplateManager {
 			/* I18N */
 			context.put( "locale", locale );
 			
-			t.merge( context, writer );
+			template.merge( context, writer );
 			
 			return writer.toString();
 		}
@@ -259,71 +263,16 @@ public class TemplateManager {
          * @throws TemplateDoesNotExistException
          */
         public String renderObject( Object object, String method ) throws TemplateDoesNotExistException {
-            List<String> list = getTemplateFile( object, method, -1 );
+            Template template = getTemplate( theme, object, method );
 
             context.put( "item", object );
-
-            int c = 0;
-            for( String t : list ) {
-                try {
-                    context.put( "subchildcontent", render( t ) );
-                } catch( TemplateDoesNotExistException e ) {
-                    /* No op, we just bail */
-                    break;
-                }
-
-                c++;
-            }
-
-            if( c == 0 ) {
-                throw new TemplateDoesNotExistException( "No \"" + method + "\" template found for " + object.getClass() );
-            }
-
-            return context.get( "subchildcontent" ).toString();
+            return render( template );
         }
 
         public String renderClass( Class clazz, String method ) throws TemplateDoesNotExistException {
-            List<String> list = getTemplateFile( clazz, method, -1 );
-
-            int c = 0;
-            for( String t : list ) {
-                try {
-                    context.put( "subchildcontent", render( t ) );
-                } catch( TemplateDoesNotExistException e ) {
-                    /* No op, we just bail */
-                    break;
-                }
-
-                c++;
-            }
-
-            if( c == 0 ) {
-                throw new TemplateDoesNotExistException( "No \"" + method + "\" template found for " + clazz );
-            }
-
-            return context.get( "subchildcontent" ).toString();
+            Template template = getTemplateFile( theme, clazz, method );
+            return render( template );
         }
-
-        public String renderClassNoRecursive( Class clazz, String method ) throws TemplateDoesNotExistException {
-            String template = getUrlFromClass( clazz.getCanonicalName(), method );
-
-            context.put( "subchildcontent", render( template ) );
-
-            return context.get( "subchildcontent" ).toString();
-        }
-
-        /**
-         * Render a specific object, given as "item" in the context
-         * @param object
-         * @param method
-         * @return
-         * @throws TemplateDoesNotExistException
-         */
-		public String renderObjectNoRecursive( Object object, String method ) throws TemplateDoesNotExistException {
-			String template = getUrlFromClass( object.getClass().getCanonicalName(), method );
-			context.put( "item", object );
-			return render( template );
-		}
 
         /**
          * Render a specific object given the class, given as "item" in the context
@@ -334,7 +283,7 @@ public class TemplateManager {
          * @throws TemplateDoesNotExistException
          */
         public String renderObject( Class<?> clazz, Object object, String method ) throws TemplateDoesNotExistException {
-            String template = getUrlFromClass( clazz.getCanonicalName(), method );
+            Template template = getTemplateFile( theme, clazz, method );
             context.put( "item", object );
             return render( template );
         }
@@ -345,41 +294,42 @@ public class TemplateManager {
      * Given a class, get the corresponding list of templates
      * @param object
      * @param method
-     * @param depth
      * @return
      */
-	public static List<String> getTemplateFile( Object object, String method, int depth ) {
+	public Template getTemplate( AbstractTheme theme, Object object, String method ) throws TemplateDoesNotExistException {
 		/* Resolve template */
-		List<String> list = new ArrayList<String>();
 		Class<?> clazz = object.getClass();
-		int cnt = 0;
-		while( clazz != Object.class && clazz != null && cnt != depth ) {
-			list.add( getUrlFromClass( clazz.getCanonicalName(), method ) );
-			cnt++;
-			clazz = clazz.getSuperclass();
+		while( clazz != Object.class && clazz != null ) {
+            try {
+                return getTemplate( theme, getUrlFromClass( clazz.getCanonicalName(), method ) );
+            } catch( TemplateDoesNotExistException e ) {
+                clazz = clazz.getSuperclass();
+            }
 		}
 		
-		return list;
+		throw new TemplateDoesNotExistException( method + " for " + object.getClass().getName() + " not found" );
 	}
+
+
 
     /**
      * Given a class, get the corresponding list of templates
      * @param clazz
      * @param method
-     * @param depth
      * @return
      */
-	public static List<String> getTemplateFile( Class<?> clazz, String method, int depth ) {
+	public Template getTemplateFile( AbstractTheme theme, Class<?> clazz, String method ) throws TemplateDoesNotExistException {
 		/* Resolve template */
-		List<String> list = new ArrayList<String>();
 		int cnt = 0;
-		while( clazz != Object.class && clazz != null && cnt != depth ) {
-			list.add( getUrlFromClass( clazz.getCanonicalName(), method ) );
-			cnt++;
-			clazz = clazz.getSuperclass();
+		while( clazz != Object.class && clazz != null ) {
+            try {
+                return getTemplate( theme, getUrlFromClass( clazz.getCanonicalName(), method ) );
+            } catch( TemplateDoesNotExistException e ) {
+                clazz = clazz.getSuperclass();
+            }
 		}
-		
-		return list;
+
+        throw new TemplateDoesNotExistException( method + " for " + clazz.getName() + " not found" );
 	}
 
     public static String getUrlFromClass( Class<?> clazz ) {
