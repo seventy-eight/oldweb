@@ -1,3 +1,9 @@
 YEAH!
 
 #render( $item "view" )
+
+<table style="width: 100%">
+    #foreach( $view in $item.getContributingViews( "bottom.vm", $theme ) )
+        $view
+    #end
+</table>

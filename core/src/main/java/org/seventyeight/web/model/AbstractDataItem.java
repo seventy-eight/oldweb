@@ -7,7 +7,7 @@ import org.seventyeight.database.Node;
  *         Date: 02-01-13
  *         Time: 21:01
  */
-public class AbstractDataItem extends AbstractDatabaseItem {
+public abstract class AbstractDataItem extends AbstractDatabaseItem {
 
     public AbstractDataItem( Node node ) {
         super( node );

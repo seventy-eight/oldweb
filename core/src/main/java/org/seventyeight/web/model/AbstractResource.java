@@ -1,19 +1,16 @@
 package org.seventyeight.web.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Database;
-import org.seventyeight.database.Direction;
 import org.seventyeight.database.Edge;
 import org.seventyeight.database.Node;
 import org.seventyeight.utils.Date;
 import org.seventyeight.web.SeventyEight;
-import org.seventyeight.web.debate.exceptions.ReplyException;
-import org.seventyeight.web.debate.ReplyHub;
 import org.seventyeight.web.exceptions.*;
+import org.seventyeight.web.model.extensions.ResourceExtension;
 import org.seventyeight.web.model.resources.User;
 
 import com.google.gson.JsonObject;
@@ -251,5 +248,28 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
         getDB().putToIndex( SeventyEight.INDEX_RESOURCES, node, getIdentifier() );
 	}
 
+    @Override
+    public List<Item> getContributingViews( String view, AbstractTheme theme ) {
+        logger.debug( "Getting contributing views for " + view );
 
+        List<Node> nodes = getExtensionsNodes( ResourceExtension.class );
+        logger.debug( "NODES: " + nodes );
+        List<Item> items = new ArrayList<Item>( nodes.size() );
+        for( Node n : nodes ) {
+            try {
+                DatabaseItem item = SeventyEight.getInstance().getDatabaseItem( n );
+                try {
+                    SeventyEight.getInstance().getTemplateManager().getTemplate( theme, item, view, false );
+                    items.add( item );
+                } catch( TemplateDoesNotExistException e ) {
+                    logger.debug( view + " does not exist for " + item );
+                }
+
+            } catch( CouldNotLoadObjectException e ) {
+                logger.warn( e.getMessage() );
+            }
+        }
+
+        return items;
+    }
 }

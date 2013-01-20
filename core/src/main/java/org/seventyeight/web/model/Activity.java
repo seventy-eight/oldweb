@@ -21,6 +21,11 @@ public class Activity extends AbstractDatabaseItem implements Timestamped {
         super( node );
     }
 
+    @Override
+    public String getDisplayName() {
+        return "Activity";
+    }
+
     public void setText( String text ) {
         node.set( KEY_TEXT, text );
     }

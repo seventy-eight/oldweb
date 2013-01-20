@@ -10,7 +10,7 @@ import org.seventyeight.database.Node;
  * Date: 20-11-12
  * Time: 14:53
  */
-public interface DatabaseItem {
+public interface DatabaseItem extends Item {
     public Node getNode();
     public Edge createRelation( DatabaseItem other, EdgeType type );
     public String getItemClass();

@@ -54,6 +54,7 @@ public class TemplateManager {
             return _getTemplate( SeventyEight.getInstance().getDefaultTheme(), template );
         }
     }
+
 	
 	public void addTemplatePath( File path ) {
 		this.paths += path.toString() + ", ";

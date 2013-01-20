@@ -14,7 +14,7 @@ import com.google.gson.JsonObject;
 import javax.servlet.http.HttpServletResponse;
 
 
-public abstract class AbstractItem extends AbstractDatabaseItem implements Item, Extensible, Action {
+public abstract class AbstractItem extends AbstractDatabaseItem implements Item, Extensible, Action, Savable {
 
 	private static Logger logger = Logger.getLogger( AbstractItem.class );
 
@@ -318,7 +318,9 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 
     @Override
     public Node getExtensionsNode() {
+        logger.debug( "GET EXTENSIONS NODE!!!!!" );
         List<Edge> edges = node.getEdges( SeventyEight.ResourceEdgeType.extensions, Direction.OUTBOUND );
+        logger.debug( "EDGES: " + edges );
 
         if( edges.size() == 1 ) {
             return edges.get( 0 ).getTargetNode();
@@ -332,13 +334,14 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
     }
 
     public List<Node> getExtensionsNodes( Class<?> extensionClass ) {
-        Node node = getExtensionsNode();
-        logger.debug( "Extensions node " + node );
+        logger.debug( "Extensions node " + extensionClass );
+        Node enode = getExtensionsNode();
+        logger.debug( "Extensions node " + enode );
 
         List<Node> nodes = new ArrayList<Node>();
 
-        if( node != null ) {
-            List<Edge> edges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND, "extensionClass", extensionClass.getName() );
+        if( enode != null ) {
+            List<Edge> edges = enode.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND, "extensionClass", extensionClass.getName() );
             for( Edge edge : edges ) {
                 nodes.add( edge.getTargetNode() );
             }
@@ -349,8 +352,9 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         return nodes;
     }
 
-    public void getContributingViews( String view ) {
-
+    public List<Item> getContributingViews( String view, AbstractTheme theme ) {
+        /* Default implementation is empty */
+        return Collections.emptyList();
     }
 
     /**

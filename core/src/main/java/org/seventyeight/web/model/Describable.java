@@ -4,7 +4,7 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
 
-public interface Describable extends Item, DatabaseItem {
+public interface Describable extends Item, DatabaseItem, Savable {
 	public Descriptor<?> getDescriptor();
 
     /**
