@@ -120,15 +120,15 @@ public abstract class Descriptor<T extends Describable> {
         if( node != null ) {
             try {
                 T instance = getInstance( node );
-                c.put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( instance, "configure.vm" ) );
+                c.put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( instance, "config.vm" ) );
             } catch( UnableToInstantiateObjectException e ) {
                 /* instance == null || node == null */
                 logger.warn( e );
-                c.put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClass( getClazz(), "configure.vm" ) );
+                c.put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClass( getClazz(), "config.vm" ) );
             }
         } else {
             logger.debug( "Preparing EMPTY " + getClazz() );
-            c.put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClass( getClazz(), "configure.vm" ) );
+            c.put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClass( getClazz(), "config.vm" ) );
         }
 
         //logger.fatal( Arrays.asList( request.getContext().getKeys() ) );
