@@ -83,7 +83,7 @@ public class ResourceHelper {
         try {
             /* Special dual side */
             try {
-                request.getContext().put( "dualSide", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClassNoRecursive( descriptor.getClazz(), "dualSide.vm" ) );
+                request.getContext().put( "dualSide", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClass( descriptor.getClazz(), "dualSide.vm" ) );
             } catch ( TemplateDoesNotExistException e ) {
                 /* No op */
                 logger.debug( "Dual side not defined" );

@@ -51,8 +51,8 @@ public class RenderObject extends Directive {
                 throw new IOException( "Second argument is not a string" );
             }
 
-            if( node.jjtGetChild( 1 ) != null ) {
-                container = (String) node.jjtGetChild( 1 ).value( context );
+            if( node.jjtGetChild( 2 ) != null ) {
+                container = (String) node.jjtGetChild( 2 ).value( context );
             } else {
                 throw new IOException( "Third argument is not a string" );
             }

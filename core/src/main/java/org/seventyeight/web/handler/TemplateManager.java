@@ -46,6 +46,7 @@ public class TemplateManager {
 	}
 
     public Template getTemplate( AbstractTheme theme, String template ) throws TemplateDoesNotExistException {
+        logger.debug( "[Finding] " + template + " for " + theme.getName() );
         try {
             return _getTemplate( theme, template );
         } catch( TemplateDoesNotExistException e ) {

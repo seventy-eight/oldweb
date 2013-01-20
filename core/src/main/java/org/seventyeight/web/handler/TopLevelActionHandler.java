@@ -61,7 +61,20 @@ public class TopLevelActionHandler {
         logger.debug( "[Action method] " + method + " -> " + action + "/" + lastAction );
 
         if( action != null ) {
-            /* Last sub space was an action, call its index method */
+            /* Last sub space was an action, do its index method */
+            if( !request.isRequestPost() ) {
+                /* First try to find a view, if not a POST */
+                try {
+                    request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( action, "index.vm" ) );
+                    response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
+                    return;
+                } catch( TemplateDoesNotExistException e ) {
+                    logger.warn( e );
+                } catch( IOException e ) {
+                    throw new ActionHandlerException( e );
+                }
+            }
+
             try {
                 executeMethod( action, request, response, "index" );
             } catch( Exception e ) {
