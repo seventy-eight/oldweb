@@ -6,5 +6,5 @@ package org.seventyeight.web.model;
  *         Time: 15:59
  */
 public interface Action {
-
+    public String getUrlName();
 }

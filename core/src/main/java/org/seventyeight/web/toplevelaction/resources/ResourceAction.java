@@ -34,6 +34,7 @@ public class ResourceAction implements TopLevelAction, Actionable {
         logger.debug( "Get action " + subSpace );
         try {
             AbstractResource r = ResourceUtils.getResource( request.getDB(), subSpace );
+            request.getContext().put( "title", r.getDisplayName() );
             return r;
         } catch( Exception e ) {
             logger.error( e );

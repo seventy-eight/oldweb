@@ -1,1 +1,18 @@
-JAJAJJA
+
+<hr>
+<form action="$currentUrl/reply" method="post">
+    <table style="width:25%;border-style: solid">
+        <tr>
+            <td>
+                <input type="text" name="title" value="Re: $title" style="width:100%">
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <textarea style="width: 100%; height:200px"></textarea>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" value="Reply">
+</form>

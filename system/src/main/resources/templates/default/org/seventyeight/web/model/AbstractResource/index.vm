@@ -2,8 +2,8 @@ YEAH!
 
 #render( $item "view" )
 
-<table style="width: 100%">
+<div style="width: 100%" align="center">
     #foreach( $view in $item.getContributingViews( "bottom.vm", $theme ) )
-        $view
+        #render( $view "bottom" )
     #end
-</table>
+</div>

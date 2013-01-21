@@ -235,6 +235,7 @@ public class TemplateManager {
 
             context.put( "core", SeventyEight.getInstance() );
             context.put( "theme", theme );
+            //context.put( "url" );
 
 			/* I18N */
 			context.put( "locale", locale );

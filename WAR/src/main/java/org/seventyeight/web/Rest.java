@@ -82,6 +82,8 @@ public class Rest extends HttpServlet {
         r.setDB( OrientDBManager.getInstance().getDatabase() );
         vc.put( "database", r.getDB() );
 
+        vc.put( "currentUrl", request.getRequestURI() );
+
         r.setUser( SeventyEight.getInstance().getAnonymousUser() );
         r.setTheme( SeventyEight.getInstance().getDefaultTheme() );
 

@@ -16,12 +16,17 @@ import java.util.List;
  *         Date: 30-12-12
  *         Time: 21:54
  */
-public class Debate extends AbstractItem implements ResourceExtension, Describable {
+public class Debate extends AbstractItem implements ResourceExtension, Describable, Action {
 
     private static Logger logger = Logger.getLogger( Debate.class );
 
     public Debate( Node node ) {
         super( node );
+    }
+
+    @Override
+    public String getUrlName() {
+        return "debate";
     }
 
     @Override
