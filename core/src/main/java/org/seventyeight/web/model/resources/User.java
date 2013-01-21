@@ -30,7 +30,7 @@ public class User extends AbstractResource {
 		super( node );
 	}
 
-	public Save getSaver( ParameterRequest request, JsonObject jsonData ) {
+	public Save getSaver( CoreRequest request, JsonObject jsonData ) {
 		return new UserSaveImpl( this, request, jsonData );
 	}
 

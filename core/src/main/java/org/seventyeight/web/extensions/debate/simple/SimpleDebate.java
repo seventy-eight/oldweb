@@ -5,9 +5,8 @@ import org.apache.log4j.Logger;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.extensions.debate.AbstractDebate;
-import org.seventyeight.web.extensions.debate.DebateInterface;
+import org.seventyeight.web.model.CoreRequest;
 import org.seventyeight.web.model.Descriptor;
-import org.seventyeight.web.model.ParameterRequest;
 
 /**
  * @author cwolfgang
@@ -28,7 +27,7 @@ public class SimpleDebate extends AbstractDebate {
     }
 
     @Override
-    public void save( ParameterRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+    public void save( CoreRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
         super.save( request, json );
 
         logger.fatal( "[MY JSON IS] " + json );

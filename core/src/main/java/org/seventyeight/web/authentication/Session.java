@@ -10,7 +10,7 @@ import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.AbstractItem;
-import org.seventyeight.web.model.ParameterRequest;
+import org.seventyeight.web.model.CoreRequest;
 import org.seventyeight.web.model.resources.User;
 import org.seventyeight.utils.Date;
 
@@ -35,7 +35,7 @@ public class Session extends AbstractItem {
     }
 
     @Override
-    public final void save( ParameterRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+    public final void save( CoreRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 

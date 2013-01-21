@@ -67,7 +67,7 @@ public abstract class ReplyHub extends Hub {
     }
 
     @Override
-    public final void save( ParameterRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+    public final void save( CoreRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
         node.set( "type", Debatable.HUB_DEBATE );
 
         node.save();

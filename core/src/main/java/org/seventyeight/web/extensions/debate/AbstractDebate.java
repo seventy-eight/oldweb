@@ -76,7 +76,7 @@ public abstract class AbstractDebate extends Hub implements DebateInterface {
     }
 
     @Override
-    public void save( ParameterRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+    public void save( CoreRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
         //node.set( "type", Debatable.HUB_DEBATE );
         super.save( request, json );
 

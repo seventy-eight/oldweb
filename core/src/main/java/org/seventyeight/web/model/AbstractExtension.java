@@ -25,7 +25,7 @@ public abstract class AbstractExtension extends AbstractItem implements Extensio
 		return node;
 	}
 
-    public Save getSaver( ParameterRequest request, JsonObject jsonData ) {
+    public Save getSaver( CoreRequest request, JsonObject jsonData ) {
 		return new ExtensionSave( this, request, jsonData );
 	}
 	

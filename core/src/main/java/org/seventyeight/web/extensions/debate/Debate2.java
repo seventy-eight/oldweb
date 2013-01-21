@@ -3,10 +3,7 @@ package org.seventyeight.web.extensions.debate;
 import com.google.gson.JsonObject;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.exceptions.*;
-import org.seventyeight.web.model.AbstractItem;
-import org.seventyeight.web.model.Describable;
-import org.seventyeight.web.model.Descriptor;
-import org.seventyeight.web.model.ParameterRequest;
+import org.seventyeight.web.model.*;
 import org.seventyeight.web.model.extensions.ResourceExtension;
 
 /**
@@ -31,7 +28,7 @@ public class Debate2 extends AbstractItem implements ResourceExtension, Describa
     }
 
     @Override
-    public final void save( ParameterRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+    public final void save( CoreRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
     }
 
     public static class DebateDescriptor extends Descriptor<Debate2> {

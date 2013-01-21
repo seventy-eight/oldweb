@@ -48,7 +48,7 @@ public class TreeReply extends AbstractItem implements Reply, Describable {
     }
 
     @Override
-    public final void save( ParameterRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+    public final void save( CoreRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
         logger.debug( "Saving reply" );
 
         String title = request.getValue( "title", "" );

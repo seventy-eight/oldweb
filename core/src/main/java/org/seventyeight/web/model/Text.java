@@ -48,7 +48,7 @@ public class Text extends AbstractSubItem implements Item {
 	}
 
 	@Override
-    public final void save( ParameterRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+    public final void save( CoreRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
 		// TODO Auto-generated method stub
 	}
 

@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collections;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -31,7 +29,7 @@ public class FileResource extends AbstractResource {
 	}
 
     @Override
-    public Save getSaver( ParameterRequest request, JsonObject jsonData ) {
+    public Save getSaver( CoreRequest request, JsonObject jsonData ) {
 		return new FileSaveImpl( this, request, jsonData );
 	}
 	

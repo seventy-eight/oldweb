@@ -2,7 +2,6 @@ package org.seventyeight.web.model.resources;
 
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
-import org.seventyeight.database.Database;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
@@ -18,7 +17,7 @@ public class Article extends AbstractResource {
 	}
 
     @Override
-    public Save getSaver( ParameterRequest request, JsonObject jsonData ) {
+    public Save getSaver( CoreRequest request, JsonObject jsonData ) {
 		return new ArticleSaveImpl( this, request, jsonData );
 	}
 	

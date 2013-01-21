@@ -16,17 +16,12 @@ import java.util.List;
  *         Date: 30-12-12
  *         Time: 21:54
  */
-public class Debate extends AbstractItem implements ResourceExtension, Describable, Action {
+public class Debate extends AbstractItem implements ResourceExtension, Describable {
 
     private static Logger logger = Logger.getLogger( Debate.class );
 
     public Debate( Node node ) {
         super( node );
-    }
-
-    @Override
-    public String getUrlName() {
-        return "debate";
     }
 
     @Override
@@ -40,7 +35,7 @@ public class Debate extends AbstractItem implements ResourceExtension, Describab
     }
 
     @Override
-    public final void save( ParameterRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+    public final void save( CoreRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
         //super.save( request, json );
         logger.debug( "JSON: " + json );
         String dobj = json.get( "debateClass" ).toString();
@@ -53,6 +48,9 @@ public class Debate extends AbstractItem implements ResourceExtension, Describab
         } catch( DescribableException e ) {
             throw new ErrorWhileSavingException( e );
         }
+
+        Node actionNode = SeventyEight.getInstance().createNode( request.getDB(), DebateAction.class );
+
 
         /*
         Descriptor descriptor = null;

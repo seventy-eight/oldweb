@@ -15,14 +15,10 @@ import javax.imageio.stream.ImageOutputStream;
 import org.apache.log4j.Logger;
 
 import com.google.gson.JsonObject;
-import org.seventyeight.database.Database;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
-import org.seventyeight.web.model.AbstractResource;
-import org.seventyeight.web.model.Extension;
-import org.seventyeight.web.model.ParameterRequest;
-import org.seventyeight.web.model.ResourceDescriptor;
+import org.seventyeight.web.model.*;
 
 public class Image extends FileResource {
 
@@ -37,7 +33,7 @@ public class Image extends FileResource {
 	}
 
     @Override
-	public Save getSaver( ParameterRequest request, JsonObject jsonData ) {
+	public Save getSaver( CoreRequest request, JsonObject jsonData ) {
 		return new ImageSaveImpl( this, request, jsonData );
 	}
 

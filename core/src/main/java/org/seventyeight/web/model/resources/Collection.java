@@ -35,7 +35,7 @@ public class Collection extends AbstractResource {
 	}
 
     @Override
-    public Save getSaver( ParameterRequest request, JsonObject jsonData ) {
+    public Save getSaver( CoreRequest request, JsonObject jsonData ) {
 		return new ResourceSaveImpl( this, request, jsonData );
 	}
 

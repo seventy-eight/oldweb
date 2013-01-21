@@ -27,7 +27,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 	}
 
     @Override
-	public void save( ParameterRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
+	public void save( CoreRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
 		logger.debug( "Begin saving" );
 
         Save save = getSaver( request, jsonData );
@@ -56,17 +56,17 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 		logger.debug( "End saving item" );
 	}
 
-    public Save getSaver( ParameterRequest request, JsonObject json ) {
+    public Save getSaver( CoreRequest request, JsonObject json ) {
         return new Save( this, request, json );
     }
 
 	protected class Save {
 
 		protected AbstractItem item;
-		protected ParameterRequest request;
+		protected CoreRequest request;
 		protected JsonObject jsonData;
 
-		public Save( AbstractItem type, ParameterRequest request, JsonObject jsonData ) {
+		public Save( AbstractItem type, CoreRequest request, JsonObject jsonData ) {
 			this.item = type;
 			this.request = request;
 			this.jsonData = jsonData;
@@ -82,7 +82,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 		
 		public void updateIndexes() {}
 		
-		public ParameterRequest getRequest() {
+		public CoreRequest getRequest() {
 			return request;
 		}
 		
@@ -135,11 +135,12 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 
     /**
      * Get all extension classes for an item. Iterate over them, get the extension hub or create it.
+     *
      * @param request
      * @param jsonData
      * @throws org.seventyeight.web.exceptions.NoSuchExtensionException
      */
-    public void handleJsonExtensionClass( ParameterRequest request, JsonObject jsonData ) {
+    public void handleJsonExtensionClass( CoreRequest request, JsonObject jsonData ) {
         logger.debug( "Handling extension class Json data" );
 
         List<JsonObject> objects = SeventyEight.getInstance().getJsonObjects( jsonData, SeventyEight.JsonType.extensionClass );
@@ -185,13 +186,14 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 
     /**
      *
+     *
      * @param extensionsNode
      * @param request
      * @param jsonData
      * @return
      * @throws DescribableException
      */
-    public Describable handleJsonConfiguration( Node extensionsNode, ParameterRequest request, JsonObject jsonData ) throws DescribableException {
+    public Describable handleJsonConfiguration( Node extensionsNode, CoreRequest request, JsonObject jsonData ) throws DescribableException {
         String cls = jsonData.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
         List<Edge> edges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND, SeventyEight.__JSON_CLASS_NAME, cls );
 
@@ -201,13 +203,14 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 
     /**
      * Given a {@link JsonObject} return a {@link Describable}. The nodeMap determines whether to instantiate or not.
+     *
      * @param extensionsNode
      * @param request
      * @param jsonData
      * @param nodeMap Can be null
      * @return
      */
-    public Describable handleJsonConfiguration( Node extensionsNode, ParameterRequest request, JsonObject jsonData, Map<String, Node> nodeMap ) throws DescribableException {
+    public Describable handleJsonConfiguration( Node extensionsNode, CoreRequest request, JsonObject jsonData, Map<String, Node> nodeMap ) throws DescribableException {
         String cls = jsonData.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
         if( nodeMap != null && nodeMap.containsKey( cls ) ) {
             return handleJsonConfiguration( extensionsNode, request, jsonData, nodeMap.get( cls ) );
@@ -216,7 +219,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         }
     }
 
-    public Describable handleJsonConfiguration( Node extensionsNode, ParameterRequest request, JsonObject jsonData, Node enode ) throws DescribableException {
+    public Describable handleJsonConfiguration( Node extensionsNode, CoreRequest request, JsonObject jsonData, Node enode ) throws DescribableException {
         try {
             /* Get Json configuration object class name */
             String cls = jsonData.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
@@ -258,7 +261,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 
 
 
-    public void handleJsonExtensionClass( Node extensionsNode, ParameterRequest request, JsonObject extensionConfiguration ) {
+    public void handleJsonExtensionClass( Node extensionsNode, CoreRequest request, JsonObject extensionConfiguration ) {
         String extensionClassName = extensionConfiguration.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
         logger.debug( "Extension class name is " + extensionClassName );
 
@@ -297,7 +300,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
      * @param request
      * @param jsonData
      */
-    public void handleJsonConfigurations( Node extensionsNode, ParameterRequest request, JsonObject jsonData ) {
+    public void handleJsonConfigurations( Node extensionsNode, CoreRequest request, JsonObject jsonData ) {
 
         logger.debug( "Handling extension class Json data" );
 
@@ -310,7 +313,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
     }
 
     public void doConfigurationSubmit( Request request, HttpServletResponse response, JsonObject jsonData ) throws ErrorWhileSavingException, ParameterDoesNotExistException, IncorrectTypeException, ResourceDoesNotExistException, InconsistentParameterException, TemplateDoesNotExistException, IOException {
-        save( request, jsonData );
+        save( (CoreRequest) request, jsonData );
 
         request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( this, "index.vm" ) );
         response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );

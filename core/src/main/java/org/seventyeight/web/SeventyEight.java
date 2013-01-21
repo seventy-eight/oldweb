@@ -3,6 +3,7 @@ package org.seventyeight.web;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -317,6 +318,18 @@ public class SeventyEight {
         }
 
         return node;
+    }
+
+    public <T extends Item> T createItem( Database db,  Class<?> clazz ) throws UnableToInstantiateObjectException {
+        Node node = createNode( db, clazz );
+
+        try {
+            Constructor c = clazz.getConstructor( Node.class );
+            T instance = (T) c.newInstance( node );
+            return instance;
+        } catch( Exception e ) {
+            throw new UnableToInstantiateObjectException( clazz.getName(), e );
+        }
     }
 
     public Node createNode( Database db, Class clazz, String[] keys, Object[] values ) {

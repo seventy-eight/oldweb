@@ -9,6 +9,7 @@ import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.ErrorWhileSavingException;
 import org.seventyeight.web.exceptions.InconsistentParameterException;
 import org.seventyeight.web.model.AbstractResource;
+import org.seventyeight.web.model.CoreRequest;
 import org.seventyeight.web.model.ParameterRequest;
 import org.seventyeight.web.model.ResourceDescriptor;
 
@@ -30,7 +31,7 @@ public class Group extends AbstractResource {
 	}
 
     @Override
-    public Save getSaver( ParameterRequest request, JsonObject jsonData ) {
+    public Save getSaver( CoreRequest request, JsonObject jsonData ) {
 		return new GroupSaveImpl( this, request, jsonData );
 	}
 	
