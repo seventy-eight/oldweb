@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Database;
 import org.seventyeight.database.Edge;
+import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
 import org.seventyeight.utils.Date;
 import org.seventyeight.web.SeventyEight;
@@ -271,5 +272,10 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
         }
 
         return items;
+    }
+
+    @Override
+    public EdgeType getEdgeType() {
+        return null;
     }
 }

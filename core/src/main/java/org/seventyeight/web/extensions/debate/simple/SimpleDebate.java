@@ -5,15 +5,18 @@ import org.apache.log4j.Logger;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.extensions.debate.AbstractDebate;
+import org.seventyeight.web.extensions.debate.DebateException;
 import org.seventyeight.web.model.CoreRequest;
+import org.seventyeight.web.model.Describable;
 import org.seventyeight.web.model.Descriptor;
+import org.seventyeight.web.model.Reply;
 
 /**
  * @author cwolfgang
  *         Date: 05-01-13
  *         Time: 23:25
  */
-public class SimpleDebate extends AbstractDebate {
+public class SimpleDebate extends AbstractDebate implements Describable {
 
     private static Logger logger = Logger.getLogger( SimpleDebate.class );
 
@@ -24,6 +27,10 @@ public class SimpleDebate extends AbstractDebate {
     @Override
     public Descriptor<?> getReplyDescriptor() {
         return null;
+    }
+
+    @Override
+    public void addReply( Reply reply ) throws DebateException {
     }
 
     @Override

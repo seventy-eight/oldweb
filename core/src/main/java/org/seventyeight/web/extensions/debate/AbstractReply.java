@@ -2,6 +2,7 @@ package org.seventyeight.web.extensions.debate;
 
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
+import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
@@ -69,5 +70,10 @@ public class AbstractReply extends AbstractItem implements Reply, Describable {
         public String getDisplayName() {
             return "Tree Reply";
         }
+    }
+
+    @Override
+    public EdgeType getEdgeType() {
+        return null;
     }
 }

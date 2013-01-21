@@ -2,6 +2,7 @@ package org.seventyeight.web.debate.treelike;
 
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
+import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
@@ -20,6 +21,11 @@ public class TreeReply extends AbstractItem implements Reply, Describable {
 
     public TreeReply( Node node ) {
         super( node );
+    }
+
+    @Override
+    public EdgeType getEdgeType() {
+        return null;
     }
 
     @Override

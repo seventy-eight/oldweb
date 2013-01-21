@@ -1,6 +1,7 @@
 package org.seventyeight.web.debate.treelike;
 
 import org.apache.log4j.Logger;
+import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.debate.ReplyHub;
@@ -39,5 +40,10 @@ public class ReplyTreeHub extends ReplyHub implements ReplyHubExtension {
         public String getDisplayName() {
             return "Reply Tree Hub";
         }
+    }
+
+    @Override
+    public EdgeType getEdgeType() {
+        return null;
     }
 }

@@ -28,8 +28,13 @@ public abstract class AbstractExtension extends AbstractItem implements Extensio
     public Save getSaver( CoreRequest request, JsonObject jsonData ) {
 		return new ExtensionSave( this, request, jsonData );
 	}
-	
-	public class ExtensionSave extends Save {
+
+    @Override
+    public EdgeType getEdgeType() {
+        return SeventyEight.ResourceEdgeType.extension;
+    }
+
+    public class ExtensionSave extends Save {
 
 		public ExtensionSave( AbstractItem type, CoreRequest request, JsonObject jsonData ) {
 			super( type, request, jsonData );

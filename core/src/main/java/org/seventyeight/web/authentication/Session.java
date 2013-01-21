@@ -22,7 +22,7 @@ public class Session extends AbstractItem {
 	public static final String __END_DATE = "end";
 	
 	public enum SessionEdge implements EdgeType {
-		OPEN_SESSION
+        session
 	}
 	
 	public Session( Node node ) {
@@ -35,6 +35,11 @@ public class Session extends AbstractItem {
     }
 
     @Override
+    public EdgeType getEdgeType() {
+        return SessionEdge.session;
+    }
+
+    @Override
     public final void save( CoreRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
         //To change body of implemented methods use File | Settings | File Templates.
     }
@@ -42,14 +47,14 @@ public class Session extends AbstractItem {
     public void bindToUser( User user ) {
 		removeBindings();
 		logger.debug( "Binding session to " + user );
-		//user.getNode().createRelationshipTo( node, SessionEdge.OPEN_SESSION );
-        user.createRelation( this, SessionEdge.OPEN_SESSION );
+		//user.getNode().createRelationshipTo( node, SessionEdge.session );
+        user.createRelation( this, SessionEdge.session );
 	}
 	
 	public void removeBindings() {
 		logger.debug( "Removing all bindings for session" );
-        List<Edge> edges = node.getEdges( SessionEdge.OPEN_SESSION, Direction.INBOUND );
-		//Iterator<Relationship> i = node.getRelationships( SessionEdge.OPEN_SESSION ).iterator();
+        List<Edge> edges = node.getEdges( SessionEdge.session, Direction.INBOUND );
+		//Iterator<Relationship> i = node.getRelationships( SessionEdge.session ).iterator();
 
         for( Edge e : edges ) {
             e.remove();
@@ -57,7 +62,7 @@ public class Session extends AbstractItem {
 	}
 	
 	public User getUser() {
-        List<Edge> edges = node.getEdges( SessionEdge.OPEN_SESSION, Direction.INBOUND );
+        List<Edge> edges = node.getEdges( SessionEdge.session, Direction.INBOUND );
         for( Edge e : edges ) {
             return new User( e.getSourceNode() );
         }

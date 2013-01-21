@@ -3,9 +3,11 @@ package org.seventyeight.web.extensions.debate;
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Database;
+import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
+import org.seventyeight.web.extensions.AbstractResourceExtension;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.model.extensions.ResourceExtension;
 
@@ -16,7 +18,7 @@ import java.util.List;
  *         Date: 30-12-12
  *         Time: 21:54
  */
-public class Debate extends AbstractItem implements ResourceExtension, Describable {
+public class Debate extends AbstractResourceExtension implements Describable {
 
     private static Logger logger = Logger.getLogger( Debate.class );
 
@@ -35,6 +37,11 @@ public class Debate extends AbstractItem implements ResourceExtension, Describab
     }
 
     @Override
+    public EdgeType getEdgeType() {
+        return SeventyEight.ResourceEdgeType.extension;
+    }
+
+    @Override
     public final void save( CoreRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
         //super.save( request, json );
         logger.debug( "JSON: " + json );
@@ -44,7 +51,7 @@ public class Debate extends AbstractItem implements ResourceExtension, Describab
         List<JsonObject> config = SeventyEight.getInstance().getJsonObjects( json );
 
         try {
-            Describable d = handleJsonConfiguration( getExtensionsNode(), request, config.get( 0 ) );
+            Describable d = handleJsonConfiguration( request, config.get( 0 ) );
         } catch( DescribableException e ) {
             throw new ErrorWhileSavingException( e );
         }
@@ -58,7 +65,8 @@ public class Debate extends AbstractItem implements ResourceExtension, Describab
             logger.error( e );
         }
 
-        request.getItem().addAction( action );
+
+        getParent().addAction( action );
 
 
         /*

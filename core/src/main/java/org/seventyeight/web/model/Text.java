@@ -25,8 +25,13 @@ public class Text extends AbstractSubItem implements Item {
 	public String getText() {
 		return (String) node.get( "text", "" );
 	}
-	
-	public static Text create( Database db, DatabaseItem item, String property, String language ) {
+
+    @Override
+    public EdgeType getEdgeType() {
+        return ResourceEdgeType.translation;
+    }
+
+    public static Text create( Database db, DatabaseItem item, String property, String language ) {
 		//ODocument node = SeventyEight.getInstance().createNode( Text.class, NodeType.text );
 		Text t = new Text( db.createNode() );
 

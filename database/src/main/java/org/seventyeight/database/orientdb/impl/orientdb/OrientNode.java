@@ -109,7 +109,7 @@ public class OrientNode implements Node {
             for( OIdentifiable e : out ) {
                 ODocument other = db.getInternalDatabase().getInVertex( e );
 
-                if( field == null || ( other.containsField( "class" ) && other.field( field ).equals( value ) ) ) {
+                if( field == null || ( other.containsField( "class" ) && other.containsField( field ) && other.field( field ).equals( value ) ) ) {
                     OrientEdge edge = new OrientEdge( e, this, new OrientNode( db, other ) );
                     es.add( edge );
                 }

@@ -201,8 +201,10 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
             return e;
 
         } catch( Exception e ) {
-            logger.warn( "Unable to get describable for " + jsonData + ": " + e.getMessage() );
-            throw new DescribableException( "Cannot get descriable", e );
+            logger.warn( "Unable to handle configuration for " + jsonData + ": " + e.getMessage() );
+            e.printStackTrace();
+            logger.warn( e );
+            throw new DescribableException( "Cannot handle configuration", e );
         }
     }
 
@@ -267,6 +269,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 
     public List<Node> getExtensionsNodes( Class<?> extensionClass ) {
         logger.debug( "[Getting extensions] " + extensionClass );
+        logger.debug( "[NODE] " + node );
 
         List<Node> nodes = new ArrayList<Node>();
 
@@ -341,17 +344,21 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
     public abstract EdgeType getEdgeType();
 
     public <T extends AbstractItem> T getParent() {
-        List<Edge> edges = node.getEdges( getEdgeType(), Direction.INBOUND );
+        if( getEdgeType() != null ) {
+            List<Edge> edges = node.getEdges( getEdgeType(), Direction.INBOUND );
 
-        if( edges.size() == 0 ) {
-            return null;
-        } else {
-            try {
-                return (T) SeventyEight.getInstance().getDatabaseItem( edges.get( 0 ).getSourceNode() );
-            } catch( CouldNotLoadObjectException e ) {
-                logger.warn( e );
+            if( edges.size() == 0 ) {
                 return null;
+            } else {
+                try {
+                    return (T) SeventyEight.getInstance().getDatabaseItem( edges.get( 0 ).getSourceNode() );
+                } catch( CouldNotLoadObjectException e ) {
+                    logger.warn( e );
+                    return null;
+                }
             }
+        } else {
+            return null;
         }
     }
 }

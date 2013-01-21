@@ -1,6 +1,8 @@
 package org.seventyeight.web.extensions.Copyright;
 
+import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
+import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.extensions.AbstractResourceExtension;
 import org.seventyeight.web.model.Descriptor;
 
@@ -27,5 +29,10 @@ public class Copyright extends AbstractResourceExtension {
             return "Copyright";
         }
 
+    }
+
+    @Override
+    public EdgeType getEdgeType() {
+        return SeventyEight.ResourceEdgeType.extension;
     }
 }

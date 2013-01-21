@@ -20,7 +20,6 @@ import org.seventyeight.web.debate.treelike.TreeReply;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.extensions.Copyright.Copyright;
 import org.seventyeight.web.extensions.debate.Debate;
-import org.seventyeight.web.extensions.debate.Debate2;
 import org.seventyeight.web.extensions.debate.simple.SimpleDebate;
 import org.seventyeight.web.handler.Dictionary;
 import org.seventyeight.web.handler.TemplateManager;
@@ -40,8 +39,6 @@ import org.seventyeight.web.model.themes.Default;
 import org.seventyeight.utils.Date;
 import org.seventyeight.web.util.Installer;
 import org.seventyeight.web.util.ResourceDescriptorList;
-
-import javax.swing.*;
 
 public class SeventyEight {
 	private static Logger logger = Logger.getLogger( SeventyEight.class );
