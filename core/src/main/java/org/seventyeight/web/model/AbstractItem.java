@@ -14,7 +14,7 @@ import com.google.gson.JsonObject;
 import javax.servlet.http.HttpServletResponse;
 
 
-public abstract class AbstractItem extends AbstractDatabaseItem implements Item, Extensible, Savable, Actionable, Action {
+public abstract class AbstractItem extends AbstractDatabaseItem implements Item, Savable, Actionable, Action {
 
 	private static Logger logger = Logger.getLogger( AbstractItem.class );
 
@@ -48,12 +48,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 
         logger.debug( "Handling extensions" );
         if( jsonData != null ) {
-            //handleJsonExtensionClass( request, jsonData );
-
-            /* Get the extensions node */
-            Node enode = getExtensionsNode();
-
-            handleJsonConfigurations( enode, request, jsonData );
+            handleJsonConfigurations( request, jsonData );
         } else {
             logger.debug( "Json data was null. Skipping" );
         }
@@ -139,94 +134,39 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
     }
 
 
-
-    /**
-     * Get all extension classes for an item. Iterate over them, get the extension hub or create it.
-     *
-     * @param request
-     * @param jsonData
-     * @throws org.seventyeight.web.exceptions.NoSuchExtensionException
-     */
-    public void handleJsonExtensionClass( CoreRequest request, JsonObject jsonData ) {
-        logger.debug( "Handling extension class Json data" );
-
-        List<JsonObject> objects = SeventyEight.getInstance().getJsonObjects( jsonData, SeventyEight.JsonType.extensionClass );
-        logger.debug( "I got " + objects.size() + " extension types" );
-
-        for( JsonObject obj : objects ) {
-            String className = obj.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
-            logger.debug( "Extension class name is " + className );
-
-            //AbstractExtensionHub hub = null;
-            Node extensionNode = null;
-
-            try {
-                Class<?> clazz = Class.forName( className );
-                logger.debug( "Extension class is " + clazz );
-                List<Edge> edges = node.getEdges( SeventyEight.ResourceEdgeType.extensions, Direction.OUTBOUND, SeventyEight.FIELD_EXTENSION_CLASS, clazz.getName() );
-
-                /* There should be only one */
-                if( edges.size() == 0 ) {
-                    /* Create new extension node, with extensions set */
-                    extensionNode = SeventyEight.getInstance().createNode( getDB(), null /* For now! */, new String[] { SeventyEight.FIELD_EXTENSION_CLASS }, new Object[] { className } );
-
-                    /* Create the relation from this to the extension node */
-                    this.getNode().createEdge( extensionNode, SeventyEight.ResourceEdgeType.extensions );
-                } else {
-                    //hub = getExtensionHub( edges.get( 0 ).getTargetNode() );
-                    extensionNode = edges.get( 0 ).getTargetNode();
-
-                    /* Remove any configured extensions from this hub */
-                    //hub.removeExtensions();
-                    extensionNode.removeEdges( SeventyEight.ResourceEdgeType.extension, Direction.OUTBOUND );
-                }
-
-
-
-                handleJsonConfigurations( extensionNode, request, obj );
-
-            } catch( ClassNotFoundException e ) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     /**
      *
-     *
-     * @param extensionsNode
      * @param request
      * @param jsonData
      * @return
      * @throws DescribableException
      */
-    public Describable handleJsonConfiguration( Node extensionsNode, CoreRequest request, JsonObject jsonData ) throws DescribableException {
+    public Describable handleJsonConfiguration( CoreRequest request, JsonObject jsonData ) throws DescribableException {
         String cls = jsonData.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
         List<Edge> edges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND, SeventyEight.__JSON_CLASS_NAME, cls );
 
-        return handleJsonConfiguration( extensionsNode, request, jsonData, ( edges.size() > 0 ? edges.get( 0 ).getTargetNode() : null ) );
+        return handleJsonConfiguration( request, jsonData, ( edges.size() > 0 ? edges.get( 0 ).getTargetNode() : null ) );
     }
 
 
     /**
      * Given a {@link JsonObject} return a {@link Describable}. The nodeMap determines whether to instantiate or not.
      *
-     * @param extensionsNode
      * @param request
      * @param jsonData
      * @param nodeMap Can be null
      * @return
      */
-    public Describable handleJsonConfiguration( Node extensionsNode, CoreRequest request, JsonObject jsonData, Map<String, Node> nodeMap ) throws DescribableException {
+    public Describable handleJsonConfiguration( CoreRequest request, JsonObject jsonData, Map<String, Node> nodeMap ) throws DescribableException {
         String cls = jsonData.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
         if( nodeMap != null && nodeMap.containsKey( cls ) ) {
-            return handleJsonConfiguration( extensionsNode, request, jsonData, nodeMap.get( cls ) );
+            return handleJsonConfiguration( request, jsonData, nodeMap.get( cls ) );
         } else {
-            return handleJsonConfiguration( extensionsNode, request, jsonData, (Node) null );
+            return handleJsonConfiguration( request, jsonData, (Node) null );
         }
     }
 
-    public Describable handleJsonConfiguration( Node extensionsNode, CoreRequest request, JsonObject jsonData, Node enode ) throws DescribableException {
+    public Describable handleJsonConfiguration( CoreRequest request, JsonObject jsonData, Node enode ) throws DescribableException {
         try {
             /* Get Json configuration object class name */
             String cls = jsonData.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
@@ -245,7 +185,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
                 e = d.newInstance( getDB() );
 
                 logger.debug( "Creating relation from hub node to describable" );
-                extensionsNode.createEdge( e.getNode(), d.getRelationType() );
+                node.createEdge( e.getNode(), d.getRelationType() );
 
             }
 
@@ -268,7 +208,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 
 
 
-    public void handleJsonExtensionClass( Node extensionsNode, CoreRequest request, JsonObject extensionConfiguration ) {
+    public void handleJsonExtensionClass( CoreRequest request, JsonObject extensionConfiguration ) {
         String extensionClassName = extensionConfiguration.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
         logger.debug( "Extension class name is " + extensionClassName );
 
@@ -277,7 +217,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         logger.debug( "I got " + configs.size() + " configurations" );
 
         /* Prepare existing configuration nodes */
-        List<Edge> extensionEdges = extensionsNode.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND, SeventyEight.FIELD_EXTENSION_CLASS, extensionClassName );
+        List<Edge> extensionEdges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND, SeventyEight.FIELD_EXTENSION_CLASS, extensionClassName );
 
         Map<String, Node> nodeMap = new HashMap<String, Node>();
 
@@ -292,7 +232,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 
         for( JsonObject c : configs ) {
             try {
-                Describable d = handleJsonConfiguration( extensionsNode, request, c, nodeMap );
+                Describable d = handleJsonConfiguration( request, c, nodeMap );
                 /**/
                 d.getNode().set( SeventyEight.FIELD_EXTENSION_CLASS, extensionClassName ).save();
             } catch( DescribableException e ) {
@@ -303,11 +243,10 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 
     /**
      *
-     * @param extensionsNode
      * @param request
      * @param jsonData
      */
-    public void handleJsonConfigurations( Node extensionsNode, CoreRequest request, JsonObject jsonData ) {
+    public void handleJsonConfigurations( CoreRequest request, JsonObject jsonData ) {
 
         logger.debug( "Handling extension class Json data" );
 
@@ -315,7 +254,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         logger.debug( "I got " + extensionsObjects.size() + " extension types" );
 
         for( JsonObject obj : extensionsObjects ) {
-            handleJsonExtensionClass( extensionsNode, request, obj );
+            handleJsonExtensionClass( request, obj );
         }
     }
 
@@ -326,37 +265,14 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
     }
 
-    @Override
-    public Node getExtensionsNode() {
-        logger.debug( "GET EXTENSIONS NODE!!!!!" );
-        List<Edge> edges = node.getEdges( SeventyEight.ResourceEdgeType.extensions, Direction.OUTBOUND );
-        logger.debug( "EDGES: " + edges );
-
-        if( edges.size() == 1 ) {
-            return edges.get( 0 ).getTargetNode();
-        } else if( edges.size() == 0 ) {
-            Node enode = getDB().createNode().set( "description", "This is an extensions node, containing all extension relations to " + this );
-            node.createEdge( enode, ResourceEdgeType.extensions );
-            return enode;
-        } else {
-            throw new IllegalStateException( "Too many extension nodes defined(" + edges.size() + ")" );
-        }
-    }
-
     public List<Node> getExtensionsNodes( Class<?> extensionClass ) {
-        logger.debug( "Extensions node " + extensionClass );
-        Node enode = getExtensionsNode();
-        logger.debug( "Extensions node " + enode );
+        logger.debug( "[Getting extensions] " + extensionClass );
 
         List<Node> nodes = new ArrayList<Node>();
 
-        if( enode != null ) {
-            List<Edge> edges = enode.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND, "extensionClass", extensionClass.getName() );
-            for( Edge edge : edges ) {
-                nodes.add( edge.getTargetNode() );
-            }
-        } else {
-            logger.debug( "No extensions node" );
+        List<Edge> edges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND, "extensionClass", extensionClass.getName() );
+        for( Edge edge : edges ) {
+            nodes.add( edge.getTargetNode() );
         }
 
         return nodes;
