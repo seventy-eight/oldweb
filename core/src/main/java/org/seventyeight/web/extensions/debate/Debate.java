@@ -49,6 +49,7 @@ public class Debate extends AbstractItem implements ResourceExtension, Describab
             throw new ErrorWhileSavingException( e );
         }
 
+        logger.debug( "[ACTION STUFF]" );
         //Node actionNode = SeventyEight.getInstance().createNode( request.getDB(), DebateAction.class );
         DebateAction action = null;
         try {
@@ -57,7 +58,7 @@ public class Debate extends AbstractItem implements ResourceExtension, Describab
             logger.error( e );
         }
 
-        addAction( action );
+        request.getItem().addAction( action );
 
 
         /*

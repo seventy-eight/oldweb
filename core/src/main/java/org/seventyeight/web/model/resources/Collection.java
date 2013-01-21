@@ -85,7 +85,7 @@ public class Collection extends AbstractResource {
 		
 		for( Path p : t ) {
 			try {
-				AbstractResource r = GraphDragon.getInstance().getResource( p.endNode() );
+				AbstractResource r = GraphDragon.getInstance().getItem( p.endNode() );
 				logger.debug( "ADDING RESOURCE: " + r );
 				resourcesForView.add( r );
 			} catch( CouldNotLoadObjectException e ) {

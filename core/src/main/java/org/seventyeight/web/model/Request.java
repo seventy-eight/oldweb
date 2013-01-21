@@ -1,12 +1,9 @@
 package org.seventyeight.web.model;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggingEvent;
 import org.apache.velocity.VelocityContext;
 import org.seventyeight.database.Database;
-import org.seventyeight.database.EdgeType;
 import org.seventyeight.web.SeventyEight;
-import org.seventyeight.web.authentication.Authentication;
 import org.seventyeight.web.model.resources.Group;
 import org.seventyeight.web.model.resources.User;
 
@@ -19,7 +16,7 @@ import java.util.List;
  * Date: 16-11-12
  * Time: 21:43
  */
-public class Request extends HttpServletRequestWrapper implements ParameterRequest, DatabaseRequest {
+public class Request extends HttpServletRequestWrapper implements CoreRequest {
 
     private static Logger logger = Logger.getLogger( Request.class );
 
@@ -28,7 +25,7 @@ public class Request extends HttpServletRequestWrapper implements ParameterReque
     private AbstractTheme theme = null;
     private VelocityContext context;
 
-    private AbstractResource resource;
+    private AbstractItem item;
 
     private String template = "org/seventyeight/web/main.vm";
 
@@ -71,12 +68,14 @@ public class Request extends HttpServletRequestWrapper implements ParameterReque
         this.requestParts = parts;
     }
 
-    public void setResource( AbstractResource resource ) {
-        this.resource = resource;
+    @Override
+    public void setItem( AbstractItem item ) {
+        this.item = item;
     }
 
-    public AbstractResource getResource() {
-        return resource;
+    @Override
+    public AbstractItem getItem() {
+        return item;
     }
 
     public void setTransactional( boolean t ) {
@@ -88,7 +87,7 @@ public class Request extends HttpServletRequestWrapper implements ParameterReque
     }
 
     /**
-     * Determine if the current {@link User} can edit/write the resource
+     * Determine if the current {@link User} can edit/write the item
      * @param resource
      * @return
      */
@@ -97,7 +96,7 @@ public class Request extends HttpServletRequestWrapper implements ParameterReque
     }
 
     /**
-     * Determine if the current {@link User} can access the resource
+     * Determine if the current {@link User} can access the item
      * @param resource
      * @return
      */

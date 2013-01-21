@@ -320,12 +320,13 @@ public class SeventyEight {
         return node;
     }
 
-    public <T extends Item> T createItem( Database db,  Class<?> clazz ) throws UnableToInstantiateObjectException {
+    public <T extends AbstractDatabaseItem> T createItem( Database db,  Class<?> clazz ) throws UnableToInstantiateObjectException {
         Node node = createNode( db, clazz );
 
         try {
             Constructor c = clazz.getConstructor( Node.class );
             T instance = (T) c.newInstance( node );
+            instance.getNode().save();
             return instance;
         } catch( Exception e ) {
             throw new UnableToInstantiateObjectException( clazz.getName(), e );

@@ -11,7 +11,19 @@ package org.seventyeight.database;
  * Time: 08:49
  */
 public interface Edge extends Parameterized<Edge> {
+
+    /**
+     * Get the source {@link Node} of the {@link Edge}
+     * @param <T>
+     * @return
+     */
     public <T extends Node> T getSourceNode();
+
+    /**
+     * Get the target {@link Node} of the {@link Edge}
+     * @param <T>
+     * @return
+     */
     public <T extends Node> T getTargetNode();
     public void remove();
 }

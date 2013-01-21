@@ -14,7 +14,7 @@ import com.google.gson.JsonObject;
 import javax.servlet.http.HttpServletResponse;
 
 
-public abstract class AbstractItem extends AbstractDatabaseItem implements Item, Extensible, Savable, Actionable {
+public abstract class AbstractItem extends AbstractDatabaseItem implements Item, Extensible, Savable, Actionable, Action {
 
 	private static Logger logger = Logger.getLogger( AbstractItem.class );
 
@@ -27,11 +27,18 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 	}
 
     @Override
+    public String getUrlName() {
+        return "Not really an action";
+    }
+
+    @Override
 	public void save( CoreRequest request, JsonObject jsonData ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
 		logger.debug( "Begin saving" );
 
         Save save = getSaver( request, jsonData );
-		
+
+        request.setItem( this );
+
 		save.before();
 		save.save();
 		save.after();
@@ -313,7 +320,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
     }
 
     public void doConfigurationSubmit( Request request, HttpServletResponse response, JsonObject jsonData ) throws ErrorWhileSavingException, ParameterDoesNotExistException, IncorrectTypeException, ResourceDoesNotExistException, InconsistentParameterException, TemplateDoesNotExistException, IOException {
-        save( (CoreRequest) request, jsonData );
+        save( request, jsonData );
 
         request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( this, "index.vm" ) );
         response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
@@ -382,7 +389,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 
         if( edges.size() == 0 ) {
             logger.debug( "No actions named " + action.getUrlName() + ", just adding" );
-            this.createRelation( action, ResourceEdgeType.action );
+
         } else {
             logger.debug( edges.size() + " actions named " + action.getUrlName() + ", removing them first" );
             for( Edge edge : edges ) {
@@ -393,8 +400,10 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
             this.createRelation( action, ResourceEdgeType.action );
         }
 
+
         action.getNode().set( "action", action.getUrlName() );
         action.getNode().save();
+        this.createRelation( action, ResourceEdgeType.action ).save();
     }
 
     @Override
@@ -408,6 +417,23 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
                 return (Action) SeventyEight.getInstance().getDatabaseItem( edges.get( 0 ).getTargetNode() );
             } catch( CouldNotLoadObjectException e ) {
                 logger.warn( e.getMessage() );
+                return null;
+            }
+        }
+    }
+
+    public abstract EdgeType getEdgeType();
+
+    public <T extends AbstractItem> T getParent() {
+        List<Edge> edges = node.getEdges( getEdgeType(), Direction.INBOUND );
+
+        if( edges.size() == 0 ) {
+            return null;
+        } else {
+            try {
+                return (T) SeventyEight.getInstance().getDatabaseItem( edges.get( 0 ).getSourceNode() );
+            } catch( CouldNotLoadObjectException e ) {
+                logger.warn( e );
                 return null;
             }
         }

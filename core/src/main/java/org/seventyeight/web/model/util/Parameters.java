@@ -1,6 +1,7 @@
 package org.seventyeight.web.model.util;
 
 import org.seventyeight.database.Database;
+import org.seventyeight.web.model.AbstractItem;
 import org.seventyeight.web.model.CoreRequest;
 import org.seventyeight.web.model.ParameterRequest;
 import org.seventyeight.web.model.resources.User;
@@ -17,9 +18,20 @@ public class Parameters extends HashMap<String, String> implements CoreRequest {
 
     private User user;
     private Database database;
+    private AbstractItem item;
 
     void setDatabase( Database database ) {
         this.database = database;
+    }
+
+    @Override
+    public AbstractItem getItem() {
+        return item;
+    }
+
+    @Override
+    public void setItem( AbstractItem item ) {
+        this.item = item;
     }
 
     @Override
