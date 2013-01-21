@@ -8,5 +8,6 @@ import java.util.List;
  *         Time: 09:56
  */
 public interface Actionable {
-    public Action getAction( Request request, String subSpace );
+    public Action getAction( Request request, String urlName );
+    //public void addAction( String subSpace );
 }

@@ -34,7 +34,7 @@ public class ThemeFileHandler implements TopLevelAction {
         return true;
     }
 
-    public String getName() {
+    public String getUrlName() {
 		return "theme";
 	}
 

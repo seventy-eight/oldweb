@@ -111,6 +111,7 @@ public class SeventyEight {
 		extension,
         extensions,
 		translation,
+        action,
         data
 	}
 		

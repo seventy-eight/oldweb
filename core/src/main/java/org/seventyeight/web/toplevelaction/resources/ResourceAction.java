@@ -20,9 +20,10 @@ public class ResourceAction implements TopLevelAction, Actionable {
     private static Logger logger = Logger.getLogger( ResourceAction.class );
 
     @Override
-    public String getName() {
+    public String getUrlName() {
         return "resource";
     }
+
 
     @Override
     public boolean execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
@@ -35,7 +36,7 @@ public class ResourceAction implements TopLevelAction, Actionable {
         try {
             AbstractResource r = ResourceUtils.getResource( request.getDB(), subSpace );
             request.getContext().put( "title", r.getDisplayName() );
-            return r;
+            return (Action) r;
         } catch( Exception e ) {
             logger.error( e );
             return null;

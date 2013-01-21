@@ -170,7 +170,7 @@ public class UploadHandler implements TopLevelAction {
     }
 
     @Override
-    public String getName() {
+    public String getUrlName() {
         return "upload";
     }
 

@@ -34,7 +34,7 @@ public class StaticFileHandler implements TopLevelAction {
         return true;
     }
 
-    public String getName() {
+    public String getUrlName() {
 		return "static";
 	}
 

@@ -68,7 +68,7 @@ public class ResourcesAction implements TopLevelAction, Actionable {
     }
 
     @Override
-    public String getName() {
+    public String getUrlName() {
         return "resources";
     }
 }

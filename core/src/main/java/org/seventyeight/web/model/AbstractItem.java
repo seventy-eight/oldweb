@@ -14,7 +14,7 @@ import com.google.gson.JsonObject;
 import javax.servlet.http.HttpServletResponse;
 
 
-public abstract class AbstractItem extends AbstractDatabaseItem implements Item, Extensible, Action, Savable {
+public abstract class AbstractItem extends AbstractDatabaseItem implements Item, Extensible, Savable, Actionable {
 
 	private static Logger logger = Logger.getLogger( AbstractItem.class );
 
@@ -374,14 +374,39 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         return nodes;
     }
 
+    public void addAction( AbstractAction action ) {
+        List<Edge> edges = node.getEdges( ResourceEdgeType.action, Direction.OUTBOUND, "action", action.getUrlName() );
 
-    public abstract class Viewer {
+        if( edges.size() == 0 ) {
+            logger.debug( "No actions named " + action.getUrlName() + ", just adding" );
+            this.createRelation( action, ResourceEdgeType.action );
+        } else {
+            logger.debug( edges.size() + " actions named " + action.getUrlName() + ", removing them first" );
+            for( Edge edge : edges ) {
+                edge.getTargetNode().remove();
+                edge.remove();
+            }
 
+            this.createRelation( action, ResourceEdgeType.action );
+        }
+
+        action.getNode().set( "action", action.getUrlName() );
+        action.getNode().save();
     }
 
-    public void view( Viewer viewer ) {
+    @Override
+    public Action getAction( Request request, String urlName ) {
+        List<Edge> edges = node.getEdges( ResourceEdgeType.action, Direction.OUTBOUND, "action", urlName );
 
-        /* Run any  */
+        if( edges.size() == 0 ) {
+            return null;
+        } else {
+            try {
+                return (Action) SeventyEight.getInstance().getDatabaseItem( edges.get( 0 ).getTargetNode() );
+            } catch( CouldNotLoadObjectException e ) {
+                logger.warn( e.getMessage() );
+                return null;
+            }
+        }
     }
-
 }

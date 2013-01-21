@@ -10,8 +10,6 @@ import javax.servlet.http.HttpServletResponse;
  *         Time: 16:00
  */
 public interface TopLevelAction extends Action, Actionable {
-    public String getName();
-
     /**
      * If true is returned, default handling should not be executed.
      * @param request

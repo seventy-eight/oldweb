@@ -75,7 +75,7 @@ public class Rest extends HttpServlet {
         }
         sw.stop();
 
-        sw.start( action.getName() );
+        sw.start( action.getUrlName() );
 
 
         /**/
