@@ -16,10 +16,7 @@ import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.ErrorWhileSavingException;
 import org.seventyeight.web.exceptions.UnableToInstantiateObjectException;
-import org.seventyeight.web.model.AbstractResource;
-import org.seventyeight.web.model.Extension;
-import org.seventyeight.web.model.ParameterRequest;
-import org.seventyeight.web.model.ResourceDescriptor;
+import org.seventyeight.web.model.*;
 
 public class Decal extends Image {
 
@@ -37,7 +34,7 @@ public class Decal extends Image {
 	
 	public class DecalSaveImpl extends ImageSaveImpl {
 
-		public DecalSaveImpl( AbstractResource resource, ParameterRequest request, JsonObject jsonData ) {
+		public DecalSaveImpl( AbstractResource resource, CoreRequest request, JsonObject jsonData ) {
 			super( resource, request, jsonData );
 		}
 

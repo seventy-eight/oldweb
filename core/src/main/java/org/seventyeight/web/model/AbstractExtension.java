@@ -31,7 +31,7 @@ public abstract class AbstractExtension extends AbstractItem implements Extensio
 	
 	public class ExtensionSave extends Save {
 
-		public ExtensionSave( AbstractItem type, ParameterRequest request, JsonObject jsonData ) {
+		public ExtensionSave( AbstractItem type, CoreRequest request, JsonObject jsonData ) {
 			super( type, request, jsonData );
 		}
 

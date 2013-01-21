@@ -39,7 +39,7 @@ public class Image extends FileResource {
 
 	public class ImageSaveImpl extends FileSaveImpl {
 
-		public ImageSaveImpl( AbstractResource resource, ParameterRequest request, JsonObject jsonData ) {
+		public ImageSaveImpl( AbstractResource resource, CoreRequest request, JsonObject jsonData ) {
 			super( resource, request, jsonData );
 		}
 

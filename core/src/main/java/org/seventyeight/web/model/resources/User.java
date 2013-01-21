@@ -36,7 +36,7 @@ public class User extends AbstractResource {
 
 	public class UserSaveImpl extends ResourceSaveImpl {
 
-		public UserSaveImpl( AbstractResource resource, ParameterRequest request, JsonObject jsonData ) {
+		public UserSaveImpl( AbstractResource resource, CoreRequest request, JsonObject jsonData ) {
 			super( resource, request, jsonData );
 		}
 

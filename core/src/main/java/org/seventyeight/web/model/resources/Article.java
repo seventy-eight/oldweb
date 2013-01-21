@@ -23,7 +23,7 @@ public class Article extends AbstractResource {
 	
 	public class ArticleSaveImpl extends ResourceSaveImpl {
 
-		public ArticleSaveImpl( AbstractResource resource, ParameterRequest request, JsonObject jsonData ) {
+		public ArticleSaveImpl( AbstractResource resource, CoreRequest request, JsonObject jsonData ) {
 			super( resource, request, jsonData );
 		}
 		

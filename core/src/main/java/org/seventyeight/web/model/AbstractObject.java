@@ -45,7 +45,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 		protected AbstractObject object;
 		protected String language;
 		
-		public ObjectSave( AbstractObject object, ParameterRequest configuration, JsonObject jsonData ) {
+		public ObjectSave( AbstractObject object, CoreRequest configuration, JsonObject jsonData ) {
 			super( object, configuration, jsonData );
 			
 			this.object = object;

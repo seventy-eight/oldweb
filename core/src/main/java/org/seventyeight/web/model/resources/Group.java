@@ -37,7 +37,7 @@ public class Group extends AbstractResource {
 	
 	public class GroupSaveImpl extends ResourceSaveImpl {
 
-		public GroupSaveImpl( AbstractResource resource, ParameterRequest request, JsonObject jsonData ) {
+		public GroupSaveImpl( AbstractResource resource, CoreRequest request, JsonObject jsonData ) {
 			super( resource, request, jsonData );
 		}
 		

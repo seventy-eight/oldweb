@@ -49,7 +49,15 @@ public class Debate extends AbstractItem implements ResourceExtension, Describab
             throw new ErrorWhileSavingException( e );
         }
 
-        Node actionNode = SeventyEight.getInstance().createNode( request.getDB(), DebateAction.class );
+        //Node actionNode = SeventyEight.getInstance().createNode( request.getDB(), DebateAction.class );
+        DebateAction action = null;
+        try {
+            action = SeventyEight.getInstance().createItem( request.getDB(), DebateAction.class );
+        } catch( UnableToInstantiateObjectException e ) {
+            logger.error( e );
+        }
+
+        addAction( action );
 
 
         /*

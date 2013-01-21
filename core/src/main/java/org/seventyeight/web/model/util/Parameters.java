@@ -1,5 +1,7 @@
 package org.seventyeight.web.model.util;
 
+import org.seventyeight.database.Database;
+import org.seventyeight.web.model.CoreRequest;
 import org.seventyeight.web.model.ParameterRequest;
 import org.seventyeight.web.model.resources.User;
 
@@ -11,9 +13,19 @@ import java.util.Map;
  *         Date: 30-11-12
  *         Time: 23:23
  */
-public class Parameters extends HashMap<String, String> implements ParameterRequest {
+public class Parameters extends HashMap<String, String> implements CoreRequest {
 
     private User user;
+    private Database database;
+
+    void setDatabase( Database database ) {
+        this.database = database;
+    }
+
+    @Override
+    public Database getDB() {
+        return null;
+    }
 
     @Override
     public User getUser() {

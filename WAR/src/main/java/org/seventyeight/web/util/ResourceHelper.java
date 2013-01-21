@@ -11,10 +11,7 @@ import org.apache.log4j.Logger;
 
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
-import org.seventyeight.web.model.AbstractResource;
-import org.seventyeight.web.model.Descriptor;
-import org.seventyeight.web.model.Request;
-import org.seventyeight.web.model.ResourceDescriptor;
+import org.seventyeight.web.model.*;
 
 public class ResourceHelper {
 	
@@ -126,7 +123,7 @@ public class ResourceHelper {
 
             logger.debug( "r: " + r.getIdentifier() );
 
-            r.save( request, jo );
+            r.save( (CoreRequest) request, jo );
             //request.succeedTransaction();
 
             return r;

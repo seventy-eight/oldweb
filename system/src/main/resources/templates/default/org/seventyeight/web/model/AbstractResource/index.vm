@@ -1,9 +1,24 @@
-YEAH!
+<table style="width:100%;border-collapse: collapse;">
+    <tr>
+        <td style="width:100%">
+            <a href="/db/browse/resource/$item.getIdentifier()">Browse</a>
+        </td>
+    </tr>
 
-#render( $item "view" )
+    <tr>
+        <td style="width:100%">
+            #render( $item "view" )
+        </td>
+    </tr>
 
-<div style="width: 100%" align="center">
-    #foreach( $view in $item.getContributingViews( "bottom.vm", $theme ) )
-        #render( $view "bottom" )
-    #end
-</div>
+    <tr>
+        <td style="width:100%">
+            <div style="width: 100%" align="center">
+                #foreach( $view in $item.getContributingViews( "bottom.vm", $theme ) )
+                    #render( $view "bottom" )
+                #end
+            </div>
+        </td>
+    </tr>
+
+</table>
