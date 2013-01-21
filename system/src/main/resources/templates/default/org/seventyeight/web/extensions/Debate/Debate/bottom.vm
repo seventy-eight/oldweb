@@ -1,6 +1,6 @@
 
 <hr>
-<form action="$currentUrl/reply" method="post">
+<form action="$currentUrl/debate" method="post">
     <table style="width:25%;border-style: solid">
         <tr>
             <td>

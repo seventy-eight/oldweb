@@ -260,11 +260,15 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         }
     }
 
+    public String getUrl() {
+        return "";
+    }
+
     public void doConfigurationSubmit( Request request, HttpServletResponse response, JsonObject jsonData ) throws ErrorWhileSavingException, ParameterDoesNotExistException, IncorrectTypeException, ResourceDoesNotExistException, InconsistentParameterException, TemplateDoesNotExistException, IOException {
         save( request, jsonData );
-
-        request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( this, "index.vm" ) );
-        response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
+        response.sendRedirect( getUrl() );
+        //request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( this, "index.vm" ) );
+        //response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
     }
 
     public List<Node> getExtensionsNodes( Class<?> extensionClass ) {

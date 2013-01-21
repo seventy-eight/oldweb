@@ -250,6 +250,11 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 	}
 
     @Override
+    public String getUrl() {
+        return "/resource/" + getIdentifier();
+    }
+
+    @Override
     public List<Item> getContributingViews( String view, AbstractTheme theme ) {
         logger.debug( "Getting contributing views for " + view );
 

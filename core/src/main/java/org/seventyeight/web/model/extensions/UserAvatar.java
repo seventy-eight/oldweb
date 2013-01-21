@@ -19,7 +19,7 @@ public class UserAvatar extends AbstractExtension implements UserExtension, Desc
 		return getObject( SeventyEight.ResourceEdgeType.extension );
 	}
 	
-	public String getUrl() throws UnableToInstantiateObjectException, NoSuchObjectException {
+	public String getUrl2() throws UnableToInstantiateObjectException, NoSuchObjectException {
 		return getPortrait().getProtraitUrl();
 	}
 
