@@ -1,7 +1,12 @@
 package org.seventyeight.web.extensions.debate;
 
+import com.google.gson.JsonObject;
+import org.apache.log4j.Logger;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.model.AbstractAction;
+import org.seventyeight.web.model.Request;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author cwolfgang
@@ -9,6 +14,8 @@ import org.seventyeight.web.model.AbstractAction;
  *         Time: 15:06
  */
 public class DebateAction extends AbstractAction {
+
+    private static Logger logger = Logger.getLogger( DebateAction.class );
 
     public DebateAction( Node node ) {
         super( node );
@@ -22,5 +29,9 @@ public class DebateAction extends AbstractAction {
     @Override
     public String getDisplayName() {
         return "Debate!";
+    }
+
+    public void doIndex( Request request, HttpServletResponse response, JsonObject jsonObject ) {
+        logger.debug( "I AM HERE!!!!!!!!!!!!!!!!" );
     }
 }
