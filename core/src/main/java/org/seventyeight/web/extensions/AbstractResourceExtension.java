@@ -2,6 +2,7 @@ package org.seventyeight.web.extensions;
 
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
+import org.seventyeight.web.model.AbstractExtension;
 import org.seventyeight.web.model.AbstractItem;
 import org.seventyeight.web.model.Describable;
 import org.seventyeight.web.model.Descriptor;
@@ -12,7 +13,7 @@ import org.seventyeight.web.model.extensions.ResourceExtension;
  *         Date: 09-01-13
  *         Time: 13:02
  */
-public abstract class AbstractResourceExtension extends AbstractItem implements ResourceExtension, Describable {
+public abstract class AbstractResourceExtension extends AbstractExtension implements ResourceExtension, Describable {
 
     public AbstractResourceExtension( Node node ) {
         super( node );
