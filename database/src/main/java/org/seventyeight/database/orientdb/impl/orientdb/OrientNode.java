@@ -222,6 +222,7 @@ public class OrientNode implements Node {
             case OUTBOUND:
                 Set<OIdentifiable> out = db.getInternalDatabase().getOutEdges( doc, ( type != null ? type.toString() : null ) );
                 for( OIdentifiable oi : out ) {
+                    logger.debug( "Removing " + oi );
                     db.getInternalDatabase().removeEdge( oi );
                 }
                 break;
@@ -229,6 +230,7 @@ public class OrientNode implements Node {
             case INBOUND:
                 Set<OIdentifiable> in = db.getInternalDatabase().getInEdges( doc, ( type != null ? type.toString() : null ) );
                 for( OIdentifiable oi : in ) {
+                    logger.debug( "Removing " + oi );
                     db.getInternalDatabase().removeEdge( oi );
                 }
                 break;
@@ -237,9 +239,11 @@ public class OrientNode implements Node {
                 Set<OIdentifiable> ois1 = db.getInternalDatabase().getOutEdges( doc, ( type != null ? type.toString() : null ) );
                 Set<OIdentifiable> ois2 = db.getInternalDatabase().getInEdges( doc, ( type != null ? type.toString() : null ) );
                 for( OIdentifiable oi : ois1 ) {
+                    logger.debug( "Removing " + oi );
                     db.getInternalDatabase().removeEdge( oi );
                 }
                 for( OIdentifiable oi : ois2 ) {
+                    logger.debug( "Removing " + oi );
                     db.getInternalDatabase().removeEdge( oi );
                 }
         }
