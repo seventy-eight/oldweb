@@ -555,7 +555,7 @@ public class SeventyEight {
      * @return
      * @throws CouldNotLoadObjectException
      */
-	public DatabaseItem getDatabaseItem( Node node ) throws CouldNotLoadObjectException {
+	public <T extends DatabaseItem> T getDatabaseItem( Node node ) throws CouldNotLoadObjectException {
 		String clazz = (String) node.get( "class" );
 
 		if( clazz == null ) {
@@ -567,8 +567,7 @@ public class SeventyEight {
 		try {
 			Class<Item> eclass = (Class<Item>) Class.forName(clazz, true, classLoader );
 			Constructor<?> c = eclass.getConstructor( Node.class );
-            DatabaseItem instance = (DatabaseItem) c.newInstance( node );
-			return instance;
+            return (T) c.newInstance( node );
 		} catch( Exception e ) {
 			logger.error( "Unable to get the class " + clazz );
 			throw new CouldNotLoadObjectException( "Unable to get the class " + clazz, e );
