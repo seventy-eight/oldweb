@@ -59,7 +59,8 @@ public class ResourcesAction implements TopLevelAction, Actionable {
         }
         logger.debug( "RESOURCE IS " + r );
 
-        ResourceUtils.getConfigureResourceView( request, response, r, descriptor );
+        response.sendRedirect( r.getUrl() + "/configure" );
+        //ResourceUtils.getConfigureResourceView( request, response, r, descriptor );
     }
 
     @Override

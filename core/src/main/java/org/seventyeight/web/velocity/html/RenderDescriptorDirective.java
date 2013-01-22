@@ -66,7 +66,7 @@ public class RenderDescriptorDirective extends Directive {
         /* get the extension node */
         List<org.seventyeight.database.Node> nodes = item.getExtensionNodesByClass( d.getClazz() );
 
-        logger.debug( nodes );
+        logger.debug( "Configured instances: " + nodes.size() );
 
         for( org.seventyeight.database.Node n : nodes ) {
             try {

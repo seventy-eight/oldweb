@@ -1,5 +1,8 @@
+#set( $snade = "" )
+#set( $snade = $item.getNode().get( "SNADE", "" ) )
+
 <tr>
     <td>
-        <input type="text" name="snade">
+        <input type="text" name="snade" value="$snade">
     </td>
 </tr>

@@ -1,6 +1,11 @@
 #set( $collapsedStyle = "" )
-#if( !$expanded )
+#if( !$enabled )
     #set( $collapsedStyle = "display: none" )
+#else
+    <script type="text/javascript">
+        $('form input:checkbox[name|="$descriptor.getId()"]').prop( 'checked', true );
+        $('form input:radio[value|="$descriptor.getId()"]').prop( 'checked', 'checked' );
+    </script>
 #end
 
 #set( $locked = false )

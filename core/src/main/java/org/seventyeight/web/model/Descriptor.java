@@ -96,33 +96,18 @@ public abstract class Descriptor<T extends Describable> {
     public String getConfigurationPage( Request request, AbstractExtension extension ) throws TemplateDoesNotExistException {
         VelocityContext c = new VelocityContext();
         c.put( "class", getClazz().getName() );
-
-        /* TODO verify branching */
-        if( extension == null ) {
-            if( enabledByDefault() ) {
-                c.put( "expanded", true );
-                if( enabledByDefault()) {
-                    c.put( "enabled", true );
-                }
-            } else {
-                c.put( "expanded", false );
-                c.put( "enabled", false );
-            }
-        } else {
-            c.put( "expanded", true );
-            c.put( "enabled", true );
-        }
+        c.put( "descriptor", this );
 
         if( extension != null ) {
             //Descriptor d = extension.getDescriptor();
             logger.debug( "Extension is " + extension );
+            c.put( "enabled", true );
             c.put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( extension, "config.vm" ) );
         } else {
             logger.debug( "Preparing EMPTY " + getClazz() );
+            c.put( "enabled", false );
             c.put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClass( getClazz(), "config.vm" ) );
         }
-
-        //logger.fatal( Arrays.asList( request.getContext().getKeys() ) );
 
         return SeventyEight.getInstance().getTemplateManager().getRenderer( request ).setContext( c ).render( "org/seventyeight/web/model/descriptorpage.vm" );
     }
