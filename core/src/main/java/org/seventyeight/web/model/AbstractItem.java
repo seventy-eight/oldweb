@@ -271,13 +271,27 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         //response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
     }
 
-    public List<Node> getExtensionsNodes( Class<?> extensionClass ) {
+    public List<Node> getExtensionNodesByExtensionClass( Class<?> extensionClass ) {
         logger.debug( "[Getting extensions] " + extensionClass );
         logger.debug( "[NODE] " + node );
 
         List<Node> nodes = new ArrayList<Node>();
 
         List<Edge> edges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND, "extensionClass", extensionClass.getName() );
+        for( Edge edge : edges ) {
+            nodes.add( edge.getTargetNode() );
+        }
+
+        return nodes;
+    }
+
+    public List<Node> getExtensionNodesByClass( Class<?> clazz ) {
+        logger.debug( "[Getting extensions] " + clazz );
+        logger.debug( "[NODE] " + node );
+
+        List<Node> nodes = new ArrayList<Node>();
+
+        List<Edge> edges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND, "class", clazz.getName() );
         for( Edge edge : edges ) {
             nodes.add( edge.getTargetNode() );
         }

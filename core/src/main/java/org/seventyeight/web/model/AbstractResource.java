@@ -258,7 +258,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
     public List<Item> getContributingViews( String view, AbstractTheme theme ) {
         logger.debug( "Getting contributing views for " + view );
 
-        List<Node> nodes = getExtensionsNodes( ResourceExtension.class );
+        List<Node> nodes = getExtensionNodesByExtensionClass( ResourceExtension.class );
 
         List<Item> items = new ArrayList<Item>( nodes.size() );
         for( Node n : nodes ) {

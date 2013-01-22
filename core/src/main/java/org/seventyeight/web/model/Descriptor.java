@@ -93,17 +93,13 @@ public abstract class Descriptor<T extends Describable> {
         return false;
     }
 
-    public String getConfigurationPage( Request request, Node node ) throws TemplateDoesNotExistException {
-        return getConfigurationPage( request, node, false );
-    }
-
-    public String getConfigurationPage( Request request, Node node, boolean expanded ) throws TemplateDoesNotExistException {
+    public String getConfigurationPage( Request request, AbstractExtension extension ) throws TemplateDoesNotExistException {
         VelocityContext c = new VelocityContext();
         c.put( "class", getClazz().getName() );
 
         /* TODO verify branching */
-        if( node == null ) {
-            if( enabledByDefault() || expanded ) {
+        if( extension == null ) {
+            if( enabledByDefault() ) {
                 c.put( "expanded", true );
                 if( enabledByDefault()) {
                     c.put( "enabled", true );
@@ -117,15 +113,10 @@ public abstract class Descriptor<T extends Describable> {
             c.put( "enabled", true );
         }
 
-        if( node != null ) {
-            try {
-                T instance = getInstance( node );
-                c.put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( instance, "config.vm" ) );
-            } catch( UnableToInstantiateObjectException e ) {
-                /* instance == null || node == null */
-                logger.warn( e );
-                c.put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClass( getClazz(), "config.vm" ) );
-            }
+        if( extension != null ) {
+            //Descriptor d = extension.getDescriptor();
+            logger.debug( "Extension is " + extension );
+            c.put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( extension, "config.vm" ) );
         } else {
             logger.debug( "Preparing EMPTY " + getClazz() );
             c.put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClass( getClazz(), "config.vm" ) );

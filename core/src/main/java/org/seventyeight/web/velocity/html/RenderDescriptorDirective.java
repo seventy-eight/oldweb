@@ -64,14 +64,14 @@ public class RenderDescriptorDirective extends Directive {
 
         logger.fatal( "ITEM IS " + item );
         /* get the extension node */
-        List<org.seventyeight.database.Node> nodes = item.getExtensionsNodes( d.getClazz() );
+        List<org.seventyeight.database.Node> nodes = item.getExtensionNodesByClass( d.getClazz() );
 
         logger.debug( nodes );
 
         for( org.seventyeight.database.Node n : nodes ) {
             try {
-                SeventyEight.getInstance().getDatabaseItem( n );
-                writer.write( d.getConfigurationPage( request, n ) );
+                AbstractExtension extension = SeventyEight.getInstance().getDatabaseItem( n );
+                writer.write( d.getConfigurationPage( request, extension ) );
             } catch( TemplateDoesNotExistException e ) {
                 logger.warn( e );
                 writer.write( e.getMessage() );
