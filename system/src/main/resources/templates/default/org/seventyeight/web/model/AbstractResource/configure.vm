@@ -1,4 +1,6 @@
 
+#set( $descriptor = $item.getDescriptor() )
+
 <table>
 
     <tr>
@@ -10,7 +12,7 @@
 
 
                     <tr>
-                        <td colspan="2" align="center" style="font-size: 18px;font-weight: bold">$header</td>
+                        <td colspan="2" align="center" style="font-size: 18px;font-weight: bold">Configuring $item.getDisplayName()</td>
                     </tr>
 
 
@@ -18,9 +20,6 @@
                         <td style="width:100%" colspan="2">
                             <input type="hidden" name="class" value="$class" />
                             <table style="width:100%">
-
-                                $subchildcontent
-
                                 #if( $descriptor.inputTitle() )
 
                                     #set( $title = "" )
@@ -56,24 +55,20 @@
                             </tr>
                             -->
 
+
                                 <!--
                             <tr>
                                 <td>
-                                    $item
+                                    $item<br>
+                                    $descriptor
                                 </td>
                             </tr>
-                            -->
+                -->
 
 
-                                <!--
-                            <tr>
-                                #set( $clazz = "org.seventyeight.web.debate.ReplyHubExtension" )
-                                #parse( "/default/org/seventyeight/web/model/singleselector.vm" )
-                            </tr>
-                            -->
 
                                 #foreach( $class in $descriptor.getExtensionClasses() )
-                                    #configureExtensions( $class $item true )
+                                     #configureExtensions( $class $item )
                                 #end
 
 

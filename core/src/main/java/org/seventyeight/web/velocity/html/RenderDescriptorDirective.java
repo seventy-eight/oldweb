@@ -7,6 +7,8 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.directive.Directive;
 import org.apache.velocity.runtime.parser.node.Node;
+import org.seventyeight.web.SeventyEight;
+import org.seventyeight.web.exceptions.CouldNotLoadObjectException;
 import org.seventyeight.web.exceptions.TemplateDoesNotExistException;
 import org.seventyeight.web.model.*;
 
@@ -60,39 +62,28 @@ public class RenderDescriptorDirective extends Directive {
 
         Request request = (Request) context.get( "request" );
 
-        /* Already configured descriptor */
-        if( item != null ) {
-            logger.fatal( "ITEM IS " + item );
-            /* get the extension node */
-            List<org.seventyeight.database.Node> nodes = item.getExtensionsNodes( d.getClazz() );
+        logger.fatal( "ITEM IS " + item );
+        /* get the extension node */
+        List<org.seventyeight.database.Node> nodes = item.getExtensionsNodes( d.getClazz() );
 
-            logger.debug( nodes );
+        logger.debug( nodes );
 
-            for( org.seventyeight.database.Node n : nodes ) {
-                try {
-                    writer.write( d.getConfigurationPage( request, n ) );
-                } catch( TemplateDoesNotExistException e ) {
-                    logger.warn( e );
-                    writer.write( e.getMessage() );
-                }
-            }
-
-            if( nodes.size() == 0 ) {
-                logger.fatal( "NO NODES" );
-                logger.fatal( "EXPANDEND: " + expanded );
-                try {
-                    writer.write( d.getConfigurationPage( request, null, expanded ) );
-                } catch( TemplateDoesNotExistException e ) {
-                    logger.warn( e );
-                    writer.write( e.getMessage() );
-                }
-            }
-
-        } else {
-            logger.fatal( "ITEM IS NULL! " + context.get( "item" ) );
-            logger.fatal( "EXPANDEND: " + expanded );
+        for( org.seventyeight.database.Node n : nodes ) {
             try {
-                writer.write( d.getConfigurationPage( request, null, expanded ) );
+                SeventyEight.getInstance().getDatabaseItem( n );
+                writer.write( d.getConfigurationPage( request, n ) );
+            } catch( TemplateDoesNotExistException e ) {
+                logger.warn( e );
+                writer.write( e.getMessage() );
+            } catch( CouldNotLoadObjectException e ) {
+                e.printStackTrace();
+            }
+        }
+
+        if( nodes.size() == 0 ) {
+            logger.fatal( "NO NODES" );
+            try {
+                writer.write( d.getConfigurationPage( request, null ) );
             } catch( TemplateDoesNotExistException e ) {
                 logger.warn( e );
                 writer.write( e.getMessage() );
