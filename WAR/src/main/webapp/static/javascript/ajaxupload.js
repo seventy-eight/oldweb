@@ -8,7 +8,7 @@
 
 (function($)
 {
-	//Test if support pure ajax upload and create browse file input
+	//Testing if support pure ajax upload and create browse file input
 	var axtest = document.createElement('input');
 	axtest.type = 'file';
 	var isAjaxUpload=('multiple' in axtest &&  typeof File != "undefined" &&  typeof (new XMLHttpRequest()).upload != "undefined" );

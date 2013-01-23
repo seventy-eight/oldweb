@@ -26,7 +26,10 @@ public abstract class AbstractDatabaseItem implements DatabaseItem {
 
     @Override
     public Edge createRelation( DatabaseItem other, EdgeType type ) {
-        return node.createEdge( other.getNode(), type );
+        Edge edge = node.createEdge( other.getNode(), type ).save();
+        node.save();
+        other.getNode().save();
+        return edge;
     }
 
     @Override

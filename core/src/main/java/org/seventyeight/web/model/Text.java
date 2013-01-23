@@ -36,7 +36,7 @@ public class Text extends AbstractSubItem implements Item {
 		Text t = new Text( db.createNode() );
 
 		//List<Edge> edges = t.getNode().getEdgesTo( ResourceEdgeType.translation );
-        Edge edge = item.getNode().createEdge( t.getNode(), ResourceEdgeType.translation );
+        Edge edge = item.getNode().createEdge( t.getNode(), ResourceEdgeType.translation ).save();
 		//ODocument edge = SeventyEight.getInstance().createEdge( item, t, ResourceEdgeType.translation );
 
 		/* Edge data */

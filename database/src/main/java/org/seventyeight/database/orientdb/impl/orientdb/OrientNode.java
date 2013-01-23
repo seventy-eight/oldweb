@@ -57,7 +57,7 @@ public class OrientNode implements Node {
     public OrientEdge createEdge( Node to, EdgeType type ) {
         logger.debug( "Creating edge(" + type + ") from " + doc + " to " + ((OrientNode)to).getDocument() );
 
-        ODocument edge = db.getInternalDatabase().createEdge( doc, ((OrientNode)to).doc ).field( OGraphDatabase.LABEL, type.toString() ).save();
+        ODocument edge = db.getInternalDatabase().createEdge( doc, ((OrientNode)to).doc ).field( OGraphDatabase.LABEL, type.toString() );
 
         return new OrientEdge( edge, this, (OrientNode)to );
     }
@@ -74,7 +74,7 @@ public class OrientNode implements Node {
 
     @Override
     public List<OrientEdge> getEdges( EdgeType type, Direction direction, String field, String value ) {
-        logger.debug( "Getting " + direction + " edges for " + this + " of type " + type );
+        logger.debug( "Getting " + direction + " edges for " + this + " of type " + type + "(" + db + ")" );
 
         Set<OIdentifiable> in = null;
         Set<OIdentifiable> out = null;
@@ -287,5 +287,9 @@ public class OrientNode implements Node {
         } else {
             return doc.getIdentity().toString();
         }
+    }
+
+    public void update() {
+        doc.reload();
     }
 }

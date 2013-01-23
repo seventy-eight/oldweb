@@ -1,6 +1,7 @@
 package org.seventyeight.web.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -96,6 +97,8 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 			/* Access groups */
 			String[] accessGroupIds = request.getParameterValues( __ACCESS_GROUP_NAME );
 			if( accessGroupIds != null ) {
+                logger.debug( "GS: " + accessGroupIds );
+                logger.debug( "GROUPS: " + Arrays.asList( accessGroupIds ) );
 				addGroupsById( accessGroupIds, GroupEdgeType.readAccess );				
 			}
 			
@@ -145,7 +148,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 		Text tt = null;
 		try {
 			tt = getText( language, property );
-		} catch( TextNodeDoesNotExistException e ) {
+		} catch( Exception e ) {
 			logger.debug( "The " + property + " text node for " + language + " does not exist, creating it" );
 			tt = Text.create( node.getDB(), AbstractObject.this, property, language );
 		}
@@ -169,6 +172,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 	 */
 	public Node getTextNode( String language, String property ) {
 		//List<ODocument> edges = SeventyEight.getInstance().getEdgesTo( db, this, ResourceEdgeType.translation );
+        logger.debug( "The node is " + node );
         List<Edge> edges = node.getEdges( ResourceEdgeType.translation, Direction.OUTBOUND );
 		Node d = null;
 
@@ -203,8 +207,10 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 	}
 
 	public void setOwner( User owner ) {
+        logger.debug( "OWNER IS "+ owner + " and node is " + owner.getNode() );
 		/* Removing all owners */
 		removeAllOwners();
+        owner.getNode().update();
 		/* Adding new owner */
         createRelation( owner, ResourceEdgeType.owner );
 		//SeventyEight.getInstance().createEdge( this, owner, EdgeType.owner );
@@ -212,8 +218,11 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 	
 	protected void removeAllOwners() {
 		logger.debug( "Removing all owners for " + this );
-		//SeventyEight.getInstance().removeOutEdges( db, this, ResourceEdgeType.owner );
-        node.removeEdges( ResourceEdgeType.owner, Direction.OUTBOUND );
+		try {
+            node.removeEdges( ResourceEdgeType.owner, Direction.OUTBOUND );
+        } catch( Exception e ) {
+            logger.warn( e );
+        }
 	}
 	
 	public List<Group> getGroups( GroupEdgeType rel ) {
@@ -241,7 +250,12 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 	
 	public void addGroupsById( String[] accessGroupIds, GroupEdgeType type ) {
 		logger.debug( "Adding " + type.toString() );
-		removeGroups( type );
+        try {
+		    removeGroups( type );
+        } catch( Exception e ) {
+            logger.error( e );
+        }
+        logger.debug( "REMOVINED " );
 		
 		for( String agid : accessGroupIds ) {
 			try {
@@ -256,7 +270,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 	
 	public void addGroup( Group group, GroupEdgeType type ) {
 		//SeventyEight.getInstance().createEdge( db, this, group, type );
-        node.createEdge( group.getNode(), type );
+        node.createEdge( group.getNode(), type ).save();
 	}
 	
 	protected void removeGroups( GroupEdgeType type ) {
@@ -280,7 +294,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 		try {
 			Text t = getText( locale.getLanguage(), "title" );
 			return t.getText();
-		} catch( TextNodeDoesNotExistException e ) {
+		} catch( Exception e ) {
 			logger.debug( "Could not get title for " + locale.getLanguage() );
 			return node.get( "title", "" );
 		}

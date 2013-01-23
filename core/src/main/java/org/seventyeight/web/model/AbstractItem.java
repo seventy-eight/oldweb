@@ -185,7 +185,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
                 e = d.newInstance( getDB() );
 
                 logger.debug( "Creating relation from hub node to describable" );
-                node.createEdge( e.getNode(), d.getRelationType() );
+                node.createEdge( e.getNode(), d.getRelationType() ).save();
 
             }
 

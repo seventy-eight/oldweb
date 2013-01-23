@@ -68,4 +68,6 @@ public interface Node extends Parameterized<Node> {
     public String getId(  boolean safe );
 
     public Node save();
+
+    public void update();
 }

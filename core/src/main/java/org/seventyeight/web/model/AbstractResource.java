@@ -239,7 +239,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 	public void updateIndexes() {
 		super.updateIndexes();
 		
-		logger.debug( "Updating resource index for " + this + "/" + getNode() );
+		//logger.debug( "Updating resource index for " + this + "/" + getNode() );
 
         getDB().removeNodeFromIndex( SeventyEight.INDEX_RESOURCE_TYPES, node );
 
