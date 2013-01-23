@@ -32,10 +32,16 @@ public class Testing {
         Group group = (Group) SeventyEight.getInstance().getDescriptor( Group.class ).newInstance( env.getDB() );
         group.save( parms,  null );
 
-        List<Edge> edges = group.getNode().getEdges( null, Direction.OUTBOUND );
-        for( Edge e : edges ) {
-            System.out.println(e );
+        try {
+            List<Edge> edges = group.getNode().getEdges( null, Direction.OUTBOUND );
+            for( Edge e : edges ) {
+                System.out.println(e );
+            }
+        } catch ( Exception e ) {
+            System.out.println( "FAILED " + e.getMessage() );
+            e.printStackTrace();
         }
+
 
         //parms.put( "title", "My next title" );
         //group.save( parms,  null );

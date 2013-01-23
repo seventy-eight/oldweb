@@ -33,7 +33,9 @@ public class OrientDBManager {
     }
 
     public Database getDatabase() {
-        return new OrientDatabase( OGraphDatabasePool.global().acquire( qualifiedPath, "admin", "admin" ) );
+        OrientDatabase db = new OrientDatabase( OGraphDatabasePool.global().acquire( qualifiedPath, "admin", "admin" ) );
+        db.getInternalDatabase().setUseCustomTypes( false );
+        return db;
     }
 
     public static void createDatabase( String type, String path ) {
