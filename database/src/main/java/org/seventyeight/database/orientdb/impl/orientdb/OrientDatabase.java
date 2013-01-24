@@ -214,6 +214,11 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
     @Override
     public OrientNode getByIndex( String idx ) {
         ODocument doc = db.load( new ORecordId( idx ) );
-        return new OrientNode( this, doc );
+
+        if( doc != null ) {
+            return new OrientNode( this, doc );
+        } else {
+            return null;
+        }
     }
 }

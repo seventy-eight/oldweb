@@ -14,6 +14,8 @@ import org.seventyeight.web.model.resources.Group;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -63,9 +65,18 @@ public class ExtensionsTest {
 
         assertThat( edges.size(), is( 1 ) );
 
-        group.recursivelyRemoveExtensions( edges.get( 0 ) );
-        Node n = env.getDB().getByIndex( did );
+        Node n1a = env.getDB().getByIndex( did );
+        assertNotNull( n1a );
 
-        System.out.println( "NODE: " + n );
+        Node n1b = env.getDB().getByIndex( sdid );
+        assertNotNull( n1b );
+
+        group.recursivelyRemoveExtensions( edges.get( 0 ) );
+
+        Node n2a = env.getDB().getByIndex( did );
+        assertNull( n2a );
+
+        Node n2b = env.getDB().getByIndex( sdid );
+        assertNull( n2b );
     }
 }
