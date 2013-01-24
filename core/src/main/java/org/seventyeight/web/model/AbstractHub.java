@@ -15,21 +15,10 @@ import java.util.List;
  *         Date: 20-12-12
  *         Time: 11:16
  */
-public abstract class Hub extends AbstractItem implements Describable {
+public abstract class AbstractHub extends AbstractItem implements Describable {
 
-    public Hub( Node node ) {
+    public AbstractHub( Node node ) {
         super( node );
-    }
-
-
-    public AbstractResource getResource() throws CouldNotLoadObjectException {
-        List<Edge> edges = node.getEdges( SeventyEight.ResourceEdgeType.extension, Direction.INBOUND );
-
-        if( edges.size() == 1 ) {
-            return (AbstractResource) SeventyEight.getInstance().getDatabaseItem( edges.get( 0 ).getSourceNode() );
-        } else {
-            throw new IllegalStateException( "Found " + edges.size() + " edges, not 1" );
-        }
     }
 
     public int getNumberOfItems() {
@@ -47,13 +36,9 @@ public abstract class Hub extends AbstractItem implements Describable {
     public Long getResourceIdentifier() throws HubException {
         Long id = node.get( "resourceIdentifier" );
         if( id == null ) {
-            try {
-                AbstractResource r = getResource();
+                AbstractResource r = getParent();
                 setResourceIdentifier( r.getIdentifier() );
                 return r.getIdentifier();
-            } catch( CouldNotLoadObjectException e ) {
-                throw new HubException( "Could not retrieve identifier for resource", e );
-            }
         } else {
             return id;
         }

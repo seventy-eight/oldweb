@@ -10,6 +10,7 @@ import org.seventyeight.web.SeventyEight.ResourceEdgeType;
 import org.seventyeight.web.exceptions.*;
 
 import com.google.gson.JsonObject;
+import org.seventyeight.web.hubs.ScoresHub;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -378,5 +379,23 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         } else {
             return null;
         }
+    }
+
+    protected void addScore( String name, double score ) {
+        Edge edge = node.getFirstEdge( SeventyEight.ItemRelation.scores, Direction.OUTBOUND );
+
+        ScoresHub hub = null;
+        if( edge == null ) {
+            try {
+                hub = SeventyEight.getInstance().createItem( getDB(), ScoresHub.class );
+            } catch( UnableToInstantiateObjectException e ) {
+                logger.warn( e.getMessage() );
+                return;
+            }
+        } else {
+            hub = new ScoresHub( edge.getTargetNode() );
+        }
+
+        hub.addScore( name, score );
     }
 }

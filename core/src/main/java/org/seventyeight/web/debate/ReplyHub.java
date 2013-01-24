@@ -17,7 +17,7 @@ import java.util.List;
  *         Date: 20-12-12
  *         Time: 11:35
  */
-public abstract class ReplyHub extends Hub {
+public abstract class ReplyHub extends AbstractHub {
 
     private static Logger logger = Logger.getLogger( ReplyHub.class );
     public static final String INDEX_REPLIES = "debate-replies";
@@ -63,7 +63,7 @@ public abstract class ReplyHub extends Hub {
 
     @Override
     public String getDisplayName() {
-        return "Reply Hub";
+        return "Reply AbstractHub";
     }
 
     @Override
@@ -77,7 +77,7 @@ public abstract class ReplyHub extends Hub {
 
         @Override
         public String getDisplayName() {
-            return "Reply Hub";
+            return "Reply AbstractHub";
         }
 
         @Override

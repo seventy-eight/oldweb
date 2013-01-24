@@ -3,7 +3,6 @@ package org.seventyeight.web;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -14,9 +13,7 @@ import org.seventyeight.database.*;
 import org.seventyeight.loader.Loader;
 import org.seventyeight.utils.FileUtilities;
 import org.seventyeight.web.authentication.SessionManager;
-import org.seventyeight.web.debate.ReplyHub;
 import org.seventyeight.web.debate.treelike.ReplyTreeHub;
-import org.seventyeight.web.debate.treelike.TreeReply;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.extensions.Copyright.Copyright;
 import org.seventyeight.web.extensions.debate.Debate;
@@ -112,6 +109,10 @@ public class SeventyEight {
         action,
         data
 	}
+
+    public enum ItemRelation implements EdgeType {
+        scores
+    }
 		
 	public enum GroupEdgeType implements EdgeType {
 		readAccess,
@@ -739,7 +740,7 @@ public class SeventyEight {
     /*  TEMPORARY STUFF   */
     /**********************/
 
-    public Class<? extends Hub> getReplyHubType() {
+    public Class<? extends AbstractHub> getReplyHubType() {
         return ReplyTreeHub.class;
     }
 

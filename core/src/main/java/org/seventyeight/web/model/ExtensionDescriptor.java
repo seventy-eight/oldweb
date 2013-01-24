@@ -8,7 +8,7 @@ import org.seventyeight.web.SeventyEight;
  *         Date: 20-12-12
  *         Time: 14:50
  */
-public abstract class ExtensionDescriptor extends Descriptor<Hub> {
+public abstract class ExtensionDescriptor extends Descriptor<AbstractHub> {
 
     @Override
     public EdgeType getRelationType() {

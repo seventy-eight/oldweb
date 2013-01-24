@@ -15,7 +15,7 @@ import java.util.List;
  *         Date: 29-12-12
  *         Time: 22:03
  */
-public abstract class AbstractExtensionHub<T extends Describable> extends Hub {
+public abstract class AbstractExtensionHub<T extends Describable> extends AbstractHub {
 
     private static Logger logger = Logger.getLogger( AbstractExtensionHub.class );
 

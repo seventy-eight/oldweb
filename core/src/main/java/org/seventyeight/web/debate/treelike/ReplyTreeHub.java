@@ -38,7 +38,7 @@ public class ReplyTreeHub extends ReplyHub implements ReplyHubExtension {
 
         @Override
         public String getDisplayName() {
-            return "Reply Tree Hub";
+            return "Reply Tree AbstractHub";
         }
     }
 

@@ -119,6 +119,16 @@ public class OrientNode implements Node {
         return es;
     }
 
+    @Override
+    public Edge getFirstEdge( EdgeType type, Direction direction ) {
+        List<OrientEdge> edges = getEdges( type, direction );
+
+        if( edges.size() == 0 ) {
+            return null;
+        } else {
+            return edges.get( 0 );
+        }
+    }
 
 
     @Override
