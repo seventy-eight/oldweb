@@ -13,7 +13,7 @@ import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 
-public abstract class AbstractExtension extends AbstractItem implements Extension, Savable {
+public abstract class AbstractExtension extends AbstractItem implements Extension, Describable {
 	
 	private static Logger logger = Logger.getLogger( AbstractExtension.class );
 	
@@ -33,6 +33,8 @@ public abstract class AbstractExtension extends AbstractItem implements Extensio
     public EdgeType getEdgeType() {
         return SeventyEight.ResourceEdgeType.extension;
     }
+
+    public abstract Class<?> getExtensionClass();
 
     public class ExtensionSave extends Save {
 

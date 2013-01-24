@@ -26,6 +26,11 @@ public abstract class AbstractDebate extends AbstractExtension implements Debate
         super( node );
     }
 
+    @Override
+    public Class<?> getExtensionClass() {
+        return DebateInterface.class;
+    }
+
     public abstract Descriptor<?> getReplyDescriptor();
 
     public static List<Descriptor> all() {
@@ -45,7 +50,7 @@ public abstract class AbstractDebate extends AbstractExtension implements Debate
         //node.save();
     }
 
-    public static abstract class DebateImplDescriptor extends ExtensionDescriptor {
+    public static abstract class DebateImplDescriptor extends ExtensionDescriptor<AbstractDebate> {
 
         @Override
         public void configureIndex( Database db ) {

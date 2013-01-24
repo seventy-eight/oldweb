@@ -14,8 +14,13 @@ public class UserAvatar extends AbstractExtension implements UserExtension, Desc
 	public UserAvatar( Node node ) {
 		super( node );
 	}
-	
-	public Portrait getPortrait() throws UnableToInstantiateObjectException, NoSuchObjectException {
+
+    @Override
+    public Class<?> getExtensionClass() {
+        return UserExtension.class;
+    }
+
+    public Portrait getPortrait() throws UnableToInstantiateObjectException, NoSuchObjectException {
 		return getObject( SeventyEight.ResourceEdgeType.extension );
 	}
 	

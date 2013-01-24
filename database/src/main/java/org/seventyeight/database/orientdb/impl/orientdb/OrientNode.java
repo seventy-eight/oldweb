@@ -276,7 +276,7 @@ public class OrientNode implements Node {
 
     @Override
     public void remove() {
-        doc.remove();
+        db.getInternalDatabase().removeVertex( doc );
     }
 
     @Override

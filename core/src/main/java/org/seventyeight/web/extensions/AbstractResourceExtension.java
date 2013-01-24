@@ -20,6 +20,11 @@ public abstract class AbstractResourceExtension extends AbstractExtension implem
     }
 
     @Override
+    public Class<?> getExtensionClass() {
+        return ResourceExtension.class;
+    }
+
+    @Override
     public Descriptor<?> getDescriptor() {
         return SeventyEight.getInstance().getDescriptor( getClass() );
     }

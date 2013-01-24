@@ -20,8 +20,13 @@ public class UserDecal extends AbstractExtension implements Portrait, Describabl
 			setDecalId( Long.parseLong( id ) );
 		}
 	}
-	
-	public void setDecalId( long id ) {
+
+    @Override
+    public Class<?> getExtensionClass() {
+        return UserAvatarExtension.class;
+    }
+
+    public void setDecalId( long id ) {
 		node.set( "decalId", id );
 	}
 	

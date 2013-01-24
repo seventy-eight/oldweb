@@ -100,7 +100,7 @@ public class Debate extends AbstractResourceExtension implements Describable {
         */
     }
 
-    public static class DebateDescriptor extends Descriptor<Debate> {
+    public static class DebateDescriptor extends ExtensionDescriptor<Debate> {
 
         @Override
         public String getDisplayName() {

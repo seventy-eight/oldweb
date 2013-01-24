@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.seventyeight.database.*;
+import org.seventyeight.structure.Tuple;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.SeventyEight.ResourceEdgeType;
 import org.seventyeight.web.exceptions.*;
@@ -158,13 +159,20 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
      * @param nodeMap Can be null
      * @return
      */
-    public Describable handleJsonConfiguration( CoreRequest request, JsonObject jsonData, Map<String, Node> nodeMap ) throws DescribableException {
+    public Describable handleJsonConfiguration( CoreRequest request, JsonObject jsonData, Map<String, Tuple<Edge, Node>> nodeMap ) throws DescribableException {
         String cls = jsonData.get( SeventyEight.__JSON_CLASS_NAME ).getAsString();
         if( nodeMap != null && nodeMap.containsKey( cls ) ) {
-            return handleJsonConfiguration( request, jsonData, nodeMap.get( cls ) );
+            Describable d = handleJsonConfiguration( request, jsonData, nodeMap.get( cls ).getSecond() );
+            nodeMap.remove( cls );
+            return d;
         } else {
             return handleJsonConfiguration( request, jsonData, (Node) null );
         }
+    }
+
+    public void addExtension( Describable extension ) throws CouldNotLoadObjectException, UnableToInstantiateObjectException {
+        logger.debug( "Adding " + extension );
+        node.createEdge( extension.getNode(), ResourceEdgeType.extension ).save();
     }
 
     public Describable handleJsonConfiguration( CoreRequest request, JsonObject jsonData, Node enode ) throws DescribableException {
@@ -181,13 +189,10 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 
             /* Determine existence */
             if( enode != null ) {
-                e = (Describable) SeventyEight.getInstance().getDatabaseItem( enode );
+                e =  SeventyEight.getInstance().getDatabaseItem( enode );
             } else {
                 e = d.newInstance( getDB() );
-
-                logger.debug( "Creating relation from hub node to describable" );
-                node.createEdge( e.getNode(), d.getRelationType() ).save();
-
+                addExtension( e );
             }
 
             logger.debug( "Saving describable: " + e );
@@ -222,14 +227,15 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         /* Prepare existing configuration nodes */
         List<Edge> extensionEdges = node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND, SeventyEight.FIELD_EXTENSION_CLASS, extensionClassName );
 
-        Map<String, Node> nodeMap = new HashMap<String, Node>();
+        Map<String, Tuple<Edge, Node>> nodeMap = new HashMap<String, Tuple<Edge, Node>>();
+
 
         for( Edge edge : extensionEdges ) {
             Node node = edge.getTargetNode();
             String className = node.get( "class" );
 
             if( className != null ) {
-                nodeMap.put( className, node );
+                nodeMap.put( className, new Tuple( edge, node ) );
             }
         }
 
@@ -242,6 +248,35 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
                 logger.error( e );
             }
         }
+
+        /* Remove */
+       logger.debug( "Removing superfluous extensions" );
+        for( Tuple<Edge, Node> t : nodeMap.values() ) {
+            recursivelyRemoveExtensions( t.getFirst() );
+        }
+
+    }
+
+    public void recursivelyRemoveExtensions( Edge extensionEdge ) {
+
+        Node node = extensionEdge.getTargetNode();
+
+        /* Verify that the node is an extension */
+        if( node.get( SeventyEight.FIELD_EXTENSION_CLASS, null ) == null ) {
+            logger.debug( "Node was not really an extension" );
+            return;
+        }
+
+        for( Edge edge : node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND ) ) {
+            Node next = edge.getTargetNode();
+            recursivelyRemoveExtensions( edge );
+        }
+
+        logger.debug( "Removing " + extensionEdge );
+        extensionEdge.remove();
+        logger.debug( "Removing " + node );
+        node.remove();
+
     }
 
     /**
@@ -322,6 +357,10 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         return nodes;
     }
 
+    public List<Edge> getALlExtensions() {
+        return node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND );
+    }
+
     public void addAction( AbstractAction action ) {
         List<Edge> edges = node.getEdges( ResourceEdgeType.action, Direction.OUTBOUND, "action", action.getUrlName() );
 
@@ -398,4 +437,5 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 
         hub.addScore( name, score );
     }
+
 }
