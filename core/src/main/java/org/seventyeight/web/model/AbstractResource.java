@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.seventyeight.database.Database;
-import org.seventyeight.database.Edge;
-import org.seventyeight.database.EdgeType;
-import org.seventyeight.database.Node;
+import org.seventyeight.database.*;
 import org.seventyeight.utils.Date;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
@@ -17,7 +14,7 @@ import org.seventyeight.web.model.resources.User;
 import com.google.gson.JsonObject;
 
 
-public abstract class AbstractResource extends AbstractObject implements Portraitable {
+public abstract class AbstractResource extends AbstractObject implements Portraitable, Actionable {
 	
 	private static Logger logger = Logger.getLogger( AbstractResource.class );
 
@@ -283,4 +280,21 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
     public EdgeType getEdgeType() {
         return null;
     }
+
+    @Override
+    public Action getAction( Request request, String urlName ) {
+        List<Edge> edges = node.getEdges( SeventyEight.ResourceEdgeType.action, Direction.OUTBOUND, "action", urlName );
+
+        if( edges.size() == 0 ) {
+            return null;
+        } else {
+            try {
+                return (Action) SeventyEight.getInstance().getDatabaseItem( edges.get( 0 ).getTargetNode() );
+            } catch( CouldNotLoadObjectException e ) {
+                logger.warn( e.getMessage() );
+                return null;
+            }
+        }
+    }
+
 }

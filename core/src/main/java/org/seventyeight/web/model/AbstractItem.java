@@ -16,7 +16,7 @@ import org.seventyeight.web.hubs.ScoresHub;
 import javax.servlet.http.HttpServletResponse;
 
 
-public abstract class AbstractItem extends AbstractDatabaseItem implements Item, Savable, Actionable, Action {
+public abstract class AbstractItem extends AbstractDatabaseItem implements Item, Savable, Action {
 
 	private static Logger logger = Logger.getLogger( AbstractItem.class );
 
@@ -48,8 +48,12 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 		
 		node.save();
 
-        logger.debug( "Handling extensions" );
+
         if( jsonData != null ) {
+            logger.debug( "Removing actions" );
+            recursivelyRemoveActions();
+            
+            logger.debug( "Handling extensions" );
             handleJsonConfigurations( request, jsonData );
         } else {
             logger.debug( "Json data was null. Skipping" );
@@ -258,22 +262,25 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
     }
 
     public void recursivelyRemoveExtensions( Edge extensionEdge ) {
-
-        Node node = extensionEdge.getTargetNode();
-
-        /* Verify that the node is an extension */
-        if( node.get( SeventyEight.FIELD_EXTENSION_CLASS, null ) == null ) {
-            logger.debug( "Node was not really an extension" );
-            return;
+        recursivelyRemove( extensionEdge, ResourceEdgeType.extension );
+    }
+    public void recursivelyRemoveActions() {
+        for( Edge e : getALlActions() ) {
+            recursivelyRemove( e, ResourceEdgeType.action );
         }
+    }
 
-        for( Edge edge : node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND ) ) {
+    public void recursivelyRemove( Edge startEdge, EdgeType type ) {
+
+        Node node = startEdge.getTargetNode();
+
+        for( Edge edge : node.getEdges( type, Direction.OUTBOUND ) ) {
             Node next = edge.getTargetNode();
             recursivelyRemoveExtensions( edge );
         }
 
-        logger.debug( "Removing " + extensionEdge );
-        extensionEdge.remove();
+        logger.debug( "Removing " + startEdge );
+        startEdge.remove();
         logger.debug( "Removing " + node );
         node.remove();
 
@@ -361,6 +368,10 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         return node.getEdges( ResourceEdgeType.extension, Direction.OUTBOUND );
     }
 
+    public List<Edge> getALlActions() {
+        return node.getEdges( ResourceEdgeType.action, Direction.OUTBOUND );
+    }
+
     public void addAction( AbstractAction action ) {
         List<Edge> edges = node.getEdges( ResourceEdgeType.action, Direction.OUTBOUND, "action", action.getUrlName() );
 
@@ -381,22 +392,6 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         action.getNode().set( "action", action.getUrlName() );
         action.getNode().save();
         this.createRelation( action, ResourceEdgeType.action ).save();
-    }
-
-    @Override
-    public Action getAction( Request request, String urlName ) {
-        List<Edge> edges = node.getEdges( ResourceEdgeType.action, Direction.OUTBOUND, "action", urlName );
-
-        if( edges.size() == 0 ) {
-            return null;
-        } else {
-            try {
-                return (Action) SeventyEight.getInstance().getDatabaseItem( edges.get( 0 ).getTargetNode() );
-            } catch( CouldNotLoadObjectException e ) {
-                logger.warn( e.getMessage() );
-                return null;
-            }
-        }
     }
 
     public abstract EdgeType getEdgeType();
