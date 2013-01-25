@@ -52,7 +52,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         if( jsonData != null ) {
             logger.debug( "Removing actions" );
             recursivelyRemoveActions();
-            
+
             logger.debug( "Handling extensions" );
             handleJsonConfigurations( request, jsonData );
         } else {
