@@ -64,11 +64,15 @@ public class TopLevelActionHandler {
             /* Last sub space was an action, do its index method */
 
             try {
+                logger.debug( "RIGHT HERE" );
                 executeMethod( action, request, response, "index" );
                 return;
             } catch( Exception e ) {
                 logger.debug( e.getMessage() );
+                e.printStackTrace();
             }
+
+            logger.debug( "NOPE" );
 
             if( !request.isRequestPost() ) {
                 /* First try to find a view, if not a POST */
@@ -87,12 +91,14 @@ public class TopLevelActionHandler {
                 if( !request.isRequestPost() ) {
                     /* First try to find a view, if not a POST */
                     try {
-                        //logger.debug( "Action: " + lastAction + " -> " + method );
+                        logger.debug( "Action: " + lastAction + " -> " + method );
                         executeMethod( lastAction, request, response, method );
                         return;
                     } catch( Exception e ) {
                         logger.debug( e.getMessage() );
                     }
+
+                    logger.debug( "TRYING VIEW FILE" );
 
                     try {
                         request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( lastAction, method + ".vm" ) );
@@ -133,7 +139,8 @@ public class TopLevelActionHandler {
             //return resource.getClass().getDeclaredMethod( m, ParameterRequest.class, JsonObject.class );
             return ClassUtils.getEnheritedMethod( action.getClass(), m, Request.class, HttpServletResponse.class, JsonObject.class );
         } else {
-            return action.getClass().getDeclaredMethod( m, Request.class, HttpServletResponse.class );
+            //return action.getClass().getDeclaredMethod( m, Request.class, HttpServletResponse.class );
+            return ClassUtils.getEnheritedMethod( action.getClass(), m, Request.class, HttpServletResponse.class );
         }
     }
 }

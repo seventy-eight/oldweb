@@ -1,5 +1,6 @@
 package org.seventyeight.web.model;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,8 @@ import org.seventyeight.web.model.extensions.ResourceExtension;
 import org.seventyeight.web.model.resources.User;
 
 import com.google.gson.JsonObject;
+
+import javax.servlet.http.HttpServletResponse;
 
 
 public abstract class AbstractResource extends AbstractObject implements Portraitable, Actionable {
@@ -297,4 +300,17 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
         }
     }
 
+    public void doIndex( Request request, HttpServletResponse response ) {
+        logger.debug( "[VIEWING] " + this );
+        try {
+            request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( this, "index.vm" ) );
+            response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
+        } catch( TemplateDoesNotExistException e ) {
+            e.printStackTrace();
+        } catch( IOException e ) {
+            e.printStackTrace();
+        }
+
+
+    }
 }
