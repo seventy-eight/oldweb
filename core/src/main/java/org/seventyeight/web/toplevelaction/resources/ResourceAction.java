@@ -24,8 +24,7 @@ public class ResourceAction implements ItemType {
     @Override
     public AbstractItem getItem( String name, Database db ) throws CouldNotLoadItemException {
         logger.debug( "Get RESOURCE " + name );
-        try {
-            AbstractResource r = ResourceUtils.getResource( db, name );
-            return r;
+        AbstractResource r = ResourceUtils.getResource( db, name );
+        return r;
     }
 }
