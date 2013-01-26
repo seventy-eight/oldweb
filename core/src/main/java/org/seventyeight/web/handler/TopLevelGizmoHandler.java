@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.ActionHandlerException;
+import org.seventyeight.web.exceptions.CouldNotLoadItemException;
 import org.seventyeight.web.exceptions.NoSuchJsonElementException;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.util.ClassUtils;
@@ -25,11 +26,58 @@ public class TopLevelGizmoHandler {
     // (0)/(1)handler/(2)first((3)second/(n)last
     // n is either an actions index or an action method
 
-    private void handleItemType( ItemType type, Request request ) {
+    public void execute( TopLevelGizmo gizmo, Request request, HttpServletResponse response ) throws ActionHandlerException {
+        if( gizmo instanceof ItemType ) {
+            handleItemType( (ItemType) gizmo, request, response );
+        } else if( gizmo instanceof TopLevelAction ) {
+            handleTopLevelAction( (TopLevelAction) gizmo, request, response );
+        } else if( gizmo instanceof TopLevelExecutor ) {
+            handleExecutor( (TopLevelExecutor) gizmo, request, response );
+        } else {
+            throw new ActionHandlerException( "WHAT??? " + gizmo );
+        }
+    }
+
+    private void handleExecutor( TopLevelExecutor executor, Request request, HttpServletResponse response ) throws ActionHandlerException {
+        executor.execute( request, response );
+    }
+
+    private void handleTopLevelAction( TopLevelAction action, Request request, HttpServletResponse response ) throws ActionHandlerException {
+        if( request.getRequestParts().length > 2 ) {
+            if( action instanceof Actionable ) {
+                actions( (Actionable) action, 2, request, response );
+            } else {
+                if( request.getRequestParts().length > 2 ) {
+                    throw new ActionHandlerException( "No such action, " + request.getRequestURI() );
+                } else {
+                    executeThing( request, response, (Item) action, request.getRequestParts()[2] );
+                }
+            }
+        } else {
+            /* TODO, what? */
+        }
+    }
+
+    private void handleItemType( ItemType type, Request request, HttpServletResponse response ) throws ActionHandlerException {
         if( request.getRequestParts().length > 2 ) {
             String name = request.getRequestParts()[2];
-            AbstractItem item = type.getItem( name, request.getDB() );
+            AbstractItem item = null;
+            try {
+                item = type.getItem( name, request.getDB() );
+            } catch( CouldNotLoadItemException e ) {
+                throw new ActionHandlerException( e );
+            }
             request.getContext().put( "title", item.getDisplayName() );
+
+            if( item instanceof Actionable ) {
+                actions( (Actionable) item, 3, request, response );
+            } else {
+                if( request.getRequestParts().length > 2 ) {
+                    throw new ActionHandlerException( "No such action, " + request.getRequestURI() );
+                } else {
+                    executeThing( request, response, item, "index" );
+                }
+            }
 
         } else {
             /* TODO, what? */

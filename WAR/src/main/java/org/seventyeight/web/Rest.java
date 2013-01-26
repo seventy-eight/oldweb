@@ -68,7 +68,7 @@ public class Rest extends HttpServlet {
         logger.fatal( "Query: " + request.getQueryString() );
         logger.fatal( "URI  : " + request.getRequestURI() );
 
-        TopLevelAction action = null;
+        TopLevelExecutor action = null;
         try {
             action = SeventyEight.getInstance().getTopLevelAction( r.getRequestParts()[1] );
         } catch( ActionHandlerDoesNotExistException e ) {
@@ -116,7 +116,7 @@ public class Rest extends HttpServlet {
         logger.debug( sw.print( 1000 ) );
     }
 
-    public void parseRequest( TopLevelAction action, Request request, HttpServletResponse response ) throws ActionHandlerDoesNotExistException, ActionHandlerException {
+    public void parseRequest( TopLevelExecutor action, Request request, HttpServletResponse response ) throws ActionHandlerDoesNotExistException, ActionHandlerException {
         logger.debug( "Parsing request" );
         SeventyEight.getInstance().getTopLevelActionHandler().execute( action, request, response );
     }

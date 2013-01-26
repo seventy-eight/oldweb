@@ -6,9 +6,8 @@ import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.AbstractResource;
-import org.seventyeight.web.model.Action;
 import org.seventyeight.web.model.Request;
-import org.seventyeight.web.model.TopLevelAction;
+import org.seventyeight.web.model.TopLevelExecutor;
 import org.seventyeight.web.util.ResourceHelper;
 
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +19,7 @@ import java.net.URLDecoder;
  *         Date: 22-12-12
  *         Time: 20:33
  */
-public class DatabaseBrowser implements TopLevelAction {
+public class DatabaseBrowser implements TopLevelExecutor {
 
     private Logger logger = Logger.getLogger( DatabaseBrowser.class );
 

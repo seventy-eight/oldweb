@@ -8,7 +8,6 @@ import org.seventyeight.web.exceptions.UnableToInstantiateObjectException;
 import org.seventyeight.web.model.AbstractResource;
 import org.seventyeight.web.model.Request;
 import org.seventyeight.web.model.ResourceDescriptor;
-import org.seventyeight.web.model.TopLevelAction;
 import org.seventyeight.web.util.ResourceHelper;
 
 import javax.servlet.http.HttpServletResponse;

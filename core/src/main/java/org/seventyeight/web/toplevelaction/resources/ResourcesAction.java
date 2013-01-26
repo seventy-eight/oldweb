@@ -8,7 +8,6 @@ import org.seventyeight.web.exceptions.MissingDescriptorException;
 import org.seventyeight.web.exceptions.TemplateDoesNotExistException;
 import org.seventyeight.web.exceptions.UnableToInstantiateObjectException;
 import org.seventyeight.web.model.*;
-import org.seventyeight.web.util.ResourceUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -18,14 +17,9 @@ import java.io.IOException;
  *         Date: 17-01-13
  *         Time: 14:08
  */
-public class ResourcesAction implements TopLevelAction, Actionable {
+public class ResourcesAction implements TopLevelAction {
 
     private Logger logger = Logger.getLogger( ResourcesAction.class );
-
-    @Override
-    public boolean execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
-        return false;
-    }
 
     public void doCreate( Request request, HttpServletResponse response, JsonObject jsonData ) throws IOException, TemplateDoesNotExistException {
         String className = request.getValue( "className" );
@@ -61,11 +55,6 @@ public class ResourcesAction implements TopLevelAction, Actionable {
 
         response.sendRedirect( r.getUrl() + "/configure" );
         //ResourceUtils.getConfigureResourceView( request, response, r, descriptor );
-    }
-
-    @Override
-    public Action getAction( Request request, String subSpace ) {
-        return null;
     }
 
     @Override

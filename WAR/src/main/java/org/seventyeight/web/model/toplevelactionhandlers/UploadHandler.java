@@ -27,7 +27,7 @@ import java.util.concurrent.Executors;
  *         Date: 08-12-12
  *         Time: 23:01
  */
-public class UploadHandler implements TopLevelAction {
+public class UploadHandler implements TopLevelExecutor {
 
     private static Logger logger = Logger.getLogger( UploadHandler.class );
 

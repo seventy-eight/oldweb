@@ -149,7 +149,7 @@ public class SeventyEight {
     /**
      * A {@link Map} of top level actions, given by its name
      */
-    private ConcurrentMap<String, TopLevelAction> topLevelActions = new ConcurrentHashMap<String, TopLevelAction>();
+    private ConcurrentMap<String, TopLevelExecutor> topLevelActions = new ConcurrentHashMap<String, TopLevelExecutor>();
 
 	public SeventyEight( File path, Database db ) {
 		if( instance != null ) {
@@ -621,12 +621,12 @@ public class SeventyEight {
         return sessionManager;
     }
 
-    public void addTopLevelAction( String name, TopLevelAction handler ) {
+    public void addTopLevelAction( String name, TopLevelExecutor handler ) {
         logger.debug( "Adding " + name + " to action handlers" );
         topLevelActions.put( name, handler );
     }
 
-    public TopLevelAction getTopLevelAction( String name ) throws ActionHandlerDoesNotExistException {
+    public TopLevelExecutor getTopLevelAction( String name ) throws ActionHandlerDoesNotExistException {
         if( topLevelActions.containsKey( name ) ) {
             return topLevelActions.get( name );
         } else {

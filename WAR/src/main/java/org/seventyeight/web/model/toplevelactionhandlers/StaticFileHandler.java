@@ -10,15 +10,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.ActionHandlerException;
-import org.seventyeight.web.model.Action;
 import org.seventyeight.web.model.Request;
-import org.seventyeight.web.model.TopLevelAction;
+import org.seventyeight.web.model.TopLevelExecutor;
 import org.seventyeight.web.util.FileHelper;
 import org.seventyeight.web.util.GetFile;
 
 
 //@TopLevelActionHandlerType
-public class StaticFileHandler implements TopLevelAction {
+public class StaticFileHandler implements TopLevelExecutor {
 	
 	private static Logger logger = Logger.getLogger( StaticFileHandler.class );
 
