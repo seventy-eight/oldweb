@@ -88,16 +88,16 @@ public class DatabaseContextListener implements ServletContextListener {
 
             /* Adding action handlers */
             //GraphDragon.getInstance().addActionHandler( "system", new SystemHandler() );
-            SeventyEight.getInstance().addTopLevelAction( "resource", new ResourceAction() );
-            SeventyEight.getInstance().addTopLevelAction( "resources", new ResourcesAction() );
-            SeventyEight.getInstance().addTopLevelAction( "static", new StaticFileHandler() );
-            SeventyEight.getInstance().addTopLevelAction( "upload", new UploadHandler() );
+            SeventyEight.getInstance().addTopLevelGizmo( "resource", new ResourceAction() );
+            SeventyEight.getInstance().addTopLevelGizmo( "resources", new ResourcesAction() );
+            SeventyEight.getInstance().addTopLevelGizmo( "static", new StaticFileHandler() );
+            SeventyEight.getInstance().addTopLevelGizmo( "upload", new UploadHandler() );
 
-            //SeventyEight.getInstance().addTopLevelAction( "debate", new DebateHandler() );
+            //SeventyEight.getInstance().addTopLevelGizmo( "debate", new DebateHandler() );
 
-            SeventyEight.getInstance().addTopLevelAction( "db", new DatabaseBrowser() );
+            SeventyEight.getInstance().addTopLevelGizmo( "db", new DatabaseBrowser() );
 
-            SeventyEight.getInstance().addTopLevelAction( "theme", new ThemeFileHandler() );
+            SeventyEight.getInstance().addTopLevelGizmo( "theme", new ThemeFileHandler() );
 
             /* Post actions */
             SeventyEight.getInstance().setThemesPath( new File( "C:/Users/Christian/projects/seventy-eight/system/src/main/resources/themes" ) );

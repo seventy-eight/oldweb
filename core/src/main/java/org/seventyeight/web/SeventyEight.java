@@ -621,7 +621,7 @@ public class SeventyEight {
         return sessionManager;
     }
 
-    public void addTopLevelAction( String name, TopLevelExecutor handler ) {
+    public void addTopLevelGizmo( String name, TopLevelGizmo handler ) {
         logger.debug( "Adding " + name + " to action handlers" );
         topLevelGizmos.put( name, handler );
     }
