@@ -9,7 +9,7 @@ import org.seventyeight.web.authentication.SimpleAuthentication;
 import org.seventyeight.web.authentication.exceptions.NoSuchUserException;
 import org.seventyeight.web.authentication.exceptions.PasswordDoesNotMatchException;
 import org.seventyeight.web.authentication.exceptions.UnableToCreateSessionException;
-import org.seventyeight.web.exceptions.ActionHandlerDoesNotExistException;
+import org.seventyeight.web.exceptions.GizmoHandlerDoesNotExistException;
 import org.seventyeight.web.exceptions.ActionHandlerException;
 import org.seventyeight.web.model.*;
 
@@ -68,10 +68,10 @@ public class Rest extends HttpServlet {
         logger.fatal( "Query: " + request.getQueryString() );
         logger.fatal( "URI  : " + request.getRequestURI() );
 
-        TopLevelExecutor action = null;
+        TopLevelGizmo action = null;
         try {
-            action = SeventyEight.getInstance().getTopLevelAction( r.getRequestParts()[1] );
-        } catch( ActionHandlerDoesNotExistException e ) {
+            action = SeventyEight.getInstance().getTopLevelGizmo( r.getRequestParts()[1] );
+        } catch( GizmoHandlerDoesNotExistException e ) {
             generateException( r, out, e, e.getMessage() );
             return;
         }
@@ -116,9 +116,9 @@ public class Rest extends HttpServlet {
         logger.debug( sw.print( 1000 ) );
     }
 
-    public void parseRequest( TopLevelExecutor action, Request request, HttpServletResponse response ) throws ActionHandlerDoesNotExistException, ActionHandlerException {
+    public void parseRequest( TopLevelGizmo gizmo, Request request, HttpServletResponse response ) throws GizmoHandlerDoesNotExistException, ActionHandlerException {
         logger.debug( "Parsing request" );
-        SeventyEight.getInstance().getTopLevelActionHandler().execute( action, request, response );
+        SeventyEight.getInstance().getTopLevelActionHandler().execute( gizmo, request, response );
     }
 
     private void generateException( Request request, PrintWriter writer, Throwable e, String message ) {

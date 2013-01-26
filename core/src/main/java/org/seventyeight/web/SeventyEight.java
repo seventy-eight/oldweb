@@ -149,7 +149,7 @@ public class SeventyEight {
     /**
      * A {@link Map} of top level actions, given by its name
      */
-    private ConcurrentMap<String, TopLevelExecutor> topLevelActions = new ConcurrentHashMap<String, TopLevelExecutor>();
+    private ConcurrentMap<String, TopLevelGizmo> topLevelGizmos = new ConcurrentHashMap<String, TopLevelGizmo>();
 
 	public SeventyEight( File path, Database db ) {
 		if( instance != null ) {
@@ -623,14 +623,14 @@ public class SeventyEight {
 
     public void addTopLevelAction( String name, TopLevelExecutor handler ) {
         logger.debug( "Adding " + name + " to action handlers" );
-        topLevelActions.put( name, handler );
+        topLevelGizmos.put( name, handler );
     }
 
-    public TopLevelExecutor getTopLevelAction( String name ) throws ActionHandlerDoesNotExistException {
-        if( topLevelActions.containsKey( name ) ) {
-            return topLevelActions.get( name );
+    public TopLevelGizmo getTopLevelGizmo( String name ) throws GizmoHandlerDoesNotExistException {
+        if( topLevelGizmos.containsKey( name ) ) {
+            return topLevelGizmos.get( name );
         } else {
-            throw new ActionHandlerDoesNotExistException( "The action handler " + name + " does not exist" );
+            throw new GizmoHandlerDoesNotExistException( "The GIZMO handler " + name + " does not exist" );
         }
     }
 
