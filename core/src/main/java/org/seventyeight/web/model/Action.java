@@ -7,6 +7,6 @@ import org.seventyeight.database.Node;
  *         Date: 02-12-12
  *         Time: 15:59
  */
-public interface Action {
-    public abstract String getUrlName();
+public interface Action extends Item {
+    public String getUrlName();
 }
