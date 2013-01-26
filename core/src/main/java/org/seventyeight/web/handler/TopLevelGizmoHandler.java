@@ -29,6 +29,7 @@ public class TopLevelGizmoHandler {
         if( request.getRequestParts().length > 2 ) {
             String name = request.getRequestParts()[2];
             AbstractItem item = type.getItem( name, request.getDB() );
+            request.getContext().put( "title", item.getDisplayName() );
 
         } else {
             /* TODO, what? */

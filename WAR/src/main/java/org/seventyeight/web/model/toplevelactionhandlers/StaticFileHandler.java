@@ -23,25 +23,19 @@ public class StaticFileHandler implements TopLevelAction {
 	private static Logger logger = Logger.getLogger( StaticFileHandler.class );
 
     @Override
-    public boolean execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
+    public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
         FileHelper fh = new FileHelper();
         try {
             fh.getFile( request, response, new S(), true );
         } catch( IOException e ) {
             throw new ActionHandlerException( e );
         }
-
-        return true;
     }
 
     public String getUrlName() {
 		return "static";
 	}
 
-    @Override
-    public Action getAction( Request request, String subSpace ) {
-        return null;
-    }
 
     private class S implements GetFile {
 

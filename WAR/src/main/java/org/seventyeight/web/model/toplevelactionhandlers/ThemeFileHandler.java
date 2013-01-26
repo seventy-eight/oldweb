@@ -23,25 +23,18 @@ public class ThemeFileHandler implements TopLevelAction {
 	private static Logger logger = Logger.getLogger( ThemeFileHandler.class );
 
     @Override
-    public boolean execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
+    public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
         FileHelper fh = new FileHelper();
         try {
             fh.getFile( request, response, new GetThemeFile( request.getTheme() ), true );
         } catch( IOException e ) {
             throw new ActionHandlerException( e );
         }
-
-        return true;
     }
 
     public String getUrlName() {
 		return "theme";
 	}
-
-    @Override
-    public Action getAction( Request request, String subSpace ) {
-        return null;
-    }
 
     private class GetThemeFile implements GetFile {
 

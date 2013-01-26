@@ -27,12 +27,7 @@ public class DatabaseBrowser implements TopLevelAction {
     private ResourceHelper helper = new ResourceHelper();
 
     @Override
-    public Action getAction( Request request, String subSpace ) {
-        return null;
-    }
-
-    @Override
-    public boolean execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
+    public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
         request.getContext().put( "outbound", Direction.OUTBOUND );
         request.getContext().put( "inbound", Direction.INBOUND );
 
@@ -73,8 +68,6 @@ public class DatabaseBrowser implements TopLevelAction {
         } catch( Exception e ) {
             throw new ActionHandlerException( e );
         }
-
-        return true;
     }
 
     public String getUrlName() {

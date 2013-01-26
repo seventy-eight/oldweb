@@ -1,6 +1,7 @@
 package org.seventyeight.web.toplevelaction.resources;
 
 import org.apache.log4j.Logger;
+import org.seventyeight.database.Database;
 import org.seventyeight.web.exceptions.ActionHandlerException;
 import org.seventyeight.web.exceptions.CouldNotLoadResourceException;
 import org.seventyeight.web.exceptions.NotFoundException;
@@ -15,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
  *         Date: 17-01-13
  *         Time: 21:35
  */
-public class ResourceAction implements TopLevelAction, Actionable, NamedItem {
+public class ResourceAction implements ItemType {
 
     private static Logger logger = Logger.getLogger( ResourceAction.class );
 
@@ -26,20 +27,10 @@ public class ResourceAction implements TopLevelAction, Actionable, NamedItem {
 
 
     @Override
-    public boolean execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
-        return false;
-    }
-
-    @Override
-    public Action getAction( Request request, String subSpace ) {
-        logger.debug( "Get action " + subSpace );
+    public AbstractItem getItem( String name, Database db ) {
+        logger.debug( "Get RESOURCE " + name );
         try {
-            AbstractResource r = ResourceUtils.getResource( request.getDB(), subSpace );
-            request.getContext().put( "title", r.getDisplayName() );
-            return (Action) r;
-        } catch( Exception e ) {
-            logger.error( e );
-            return null;
-        }
+            AbstractResource r = ResourceUtils.getResource( db, name );
+            return r;
     }
 }

@@ -55,7 +55,7 @@ public class UploadHandler implements TopLevelAction {
      */
 
     @Override
-    public boolean execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
+    public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
 
         System.out.println( request.getParameterMap() );
 
@@ -100,13 +100,6 @@ public class UploadHandler implements TopLevelAction {
                 }
             }
         }
-
-        return true;
-    }
-
-    @Override
-    public Action getAction( Request request, String subSpace ) {
-        return null;
     }
 
     private void upload( Request request, HttpServletResponse response ) throws IOException, ServletException, ResourceNotCreatedException {

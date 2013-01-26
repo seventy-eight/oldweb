@@ -47,7 +47,7 @@ public class ResourceUtils {
     }
 
 
-    public static AbstractResource getResource( Database db, String part ) throws CouldNotLoadResourceException, TooManyException, NotFoundException {
+    public static AbstractResource getResource( Database db, String part ) throws CouldNotLoadResourceException {
         Long id = null;
         AbstractResource r = null;
         try {
