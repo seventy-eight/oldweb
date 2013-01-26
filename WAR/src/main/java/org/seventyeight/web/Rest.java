@@ -65,6 +65,8 @@ public class Rest extends HttpServlet {
         r.getContext().put( "request", r );
         r.setRequestParts( request.getRequestURI().split( "/" ) );
         logger.debug( "------ " + Arrays.asList( r.getRequestParts() ) + " ------" );
+        logger.fatal( "Query: " + request.getQueryString() );
+        logger.fatal( "URI  : " + request.getRequestURI() );
 
         TopLevelAction action = null;
         try {

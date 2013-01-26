@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  *         Date: 17-01-13
  *         Time: 21:35
  */
-public class ResourceAction implements TopLevelAction, Actionable {
+public class ResourceAction implements TopLevelAction, Actionable, NamedItem {
 
     private static Logger logger = Logger.getLogger( ResourceAction.class );
 

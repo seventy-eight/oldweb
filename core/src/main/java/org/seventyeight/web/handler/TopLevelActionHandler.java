@@ -27,6 +27,8 @@ public class TopLevelActionHandler {
     // (0)/(1)handler/(2)first((3)second/(n)last
     // n is either an actions index or an action method
 
+    private void handle
+
     public void execute( TopLevelAction topAction, Request request, HttpServletResponse response ) throws ActionHandlerException {
 
         if( topAction.execute( request, response ) ) {
@@ -44,7 +46,8 @@ public class TopLevelActionHandler {
 
             lastAction = action;
 
-            if( action instanceof Actionable ) {
+            if(  ) {
+            } else if( action instanceof Actionable ) {
                 action = ((Actionable)action).getAction( request, method );
             } else {
                 /* Was not actionable, break */
