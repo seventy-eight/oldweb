@@ -1,6 +1,6 @@
 package org.seventyeight.web.exceptions;
 
-public class TooManyException extends CouldNotLoadResourceException {
+public class TooManyException extends CouldNotLoadItemException {
 
     public TooManyException( String s, Exception e ) {
         super( s, e );

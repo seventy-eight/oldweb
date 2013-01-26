@@ -2,14 +2,9 @@ package org.seventyeight.web.toplevelaction.resources;
 
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Database;
-import org.seventyeight.web.exceptions.ActionHandlerException;
-import org.seventyeight.web.exceptions.CouldNotLoadResourceException;
-import org.seventyeight.web.exceptions.NotFoundException;
-import org.seventyeight.web.exceptions.TooManyException;
+import org.seventyeight.web.exceptions.CouldNotLoadItemException;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.util.ResourceUtils;
-
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author cwolfgang
@@ -27,7 +22,7 @@ public class ResourceAction implements ItemType {
 
 
     @Override
-    public AbstractItem getItem( String name, Database db ) {
+    public AbstractItem getItem( String name, Database db ) throws CouldNotLoadItemException {
         logger.debug( "Get RESOURCE " + name );
         try {
             AbstractResource r = ResourceUtils.getResource( db, name );

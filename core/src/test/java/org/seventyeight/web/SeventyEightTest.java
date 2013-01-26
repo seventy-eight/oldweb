@@ -37,7 +37,7 @@ public class SeventyEightTest {
     }
 
     @Test
-    public void createUserSaved() throws UnableToInstantiateObjectException, ErrorWhileSavingException, ParameterDoesNotExistException, IncorrectTypeException, ResourceDoesNotExistException, InconsistentParameterException, TooManyException, NotFoundException, CouldNotLoadResourceException {
+    public void createUserSaved() throws UnableToInstantiateObjectException, ErrorWhileSavingException, ParameterDoesNotExistException, IncorrectTypeException, ResourceDoesNotExistException, InconsistentParameterException, TooManyException, NotFoundException, CouldNotLoadItemException {
         SeventyEight se = SeventyEight.getInstance();
         assertNotNull( se );
 

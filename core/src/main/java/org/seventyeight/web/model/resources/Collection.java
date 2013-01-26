@@ -39,7 +39,7 @@ public class Collection extends AbstractResource {
 		return new ResourceSaveImpl( this, request, jsonData );
 	}
 
-	public void addResource( long identifier, long position ) throws CouldNotLoadResourceException, TooManyException, NotFoundException {
+	public void addResource( long identifier, long position ) throws CouldNotLoadItemException, TooManyException, NotFoundException {
 		AbstractResource r = SeventyEight.getInstance().getResource( getDB(), identifier );
 
 		addResource( r, position );
@@ -59,9 +59,9 @@ public class Collection extends AbstractResource {
     /**
      * Remove a resource from a collection
      * @param identifier
-     * @throws CouldNotLoadResourceException
+     * @throws org.seventyeight.web.exceptions.CouldNotLoadItemException
      */
-	public void removeResource( long identifier ) throws CouldNotLoadResourceException, TooManyException, NotFoundException {
+	public void removeResource( long identifier ) throws CouldNotLoadItemException, TooManyException, NotFoundException {
 		AbstractResource r = SeventyEight.getInstance().getResource( getDB(), identifier );
 		removeResource( r );
 	}

@@ -47,23 +47,23 @@ public class ResourceUtils {
     }
 
 
-    public static AbstractResource getResource( Database db, String part ) throws CouldNotLoadResourceException {
+    public static AbstractResource getResource( Database db, String name ) throws CouldNotLoadItemException {
         Long id = null;
         AbstractResource r = null;
         try {
-            id = new Long( part );
+            id = new Long( name );
             r = SeventyEight.getInstance().getResource( db, id );
 
         } catch( NumberFormatException e ) {
             /* This is an identifier, let's try the title */
             String s = "";
             try {
-                s = URLDecoder.decode( part, "UTF-8" );
+                s = URLDecoder.decode( name, "UTF-8" );
                 logger.debug( "Finding " + s );
                 //r = SeventyEight.getInstance().getResourceByTitle( s );
             } catch( UnsupportedEncodingException e1 ) {
                 logger.warn( s + " not found" );
-                throw new CouldNotLoadResourceException( "Unable to find resource[" + s + "]: " + e1.getMessage());
+                throw new CouldNotLoadItemException( "Unable to find resource[" + s + "]: " + e1.getMessage());
             }
         }
 

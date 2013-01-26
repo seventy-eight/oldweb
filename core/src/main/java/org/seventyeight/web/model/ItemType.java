@@ -1,6 +1,7 @@
 package org.seventyeight.web.model;
 
 import org.seventyeight.database.Database;
+import org.seventyeight.web.exceptions.CouldNotLoadItemException;
 
 /**
  * @author cwolfgang
@@ -8,5 +9,5 @@ import org.seventyeight.database.Database;
  *         Time: 21:05
  */
 public interface ItemType extends TopLevelGizmo {
-    public AbstractItem getItem( String name, Database db );
+    public AbstractItem getItem( String name, Database db ) throws CouldNotLoadItemException;
 }

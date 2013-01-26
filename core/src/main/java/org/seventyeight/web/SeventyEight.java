@@ -361,7 +361,7 @@ public class SeventyEight {
         return instance;
     }
 	
-	public AbstractResource getResource( Database db, Long id ) throws NotFoundException, TooManyException, CouldNotLoadResourceException {
+	public AbstractResource getResource( Database db, Long id ) throws NotFoundException, TooManyException, CouldNotLoadItemException {
         List<Node> nodes = db.getFromIndex( INDEX_RESOURCES, id );
 
         if( nodes.size() < 1 ) {
@@ -376,10 +376,10 @@ public class SeventyEight {
                     return (AbstractResource) getDatabaseItem( node );
                 } catch( CouldNotLoadObjectException e ) {
                     logger.warn( "Unable to load resource object " + id );
-                    throw new CouldNotLoadResourceException( "Unable to get resource", e );
+                    throw new CouldNotLoadItemException( "Unable to get resource", e );
                 }
             } else {
-                throw new CouldNotLoadResourceException( id + "" );
+                throw new CouldNotLoadItemException( id + "" );
             }
         }
 	}

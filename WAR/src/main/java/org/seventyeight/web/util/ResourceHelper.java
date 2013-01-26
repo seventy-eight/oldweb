@@ -18,7 +18,7 @@ public class ResourceHelper {
 	private static Logger logger = Logger.getLogger( ResourceHelper.class );
 
 
-	public AbstractResource getResource( Request request, HttpServletResponse response ) throws CouldNotLoadResourceException, TooManyException, NotFoundException {
+	public AbstractResource getResource( Request request, HttpServletResponse response ) throws CouldNotLoadItemException, TooManyException, NotFoundException {
 		Long id = null;
 		AbstractResource r = null;
 		try {
@@ -34,14 +34,14 @@ public class ResourceHelper {
 				//r = SeventyEight.getInstance().getResourceByTitle( s );
 			} catch( UnsupportedEncodingException e1 ) {
 				logger.warn( s + " not found" );
-				throw new CouldNotLoadResourceException( "Unable to find resource[" + s + "]: " + e1.getMessage());
+				throw new CouldNotLoadItemException( "Unable to find resource[" + s + "]: " + e1.getMessage());
 			}
 		}
 
 		return r;
 	}
 
-    public AbstractResource getResource( Request request, String idx ) throws CouldNotLoadResourceException, TooManyException, NotFoundException {
+    public AbstractResource getResource( Request request, String idx ) throws CouldNotLoadItemException, TooManyException, NotFoundException {
         Long id = null;
         AbstractResource r = null;
         try {
@@ -57,7 +57,7 @@ public class ResourceHelper {
                 //r = SeventyEight.getInstance().getResourceByTitle( s );
             } catch( UnsupportedEncodingException e1 ) {
                 logger.warn( s + " not found" );
-                throw new CouldNotLoadResourceException( "Unable to find resource[" + s + "]: " + e1.getMessage());
+                throw new CouldNotLoadItemException( "Unable to find resource[" + s + "]: " + e1.getMessage());
             }
         }
 
