@@ -153,7 +153,7 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
 
     public List<OrientNode> getFromIndex( String name, Object ... keys ) {
         int count = db.getMetadata().getIndexManager().getIndex( name ).getDefinition().getParamCount();
-        System.out.println( "COUNT: " + count );
+
         Collection<OIdentifiable> docs = null;
         if( keys.length > 1 ) {
             docs = db.getMetadata().getIndexManager().getIndex( name ).getValues( Collections.singleton( new OCompositeKey( keys ) ) );
@@ -177,8 +177,7 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
 
     public List<OrientNode> getFromIndexAbove( String name, int limit, Object ... keys ) {
         int count = db.getMetadata().getIndexManager().getIndex( name ).getDefinition().getParamCount();
-        System.out.println( "COUNT: " + count );
-        System.out.println( "COUNT: " + keys.length );
+
         Collection<OIdentifiable> docs = null;
         if( keys.length > 1 ) {
             docs = db.getMetadata().getIndexManager().getIndex( name ).getValuesMajor( new OCompositeKey( keys ), true, limit );
@@ -189,8 +188,6 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
                 docs = db.getMetadata().getIndexManager().getIndex( name ).getValuesMajor( new OCompositeKey( keys[0] ), true, limit );
             }
         }
-
-        System.out.println( "NNODEASS: " + docs );
 
         List<OrientNode> nodes = new LinkedList<OrientNode>();
 
