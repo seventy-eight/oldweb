@@ -45,9 +45,9 @@ public class TopLevelGizmoHandler {
     private void handleTopLevelAction( TopLevelAction action, Request request, HttpServletResponse response ) throws ActionHandlerException {
         if( request.getRequestParts().length > 2 ) {
             if( action instanceof Actionable ) {
-                actions( (Actionable) action, 2, request, response );
+                actions( (Item) action, 2, request, response );
             } else {
-                if( request.getRequestParts().length > 2 ) {
+                if( request.getRequestParts().length > 3 ) {
                     throw new ActionHandlerException( "No such action, " + request.getRequestURI() );
                 } else {
                     executeThing( request, response, (Item) action, request.getRequestParts()[2] );
@@ -70,7 +70,7 @@ public class TopLevelGizmoHandler {
             request.getContext().put( "title", item.getDisplayName() );
 
             if( item instanceof Actionable ) {
-                actions( (Actionable) item, 3, request, response );
+                actions( item, 3, request, response );
             } else {
                 if( request.getRequestParts().length > 2 ) {
                     throw new ActionHandlerException( "No such action, " + request.getRequestURI() );
@@ -84,83 +84,92 @@ public class TopLevelGizmoHandler {
         }
     }
 
-    public void actions( Actionable actionable, int uriStart, Request request, HttpServletResponse response ) throws ActionHandlerException {
+    public void actions( Item item, int uriStart, Request request, HttpServletResponse response ) throws ActionHandlerException {
 
         int i = uriStart;
         int l = request.getRequestParts().length;
         Action action = null;
-        Action lastAction = null;
+        Item lastItem = item;
         String urlName = "index";
         for( ; i < l ; i++ ) {
             urlName = request.getRequestParts()[i];
             logger.debug( "Url name is " + urlName );
 
-            lastAction = action;
+            lastItem = item;
             action = null;
 
-            for( Action a : actionable.getActions() ) {
-                logger.debug( "Action is " + a );
-                if( a.getUrlName().equals( urlName ) ) {
-                    action = a;
-                    break;
+            if( item instanceof Actionable ) {
+                for( Action a : ((Actionable)item).getActions() ) {
+                    logger.debug( "Action is " + a );
+                    if( a.getUrlName().equals( urlName ) ) {
+                        action = a;
+                        break;
+                    }
                 }
+                item = (Item) action;
+            } else {
+                i++;
+                break;
             }
 
             if( action == null ) {
                 logger.debug( "Action was null, breaking" );
-                break;
-            }
-
-            if( action instanceof Actionable ) {
-                actionable = (Actionable) action;
-            } else {
+                i++;
                 break;
             }
         }
 
-        logger.debug( "[Action method] " + urlName + " -> " + action + "/" + lastAction );
+        logger.debug( "[Action method] " + urlName + " -> " + action + "/" + lastItem );
 
         if( action != null ) {
             /* Last sub space was an action, do its index method */
             logger.debug( "Action was NOT null" );
             executeThing( request, response, action, "index" );
         } else {
-            if( i == l - 1 ) {
+            // i:3  l:3
+            //if( i == l - 1 ) {
+            if( i == l ) {
                 /* We came to an end */
                 logger.debug( "Action was null" );
-                executeThing( request, response, lastAction, urlName );
+                executeThing( request, response, lastItem, urlName );
 
             } else {
-                throw new ActionHandlerException( urlName + " not defined for " + lastAction );
+                throw new ActionHandlerException( urlName + " not defined for " + lastItem );
             }
         }
 
     }
 
     private void executeThing( Request request, HttpServletResponse response, Item item, String urlName ) throws ActionHandlerException {
-        if( !request.isRequestPost() ) {
-            /* First try to find a view, if not a POST */
-            try {
-                logger.debug( "Item: " + item + " -> " + urlName );
-                executeMethod( item, request, response, urlName );
-                return;
-            } catch( Exception e ) {
-                logger.debug( e.getMessage() );
-            }
+        logger.debug( "EXECUTE: " + item + ", " + urlName );
+
+
+        /* First try to find a view, if not a POST */
+        try {
+            logger.debug( "Item: " + item + " -> " + urlName );
+            executeMethod( item, request, response, urlName );
+            return;
+        } catch( Exception e ) {
+            logger.debug( item + " does not not have " + urlName + ", " + e.getMessage() );
+        }
 
             logger.debug( "TRYING VIEW FILE" );
 
+        if( !request.isRequestPost() ) {
             try {
                 request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( item, urlName + ".vm" ) );
                 response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
                 return;
             } catch( Exception e ) {
+                logger.debug( "Unable to view " + urlName + " for " + item + ": " + e.getMessage() );
                 throw new ActionHandlerException( e );
             }
         }
     }
 
     private void executeMethod( Item item, Request request, HttpServletResponse response, String actionMethod ) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchJsonElementException {
+        logger.debug( "METHOD: " + item + ", " + actionMethod );
+
         Method method = getRequestMethod( item, actionMethod, request.isRequestPost() );
 
         if( request.isRequestPost() ) {
@@ -178,7 +187,7 @@ public class TopLevelGizmoHandler {
 
     private Method getRequestMethod( Item item, String method, boolean post ) throws NoSuchMethodException {
         String m = "do" + method.substring( 0, 1 ).toUpperCase() + method.substring( 1, method.length() );
-        logger.debug( "Method: " + method + " = " + m );
+        logger.debug( "Method(P:" + post + "): " + method + " = " + m );
         if( post ) {
             //return resource.getClass().getDeclaredMethod( m, ParameterRequest.class, JsonObject.class );
             return ClassUtils.getEnheritedMethod( item.getClass(), m, Request.class, HttpServletResponse.class, JsonObject.class );

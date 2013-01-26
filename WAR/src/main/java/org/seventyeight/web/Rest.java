@@ -65,8 +65,9 @@ public class Rest extends HttpServlet {
         r.getContext().put( "request", r );
         r.setRequestParts( request.getRequestURI().split( "/" ) );
         logger.debug( "------ " + Arrays.asList( r.getRequestParts() ) + " ------" );
-        logger.fatal( "Query: " + request.getQueryString() );
-        logger.fatal( "URI  : " + request.getRequestURI() );
+        logger.fatal( "Query : " + request.getQueryString() );
+        logger.fatal( "URI   : " + request.getRequestURI() );
+        logger.fatal( "METHOD: " + request.getMethod() );
 
         TopLevelGizmo action = null;
         try {
@@ -113,7 +114,7 @@ public class Rest extends HttpServlet {
         r.getDB().close();
 
         sw.stop();
-        logger.debug( sw.print( 1000 ) );
+        logger.info( sw.print( 1000 ) );
     }
 
     public void parseRequest( TopLevelGizmo gizmo, Request request, HttpServletResponse response ) throws GizmoHandlerDoesNotExistException, ActionHandlerException {
