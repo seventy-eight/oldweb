@@ -285,19 +285,26 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
     }
 
     @Override
-    public Action getAction( Request request, String urlName ) {
-        List<Edge> edges = node.getEdges( SeventyEight.ResourceEdgeType.action, Direction.OUTBOUND, "action", urlName );
+    public List<Action> getActions() {
+        List<Edge> edges = node.getEdges( SeventyEight.ResourceEdgeType.extension, Direction.OUTBOUND );
+
+        List<Action> actions = new ArrayList<Action>();
 
         if( edges.size() == 0 ) {
-            return null;
+            return actions;
         } else {
             try {
-                return (Action) SeventyEight.getInstance().getDatabaseItem( edges.get( 0 ).getTargetNode() );
+                AbstractExtension extension = SeventyEight.getInstance().getDatabaseItem( edges.get( 0 ).getTargetNode() );
+                if( extension instanceof Actionable ) {
+                    actions.addAll( ((Actionable)extension).getActions() );
+                    logger.debug( "ACTIONS: " + actions );
+                }
             } catch( CouldNotLoadObjectException e ) {
                 logger.warn( e.getMessage() );
-                return null;
             }
         }
+
+        return actions;
     }
 
     public void doIndex( Request request, HttpServletResponse response ) {
