@@ -86,7 +86,7 @@ public class StopWatch {
         long now = System.nanoTime();
         long full = now - initial;
 
-        System.out.println( "NOW: " + now + ", INITIAL: " + initial + " = " + ( ( now - initial ) / PRECISION_NANO ) );
+        //System.out.println( "NOW: " + now + ", INITIAL: " + initial + " = " + ( ( now - initial ) / PRECISION_NANO ) );
 
         if( tasks.size() > 0 ) {
             long total = 0;
