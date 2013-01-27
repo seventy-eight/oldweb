@@ -116,8 +116,7 @@ public class SeventyEight {
 		
 	public enum GroupEdgeType implements EdgeType {
 		readAccess,
-		writeAccess,
-		reviewAccess
+		writeAccess
 	}
 
     private TopLevelGizmoHandler topLevelActionHandler = new TopLevelGizmoHandler();

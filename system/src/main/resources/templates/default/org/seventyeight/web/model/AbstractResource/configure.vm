@@ -78,13 +78,11 @@
                                         <table>
                                             <tr>
                                                 <td align="center">#i18n( "Access groups" )</td>
-                                                <td align="center">#i18n( "Review groups" )</td>
                                                 <td align="center">#i18n( "Editor groups" )</td>
                                             </tr>
 
                                             <tr>
                                                 <td align="center">#groupsforresource($!item.getIdentifier(), "access-group", "readAccess")</td>
-                                                <td align="center">#groupsforresource($!item.getIdentifier(), "review-group", "reviewAccess")</td>
                                                 <td align="center">#groupsforresource($!item.getIdentifier(), "editor-group", "writeAccess")</td>
                                             </tr>
                                         </table>

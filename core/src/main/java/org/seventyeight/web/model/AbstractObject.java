@@ -28,7 +28,6 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 
 	public static final String __ACCESS_GROUP_NAME = "access-group";
 	public static final String __EDITOR_GROUP_NAME = "editor-group";
-	public static final String __REVIEW_GROUP_NAME = "review-group";
 
     protected Locale locale;
 	
@@ -106,12 +105,6 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 			String[] editorGroupIds = request.getParameterValues( __EDITOR_GROUP_NAME );
 			if( editorGroupIds != null ) {
 				addGroupsById( editorGroupIds, GroupEdgeType.writeAccess );
-			}
-			
-			/* Review groups */
-			String[] reviewGroupIds = request.getParameterValues( __REVIEW_GROUP_NAME );
-			if( reviewGroupIds != null ) {
-				addGroupsById( reviewGroupIds, GroupEdgeType.reviewAccess );				
 			}
 		}
 		
