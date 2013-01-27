@@ -8,15 +8,12 @@ import org.seventyeight.database.*;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.ErrorWhileSavingException;
 import org.seventyeight.web.exceptions.InconsistentParameterException;
-import org.seventyeight.web.model.AbstractResource;
-import org.seventyeight.web.model.CoreRequest;
-import org.seventyeight.web.model.ParameterRequest;
-import org.seventyeight.web.model.ResourceDescriptor;
+import org.seventyeight.web.model.*;
 
 import com.google.gson.JsonObject;
 
 
-public class Group extends AbstractResource {
+public class Group extends AbstractResource implements Authoritative {
 	
 	private static Logger logger = Logger.getLogger( Group.class );
 	
@@ -29,6 +26,11 @@ public class Group extends AbstractResource {
 	public Group( Node node ) {
 		super( node );
 	}
+
+    @Override
+    public Authorization getAuthorization( User user ) {
+        return null;
+    }
 
     @Override
     public Save getSaver( CoreRequest request, JsonObject jsonData ) {
