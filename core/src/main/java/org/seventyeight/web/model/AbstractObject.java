@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Direction;
 import org.seventyeight.database.Edge;
-import org.seventyeight.database.EdgeType;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.SeventyEight.GroupEdgeType;
@@ -240,6 +239,10 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 	public List<Group> getAccessGroups() {
 		return getGroups( GroupEdgeType.readAccess );
 	}
+
+    public void addModerator( Authoritative auth ) {
+        List<Edge> edges = node.getEdges( SeventyEight.AuthoritativeEdgeType.authoritative, Direction.OUTBOUND );
+    }
 	
 	public void addGroupsById( String[] accessGroupIds, GroupEdgeType type ) {
 		logger.debug( "Adding " + type.toString() );

@@ -119,6 +119,10 @@ public class SeventyEight {
 		writeAccess
 	}
 
+    public enum AuthoritativeEdgeType implements EdgeType {
+        authoritative
+    }
+
     private TopLevelGizmoHandler topLevelActionHandler = new TopLevelGizmoHandler();
 
 	/* Paths */
