@@ -55,15 +55,25 @@
                             </tr>
                             -->
 
-
-                                <!--
+                            <!--
                             <tr>
                                 <td>
                                     $item<br>
                                     $descriptor
                                 </td>
                             </tr>
-                -->
+                            -->
+
+                            <tr>
+                                <td class="header">
+                                    $descriptor.getDisplayName()
+                                </td>
+                            </tr>
+                                <tr>
+                                    <td>
+                                        #render( $item "config" )
+                                    </td>
+                                </tr>
 
 
 
