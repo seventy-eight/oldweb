@@ -1,5 +1,6 @@
 package org.seventyeight.web.model;
 
+import org.apache.log4j.Logger;
 import org.seventyeight.database.Direction;
 import org.seventyeight.database.Edge;
 import org.seventyeight.database.EdgeType;
@@ -17,6 +18,8 @@ import java.util.List;
  *         Time: 11:16
  */
 public abstract class AbstractHub extends AbstractItem implements Describable {
+
+    private static Logger logger = Logger.getLogger( AbstractHub.class );
 
     public AbstractHub( Node node ) {
         super( node );
@@ -49,6 +52,15 @@ public abstract class AbstractHub extends AbstractItem implements Describable {
 
     public void addItem( DatabaseItem item, EdgeType relation ) {
         createRelation( item, relation );
+    }
+
+    public void removeAllOutboundEdges() {
+        logger.debug( "[Removing all edges] " + this );
+
+        List<Edge> edges = node.getEdges( null, Direction.OUTBOUND );
+        for( Edge e : edges ) {
+            e.remove();
+        }
     }
 
     public Descriptor<?> getDescriptor() {

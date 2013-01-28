@@ -90,6 +90,7 @@ public class TopLevelGizmoHandler {
     }
 
     private void checkAuthorization( Item item, User user, Authorizer.Authorization requiredAuthorization ) throws ActionHandlerException {
+        logger.debug( "[Authorization check] "  + user + " for " + item );
         if( item instanceof Authorizable ) {
             Authorizable a = (Authorizable) item;
             Authorizer authorizer = a.getAuthorizer();

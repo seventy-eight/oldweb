@@ -456,6 +456,8 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
             return Authorization.NONE;
         }
 
+        /* First check ownerships */
+
         List<Node> mnodes = hub.getNodes( SeventyEight.AuthoritativeEdgeType.moderator );
         for( Node n : mnodes ) {
             try {

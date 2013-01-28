@@ -75,7 +75,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 		}
 		
 		public void setOwner() {
-			Long ownerId = request.getValue( "owner" );
+			Long ownerId = request.getValue( "ownerships" );
 			if( ownerId != null ) {
 				logger.debug( "OwnerId is " + ownerId );
 				try {
@@ -88,10 +88,10 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 						logger.error( "Not a user: " + o );
 					}
 				} catch( Exception e ) {
-					logger.warn( "Unable to set owner: " + e.getMessage() );
+					logger.warn( "Unable to set ownerships: " + e.getMessage() );
 				}
 			} else {
-				/* If no other owner has been specified, use the current user */
+				/* If no other ownerships has been specified, use the current user */
 				AbstractResource.this.setOwner( request.getUser() );
 				//node.createRelationshipTo( request.getUser().getNode(), SessionEdge.OWNER );
 				

@@ -116,7 +116,7 @@ public class ResourceHelper {
             AbstractResource r = (AbstractResource) descriptor.newInstance( request.getDB() );
             logger.debug( "RESOURCE IS " + r );
 
-            /* Set the owner */
+            /* Set the ownerships */
             r.setOwner( request.getUser() );
 
             request.getContext().put( "identifier", r.getIdentifier() );

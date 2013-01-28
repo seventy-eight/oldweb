@@ -76,7 +76,7 @@ public class User extends AbstractResource {
 		
 		@Override
 		public void setOwner() {
-			/* Set the user it self as owner(only for user resources) */
+			/* Set the user it self as ownerships(only for user resources) */
 			User.this.setOwner( User.this );
 			logger.debug( "Owner is now " + User.this );
 		}

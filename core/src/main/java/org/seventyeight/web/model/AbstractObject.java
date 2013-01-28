@@ -13,7 +13,9 @@ import org.seventyeight.web.SeventyEight.GroupEdgeType;
 import org.seventyeight.web.SeventyEight.ResourceEdgeType;
 import org.seventyeight.web.exceptions.ErrorWhileSavingException;
 import org.seventyeight.web.exceptions.InconsistentParameterException;
+import org.seventyeight.web.exceptions.PersistenceException;
 import org.seventyeight.web.exceptions.TextNodeDoesNotExistException;
+import org.seventyeight.web.hubs.OwnershipsHub;
 import org.seventyeight.web.model.resources.Group;
 import org.seventyeight.web.model.resources.User;
 
@@ -193,7 +195,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 			if( edges.size() > 1 ) {
 				throw new IllegalStateException( "Too many owners" );
 			} else {
-				throw new IllegalStateException( "No owner" );
+				throw new IllegalStateException( "No ownerships" );
 			}
 		}
 	}
@@ -203,9 +205,15 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 		/* Removing all owners */
 		removeAllOwners();
         owner.getNode().update();
-		/* Adding new owner */
-        createRelation( owner, ResourceEdgeType.owner );
-		//SeventyEight.getInstance().createEdge( this, owner, EdgeType.owner );
+		/* Adding new ownerships */
+        //createRelation( ownerships, ResourceEdgeType.ownerships );
+        try {
+            OwnershipsHub hub = owner.getHub( SeventyEight.getInstance().getDescriptor( OwnershipsHub.class ) );
+            hub.addOwnership( this );
+        } catch( PersistenceException e ) {
+            logger.warn( e );
+        }
+        //SeventyEight.getInstance().createEdge( this, ownerships, EdgeType.ownerships );
 	}
 	
 	protected void removeAllOwners() {
@@ -336,8 +344,8 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 			idx.add( getNode(), "group", g.getIdentifier() );
 		}
 		
-		logger.debug( "Store owner " );
-		idx.add( getNode(), "owner", getOwner().getIdentifier() );
+		logger.debug( "Store ownerships " );
+		idx.add( getNode(), "ownerships", getOwner().getIdentifier() );
 	}
 	*/
 	

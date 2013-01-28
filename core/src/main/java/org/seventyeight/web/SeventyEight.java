@@ -22,6 +22,7 @@ import org.seventyeight.web.handler.Dictionary;
 import org.seventyeight.web.handler.TemplateManager;
 import org.seventyeight.web.handler.TopLevelGizmoHandler;
 import org.seventyeight.web.hubs.AuthoritativeHub;
+import org.seventyeight.web.hubs.OwnershipsHub;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.model.Locale;
 
@@ -102,7 +103,8 @@ public class SeventyEight {
     public static final String FIELD_EXTENSION_CLASS = "extensionClass";
 
 	public enum ResourceEdgeType implements EdgeType {
-		owner,
+        ownerships,
+        owner,
 		contributor,
 		extension,
         extensions,
@@ -199,6 +201,7 @@ public class SeventyEight {
         addDescriptor( db, new Copyright.CopyrightDescriptor() );
 
         addDescriptor( db, new AuthoritativeHub.AuthoritativeHubDescriptor() );
+        addDescriptor( db, new OwnershipsHub.OwnershipsHubDescriptor() );
 
         defaultLocale = new Locale( "english" );
 
