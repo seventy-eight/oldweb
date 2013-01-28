@@ -435,11 +435,11 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         hub.addScore( name, score );
     }
 
-    public AbstractHub getHub( Descriptor<? extends AbstractHub> descriptor ) throws PersistenceException {
+    public <T extends AbstractHub> T getHub( Descriptor<? extends AbstractHub> descriptor ) throws PersistenceException {
         List<Edge> edges = node.getEdges( descriptor.getRelationType(), Direction.OUTBOUND );
 
         if( edges.size() == 0 ) {
-            return descriptor.newInstance( getDB() );
+            return (T) descriptor.newInstance( getDB() );
         } else {
             return SeventyEight.getInstance().getDatabaseItem( edges.get( 0 ).getTargetNode() );
         }
@@ -452,6 +452,39 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 
     @Override
     public Authorization getAuthorization( User user ) {
-        AuthoritativeHub hub = getHub( SeventyEight.getInstance().getDescriptor( AuthoritativeHub.class ) );
+        AuthoritativeHub hub = null;
+        try {
+            hub = getHub( SeventyEight.getInstance().getDescriptor( AuthoritativeHub.class ) );
+        } catch( PersistenceException e ) {
+            logger.warn( e.getMessage() );
+            return Authorization.NONE;
+        }
+
+        List<Node> mnodes = hub.getNodes( SeventyEight.AuthoritativeEdgeType.moderator );
+        for( Node n : mnodes ) {
+            try {
+                Authoritative a = (Authoritative) SeventyEight.getInstance().getDatabaseItem( n );
+                if( a.isAuthoritative( user ) ) {
+                    return Authorization.MODERATE;
+                }
+            } catch( CouldNotLoadObjectException e ) {
+                logger.warn( e.getMessage() );
+            }
+        }
+
+        List<Node> vnodes = hub.getNodes( SeventyEight.AuthoritativeEdgeType.viewer );
+        for( Node n : vnodes ) {
+            try {
+                Authoritative a = (Authoritative) SeventyEight.getInstance().getDatabaseItem( n );
+                if( a.isAuthoritative( user ) ) {
+                    return Authorization.VIEW;
+                }
+            } catch( CouldNotLoadObjectException e ) {
+                logger.warn( e.getMessage() );
+            }
+        }
+
+        logger.debug( "None of the above" );
+        return Authorization.NONE;
     }
 }

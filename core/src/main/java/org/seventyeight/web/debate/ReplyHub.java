@@ -33,7 +33,7 @@ public abstract class ReplyHub extends AbstractHub {
     public void addReply( Reply reply ) throws HubException {
         logger.debug( "Adding " + reply );
 
-        int id = addItem( reply, Reply.ReplyRelation.reply );
+        int id = addItemWithId( reply, Reply.ReplyRelation.reply );
         long rid = getResourceIdentifier();
         logger.debug( "RID IS " + rid + " and ID IS " + id );
         node.getDB().putToIndex( INDEX_REPLIES, reply.getNode(), rid, id );

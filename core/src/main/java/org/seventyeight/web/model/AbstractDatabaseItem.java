@@ -1,10 +1,10 @@
 package org.seventyeight.web.model;
 
-import org.seventyeight.database.Database;
-import org.seventyeight.database.Edge;
-import org.seventyeight.database.EdgeType;
-import org.seventyeight.database.Node;
+import org.seventyeight.database.*;
 import org.seventyeight.web.exceptions.IllegalStateRuntimeException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author cwolfgang
@@ -66,6 +66,18 @@ public abstract class AbstractDatabaseItem implements DatabaseItem {
         } else {
             return (T) node.get( key );
         }
+    }
+
+    public List<Node> getNodes( EdgeType type ) {
+        List<Edge> edges = node.getEdges( type, Direction.OUTBOUND );
+
+        List<Node> nodes = new ArrayList<Node>( edges.size() );
+
+        for( Edge edge : edges ) {
+            nodes.add( edge.getTargetNode() );
+        }
+
+        return nodes;
     }
 
 

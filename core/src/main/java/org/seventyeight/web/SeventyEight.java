@@ -121,7 +121,9 @@ public class SeventyEight {
 	}
 
     public enum AuthoritativeEdgeType implements EdgeType {
-        authoritative
+        authoritative,
+        moderator,
+        viewer
     }
 
     private TopLevelGizmoHandler topLevelActionHandler = new TopLevelGizmoHandler();
@@ -431,10 +433,10 @@ public class SeventyEight {
         descriptor.configureIndex( db );
     }
 	
-	public Descriptor<?> getDescriptor( Class<?> clazz ) {
+	public <T extends Descriptor> T getDescriptor( Class<?> clazz ) {
 		logger.debug( "Getting descriptor for " + clazz );
 		if( descriptors.containsKey( clazz ) ) {
-			return descriptors.get( clazz );
+			return (T) descriptors.get( clazz );
 		} else {
 			return null;
 		}

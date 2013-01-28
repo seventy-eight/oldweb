@@ -8,6 +8,7 @@ import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.CouldNotLoadObjectException;
 import org.seventyeight.web.exceptions.HubException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,22 +35,20 @@ public abstract class AbstractHub extends AbstractItem implements Describable {
     }
 
     public Long getResourceIdentifier() throws HubException {
-        Long id = node.get( "resourceIdentifier" );
-        if( id == null ) {
-                AbstractResource r = getParent();
-                setResourceIdentifier( r.getIdentifier() );
-                return r.getIdentifier();
-        } else {
-            return id;
-        }
+        AbstractResource r = getParent();
+        return r.getIdentifier();
     }
 
-    public int addItem( DatabaseItem item, EdgeType relation ) {
+    public int addItemWithId( DatabaseItem item, EdgeType relation ) {
         int id = getNextIdentifier();
         Edge edge = node.createEdge( item.getNode(), relation );
         edge.set( "id", id );
 
         return id;
+    }
+
+    public void addItem( DatabaseItem item, EdgeType relation ) {
+        createRelation( item, relation );
     }
 
     public Descriptor<?> getDescriptor() {
