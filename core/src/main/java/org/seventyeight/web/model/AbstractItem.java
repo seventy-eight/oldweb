@@ -445,6 +445,9 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         }
     }
 
+    public boolean isOwner( User owner ) {
+        return false;
+    }
 
     @Override
     public Authorization getAuthorization( User user ) {
@@ -457,6 +460,9 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         }
 
         /* First check ownerships */
+        if( isOwner( user ) ) {
+            return Authorization.MODERATE;
+        }
 
         List<Node> mnodes = hub.getNodes( SeventyEight.AuthoritativeEdgeType.moderator );
         for( Node n : mnodes ) {

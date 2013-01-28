@@ -208,7 +208,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 		/* Adding new ownerships */
         //createRelation( ownerships, ResourceEdgeType.ownerships );
         try {
-            OwnershipsHub hub = owner.getHub( SeventyEight.getInstance().getDescriptor( OwnershipsHub.class ) );
+            OwnershipsHub hub = owner.getHub( (Descriptor<? extends AbstractHub>)SeventyEight.getInstance().getDescriptor( OwnershipsHub.class ) );
             hub.addOwnership( this );
         } catch( PersistenceException e ) {
             logger.warn( e );
@@ -362,6 +362,11 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 			return false;
 		}
 	}
+
+    @Override
+    public boolean isOwner( User owner ) {
+        return getOwner().equals( owner );
+    }
 
     @Override
     public Authorizer getAuthorizer() {
