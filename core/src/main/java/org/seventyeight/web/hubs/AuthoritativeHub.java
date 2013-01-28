@@ -52,7 +52,7 @@ public class AuthoritativeHub extends AbstractHub {
 
         @Override
         public EdgeType getRelationType() {
-            return getEdgeType();
+            return SeventyEight.AuthoritativeEdgeType.authoritative;
         }
     }
 }

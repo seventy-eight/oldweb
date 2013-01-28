@@ -454,7 +454,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
     public Authorization getAuthorization( User user ) {
         AuthoritativeHub hub = null;
         try {
-            hub = getHub( SeventyEight.getInstance().getDescriptor( AuthoritativeHub.class ) );
+            hub = getHub( (Descriptor<? extends AbstractHub>) SeventyEight.getInstance().getDescriptor( AuthoritativeHub.class ) );
         } catch( PersistenceException e ) {
             logger.warn( e.getMessage() );
             return Authorization.NONE;
