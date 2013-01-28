@@ -1,6 +1,6 @@
 package org.seventyeight.web.exceptions;
 
-public class CouldNotLoadObjectException extends SeventyEightException {
+public class CouldNotLoadObjectException extends PersistenceException {
 
 	public CouldNotLoadObjectException( String s ) {
 		super( s );

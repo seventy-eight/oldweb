@@ -11,12 +11,14 @@ import org.seventyeight.web.SeventyEight.ResourceEdgeType;
 import org.seventyeight.web.exceptions.*;
 
 import com.google.gson.JsonObject;
+import org.seventyeight.web.hubs.AuthoritativeHub;
 import org.seventyeight.web.hubs.ScoresHub;
+import org.seventyeight.web.model.resources.User;
 
 import javax.servlet.http.HttpServletResponse;
 
 
-public abstract class AbstractItem extends AbstractDatabaseItem implements Item, Savable, Action {
+public abstract class AbstractItem extends AbstractDatabaseItem implements Item, Savable, Action, Authorizable, Authorizer {
 
 	private static Logger logger = Logger.getLogger( AbstractItem.class );
 
@@ -433,4 +435,23 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         hub.addScore( name, score );
     }
 
+    public AbstractHub getHub( Descriptor<? extends AbstractHub> descriptor ) throws PersistenceException {
+        List<Edge> edges = node.getEdges( descriptor.getRelationType(), Direction.OUTBOUND );
+
+        if( edges.size() == 0 ) {
+            return descriptor.newInstance( getDB() );
+        } else {
+            return SeventyEight.getInstance().getDatabaseItem( edges.get( 0 ).getTargetNode() );
+        }
+    }
+
+    @Override
+    public Authorizer getAuthorizer() {
+        return this;
+    }
+
+    @Override
+    public Authorization getAuthorization( User user ) {
+        AuthoritativeHub hub = getHub( SeventyEight.getInstance().getDescriptor( AuthoritativeHub.class ) );
+    }
 }

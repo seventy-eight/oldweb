@@ -8,11 +8,5 @@ import org.seventyeight.web.model.resources.User;
  *         Time: 21:09
  */
 public interface Authoritative {
-    public enum Authorization {
-        NONE,
-        VIEW,
-        MODERATE
-    }
-
-    public Authorization getAuthorization( User user );
+    public boolean isAuthoritative( User user );
 }

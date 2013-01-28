@@ -21,6 +21,7 @@ import org.seventyeight.web.extensions.debate.simple.SimpleDebate;
 import org.seventyeight.web.handler.Dictionary;
 import org.seventyeight.web.handler.TemplateManager;
 import org.seventyeight.web.handler.TopLevelGizmoHandler;
+import org.seventyeight.web.hubs.AuthoritativeHub;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.model.Locale;
 
@@ -70,7 +71,7 @@ public class SeventyEight {
 
 
     /**
-     * A map of descriptors keyed by their extension class
+     * A map of descriptors keyed by their super class
      */
     private Map<Class<?>, Descriptor<?>> descriptors = new HashMap<Class<?>, Descriptor<?>>();
 
@@ -194,6 +195,8 @@ public class SeventyEight {
 
         addDescriptor( db, new SimpleDebate.SimpleDebateDescriptor() );
         addDescriptor( db, new Copyright.CopyrightDescriptor() );
+
+        addDescriptor( db, new AuthoritativeHub.AuthoritativeHubDescriptor() );
 
         defaultLocale = new Locale( "english" );
 

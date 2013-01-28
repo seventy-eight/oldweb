@@ -28,8 +28,8 @@ public class Group extends AbstractResource implements Authoritative {
 	}
 
     @Override
-    public Authorization getAuthorization( User user ) {
-        return null;
+    public boolean isAuthoritative( User user ) {
+        return false;
     }
 
     @Override
