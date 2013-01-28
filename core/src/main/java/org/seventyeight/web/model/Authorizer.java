@@ -11,7 +11,15 @@ public interface Authorizer {
     public enum Authorization {
         NONE,
         VIEW,
-        MODERATE
+        MODERATE;
+
+        public static Authorization get( boolean isPost ) {
+            if( isPost ) {
+                return MODERATE;
+            } else {
+                return VIEW;
+            }
+        }
     }
 
     public Authorization getAuthorization( User user );

@@ -7,6 +7,7 @@ import org.seventyeight.web.exceptions.ActionHandlerException;
 import org.seventyeight.web.exceptions.CouldNotLoadItemException;
 import org.seventyeight.web.exceptions.NoSuchJsonElementException;
 import org.seventyeight.web.model.*;
+import org.seventyeight.web.model.resources.User;
 import org.seventyeight.web.util.ClassUtils;
 import org.seventyeight.web.util.JsonUtils;
 
@@ -67,6 +68,10 @@ public class TopLevelGizmoHandler {
             } catch( CouldNotLoadItemException e ) {
                 throw new ActionHandlerException( e );
             }
+
+            /* Authorization */
+            checkAuthorization( item, request.getUser(), Authorizer.Authorization.get( request.isRequestPost() ) );
+
             request.getContext().put( "title", item.getDisplayName() );
 
             if( item instanceof Actionable ) {
@@ -81,6 +86,17 @@ public class TopLevelGizmoHandler {
 
         } else {
             /* TODO, what? */
+        }
+    }
+
+    private void checkAuthorization( Item item, User user, Authorizer.Authorization requiredAuthorization ) throws ActionHandlerException {
+        if( item instanceof Authorizable ) {
+            Authorizable a = (Authorizable) item;
+            Authorizer authorizer = a.getAuthorizer();
+
+            if( !authorizer.getAuthorization( user ).equals( requiredAuthorization ) ) {
+                throw new ActionHandlerException( user + " was not authorized" );
+            }
         }
     }
 
