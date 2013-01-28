@@ -18,7 +18,7 @@ import org.seventyeight.web.model.resources.User;
 import javax.servlet.http.HttpServletResponse;
 
 
-public abstract class AbstractItem extends AbstractDatabaseItem implements Item, Savable, Action, Authorizable, Authorizer {
+public abstract class AbstractItem extends AbstractDatabaseItem implements Item, Savable, Action, Authorizer {
 
 	private static Logger logger = Logger.getLogger( AbstractItem.class );
 
@@ -445,10 +445,6 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         }
     }
 
-    @Override
-    public Authorizer getAuthorizer() {
-        return this;
-    }
 
     @Override
     public Authorization getAuthorization( User user ) {
