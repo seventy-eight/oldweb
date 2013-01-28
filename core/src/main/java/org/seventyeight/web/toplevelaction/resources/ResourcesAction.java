@@ -29,13 +29,9 @@ public class ResourcesAction implements TopLevelAction {
     public void doCreate( Request request, HttpServletResponse response, JsonObject jsonData ) throws IOException, TemplateDoesNotExistException {
         String className = request.getValue( "className" );
 
-        logger.debug( "[1]" );
-
         if( className == null ) {
             throw new IOException( "No className given" );
         }
-
-        logger.debug( "[2]" );
 
         /* Get the resource descriptor from the className name */
         ResourceDescriptor<?> descriptor = null;
@@ -45,13 +41,9 @@ public class ResourcesAction implements TopLevelAction {
             throw new IOException( e );
         }
 
-        logger.debug( "[3]" );
-
         if( descriptor == null ) {
             throw new IOException( new MissingDescriptorException( "Could not find descriptor for " + className ) );
         }
-
-        logger.debug( "[4]" );
 
         /* First of all we need to create the resource node */
         logger.debug( "Newing resource" );
@@ -65,6 +57,9 @@ public class ResourcesAction implements TopLevelAction {
             throw new IOException( e );
         }
         logger.debug( "RESOURCE IS " + r );
+
+        r.setOwner( request.getUser() );
+        r.getNode().save();
 
         response.sendRedirect( r.getUrl() + "/configure" );
         //ResourceUtils.getConfigureResourceView( request, response, r, descriptor );

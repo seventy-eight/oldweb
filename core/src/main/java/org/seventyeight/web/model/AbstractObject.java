@@ -187,15 +187,18 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 		return d;
 	}
 	
-	public User getOwner() throws IllegalStateException {
+	public User getOwner() throws IllegalStateException, PersistenceException {
         List<Edge> edges = node.getEdges( ResourceEdgeType.owner, Direction.OUTBOUND );
 		if( edges.size() == 1 ) {
-            return new User( edges.get( 0 ).getTargetNode() );
+            //return new User( edges.get( 0 ).getTargetNode() );
+            //OwnershipsHub hub = getHub( (Descriptor<? extends AbstractHub>) SeventyEight.getInstance().getDescriptor( OwnershipsHub.class ) );
+            OwnershipsHub hub = SeventyEight.getInstance().getDatabaseItem( edges.get( 0 ).getTargetNode() );
+            return hub.getParent();
 		} else {
 			if( edges.size() > 1 ) {
 				throw new IllegalStateException( "Too many owners" );
 			} else {
-				throw new IllegalStateException( "No ownerships" );
+				throw new IllegalStateException( "No owner" );
 			}
 		}
 	}
@@ -353,7 +356,8 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 	public String toString() {
 		return "[" + getIdentifier() + "]" + getDisplayName();
 	}
-	
+
+    /*
 	@Override
 	public boolean equals( Object other ) {
 		if( other instanceof AbstractObject ) {
@@ -362,9 +366,10 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 			return false;
 		}
 	}
+	*/
 
     @Override
-    public boolean isOwner( User owner ) {
+    public boolean isOwner( User owner ) throws PersistenceException {
         return getOwner().equals( owner );
     }
 

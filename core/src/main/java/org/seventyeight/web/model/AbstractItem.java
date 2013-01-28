@@ -439,13 +439,15 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         List<Edge> edges = node.getEdges( descriptor.getRelationType(), Direction.OUTBOUND );
 
         if( edges.size() == 0 ) {
-            return (T) descriptor.newInstance( getDB() );
+            T instance = (T) descriptor.newInstance( getDB() );
+            createRelation( instance, descriptor.getRelationType() );
+            return instance;
         } else {
             return SeventyEight.getInstance().getDatabaseItem( edges.get( 0 ).getTargetNode() );
         }
     }
 
-    public boolean isOwner( User owner ) {
+    public boolean isOwner( User owner ) throws PersistenceException {
         return false;
     }
 
@@ -460,8 +462,12 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         }
 
         /* First check ownerships */
-        if( isOwner( user ) ) {
-            return Authorization.MODERATE;
+        try {
+            if( isOwner( user ) ) {
+                return Authorization.MODERATE;
+            }
+        } catch( PersistenceException e ) {
+            logger.warn( e );
         }
 
         List<Node> mnodes = hub.getNodes( SeventyEight.AuthoritativeEdgeType.moderator );
@@ -491,4 +497,5 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         logger.debug( "None of the above" );
         return Authorization.NONE;
     }
+
 }

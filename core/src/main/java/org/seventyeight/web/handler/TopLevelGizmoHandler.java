@@ -95,7 +95,9 @@ public class TopLevelGizmoHandler {
             Authorizable a = (Authorizable) item;
             Authorizer authorizer = a.getAuthorizer();
 
-            if( !authorizer.getAuthorization( user ).equals( requiredAuthorization ) ) {
+            logger.debug( authorizer.getAuthorization( user ).ordinal() + " >= " + requiredAuthorization.ordinal() );
+
+            if( authorizer.getAuthorization( user ).ordinal() < requiredAuthorization.ordinal() ) {
                 throw new ActionHandlerException( user + " was not authorized" );
             }
         }

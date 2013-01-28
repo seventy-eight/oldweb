@@ -1,5 +1,6 @@
 package org.seventyeight.web.model;
 
+import org.apache.log4j.Logger;
 import org.seventyeight.database.*;
 import org.seventyeight.web.exceptions.IllegalStateRuntimeException;
 
@@ -12,6 +13,8 @@ import java.util.List;
  *         Time: 13:37
  */
 public abstract class AbstractDatabaseItem implements DatabaseItem {
+
+    private static Logger logger = Logger.getLogger( AbstractDatabaseItem.class );
 
     protected Node node;
 
@@ -84,19 +87,22 @@ public abstract class AbstractDatabaseItem implements DatabaseItem {
     @Override
     public boolean equals( Object obj ) {
 
-        if (obj == null) {
+        if( obj == null ) {
             return false;
         }
 
-        if (obj == this) {
+        if( obj == this ) {
             return true;
         }
 
-        if (obj.getClass() != getClass()) {
+        if( obj.getClass() != getClass() ) {
             return false;
         }
 
         AbstractDatabaseItem item = (AbstractDatabaseItem) obj;
+        logger.debug( "This: " + this.getNode().getId( false ) + " : " + this );
+        logger.debug( "OTHER: " + item.getNode().getId( false ) + " : " + item );
+
         return item.getNode().getId( false ).equals( this.getNode().getId( false ) );
 
     }

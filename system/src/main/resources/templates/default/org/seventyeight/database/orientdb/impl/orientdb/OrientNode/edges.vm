@@ -13,7 +13,11 @@
         <tr>
             <td class="listing"></td>
             <td class="listing" align="center">$l.get( "label" )</td>
-            <td class="listing"><a href="/db/browse/node/orient/$l.getTargetNode().getId( true )">$l</a></td>
+            #if( $doTargetNode )
+                <td class="listing"><a href="/db/browse/node/orient/$l.getTargetNode().getId( true )">$l</a></td>
+            #else
+                <td class="listing"><a href="/db/browse/node/orient/$l.getSourceNode().getId( true )">$l</a></td>
+            #end
         </tr>
         </tbody>
     #end
