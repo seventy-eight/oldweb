@@ -114,4 +114,37 @@ public class FileUtilities {
 		}
 		
 	}
+
+    private static final int DEFAULT_BUFFER_SIZE = 10240; // 10KB.
+
+    public static void writeToFile( InputStream is, File file ) throws IOException {
+        logger.debug( "Writing " + is + " to " + file );
+        try {
+            InputStream input = new BufferedInputStream( is, DEFAULT_BUFFER_SIZE );
+            OutputStream os = new BufferedOutputStream( new FileOutputStream( file ), DEFAULT_BUFFER_SIZE );
+            int i = 0;
+            try {
+                byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+                for( int length = 0; ( ( length = input.read( buffer ) ) > 0 ); ) {
+                    //System.out.println( "LENGTH: " + length );
+                    os.write( buffer, 0, length );
+
+                    /*
+                    try {
+                        System.out.println( "Waiting.... " + i );
+                        Thread.sleep( 250 );
+                    } catch( InterruptedException e ) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                    */
+
+                    i++;
+                }
+            } finally {
+                os.close();
+            }
+        } finally {
+            is.close();
+        }
+    }
 }

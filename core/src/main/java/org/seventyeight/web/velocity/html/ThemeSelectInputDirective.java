@@ -88,7 +88,7 @@ public class ThemeSelectInputDirective extends Directive {
 		
 		writer.write( "<select name=\"" + name + "\">" );
 		
-		//writer.write( "<option value=\"" + t.getName() + "\" selected>" + t.getName() + "</option>\n" );
+		//writer.writeToFile( "<option value=\"" + t.getName() + "\" selected>" + t.getName() + "</option>\n" );
 		
 		for( AbstractTheme t : themes ) {
 

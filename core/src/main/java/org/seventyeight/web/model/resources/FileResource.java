@@ -4,11 +4,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 
 import org.apache.log4j.Logger;
 
 import com.google.gson.JsonObject;
 import org.seventyeight.database.*;
+import org.seventyeight.structure.Tuple;
+import org.seventyeight.utils.Date;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
@@ -18,6 +21,9 @@ public class FileResource extends AbstractResource {
 
 	private static Logger logger = Logger.getLogger( FileResource.class );
     public static final String INDEX_UPLOAD_IDENTITIES = "upload-identities";
+
+    private static SimpleDateFormat formatYear = new SimpleDateFormat( "yyyy" );
+    private static SimpleDateFormat formatMonth = new SimpleDateFormat( "MM" );
 
 
     public enum FileResourceEdgeType implements EdgeType {
@@ -49,35 +55,38 @@ public class FileResource extends AbstractResource {
                 node.set( "title", title );
             }
 
-            /*
-			Long nodeid = null;
-			try {
-				nodeid = request.getValue( "nodeid" );
-			} catch( Exception e ) {
-				logger.debug( "NAN: " + e.getMessage() );
-			}
-
-			logger.debug( "Setting file relation to " + nodeid );
-			if( nodeid != null ) {
-				DatabaseItem item = SeventyEight.getInstance().getDatabaseItem( nodeid );
-				setFileRelation( item );
-			}
-
-			File file = getFile();
-			node.set( "ext", FileResource.getExtension( file ) );
-			*/
 		}
 	}
-	
-	/*
-	public byte[] getBytes() throws FileNotFoundException {
-		File file = getFile();
-		
-		FileReader reader = new FileReader( file );
-		reader.re
-	}
-	*/
-	
+
+    public static Tuple<File, File> generateFile( String filename, User user ) {
+        Date now = new Date();
+        int mid = filename.lastIndexOf( "." );
+        String fname = filename;
+        String ext = null;
+        if( mid > -1 ) {
+            ext = filename.substring( mid + 1, filename.length() );
+            fname = filename.substring( 0, mid );
+        }
+
+        String strpath = "upload/" + user.getIdentifier() + "/" + formatYear.format( now ) + "/" + formatMonth.format( now ) + "/" + ext;
+
+        File path = new File( SeventyEight.getInstance().getPath(), strpath );
+        File relativePath = new File( strpath, filename );
+        logger.debug( "Trying to create path " + path );
+        path.mkdirs();
+        File file = new File( path, filename );
+        int cnt = 0;
+        while( file.exists() ) {
+            file = new File( path, fname + "_" + cnt + ( ext != null ? "." + ext : "" ) );
+            cnt++;
+        }
+
+        logger.debug( "FILE: " + file.getAbsolutePath() );
+
+        return new Tuple<File, File>( relativePath, file );
+
+    }
+
 	public void doGet( ParameterRequest request, PrintWriter writer ) throws IOException {
 		File file = getFile();
 		

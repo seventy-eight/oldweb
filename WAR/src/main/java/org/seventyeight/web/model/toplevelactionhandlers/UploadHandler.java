@@ -4,8 +4,7 @@ import org.apache.log4j.Logger;
 import org.seventyeight.database.Node;
 import org.seventyeight.utils.Date;
 import org.seventyeight.web.SeventyEight;
-import org.seventyeight.web.exceptions.ActionHandlerException;
-import org.seventyeight.web.exceptions.ResourceNotCreatedException;
+import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.model.resources.FileResource;
 import org.seventyeight.web.util.ResourceHelper;
@@ -44,12 +43,12 @@ public class UploadHandler implements TopLevelExecutor {
 
     /*
 
-    (0) / (1) upload handler / (2) type
+    (0) / (1) uploadAndCreate handler / (2) type
 
     Types:
     GET: /info: get information
-    GET: /multiple: multiple upload form
-    POST: /: upload a single file
+    GET: /multiple: multiple uploadAndCreate form
+    POST: /: uploadAndCreate a single file
 
 
      */
@@ -60,9 +59,9 @@ public class UploadHandler implements TopLevelExecutor {
         System.out.println( request.getParameterMap() );
 
         if( request.isRequestPost() ) {
-            /* Do the actual upload */
+            /* Do the actual uploadAndCreate */
             try {
-                upload( request, response );
+                uploadAndCreate( request, response );
             } catch( Exception e ) {
                 throw new ActionHandlerException( e );
             }
@@ -90,7 +89,7 @@ public class UploadHandler implements TopLevelExecutor {
                     }
                 }
             } else {
-                logger.debug( "Multiple upload form" );
+                logger.debug( "Multiple uploadAndCreate form" );
                 try {
                     request.getContext().put( "javascript", "ajaxupload" );
                     request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( "org/seventyeight/web/multipleupload.vm" ) );
@@ -102,13 +101,30 @@ public class UploadHandler implements TopLevelExecutor {
         }
     }
 
-    private void upload( Request request, HttpServletResponse response ) throws IOException, ServletException, ResourceNotCreatedException {
-        logger.debug( "Trying to get ax-file-name!" );
-        logger.debug( "Trying to get ax-file-name: " + request.getParameter( "ax-file-name" ) );
-        //Part filepart = request.getPart( "ax-file-name" );
-        //Part appendpart = request.getPart( "append" );
-        //String filename = getFilename( filepart );
-        String filename = request.getParameter( "ax-file-name" );
+    private void upload( Request request, HttpServletResponse response ) throws CouldNotLoadItemException {
+        String filename = request.getValue( "filename", null );
+        logger.debug( "Filename: " + filename );
+
+        String id = request.getValue( "identifier", null );
+        logger.debug( "Identifier: " + id );
+
+        if( id == null ) {
+            throw new IllegalStateException( "File resource identifier must be given" );
+        }
+
+        AbstractResource resource = helper.getResource( request, id );
+        if( resource instanceof FileResource ) {
+
+        }
+    }
+
+    private void uploadAndCreate( Request request, HttpServletResponse response ) throws IOException, ServletException, ResourceNotCreatedException {
+
+        String filename = request.getValue( "filename", null );
+        if( filename == null ) {
+            request.getValue( "ax-file-name", null );
+        }
+
         logger.debug( "Filename: " + filename );
 
         /* Get the current sessions */
@@ -124,7 +140,8 @@ public class UploadHandler implements TopLevelExecutor {
             ext = filename.substring( mid + 1, filename.length() );
             fname = filename.substring( 0, mid );
         }
-        //String strpath = "upload/" + session.getUser().getIdentifier() + "/" + formatYear.format( now ) + "/" + formatMonth.format( now ) + "/" + ext;
+
+        //String strpath = "uploadAndCreate/" + session.getUser().getIdentifier() + "/" + formatYear.format( now ) + "/" + formatMonth.format( now ) + "/" + ext;
         String strpath = "upload/wolle/" + formatYear.format( now ) + "/" + formatMonth.format( now ) + "/" + ext;
 
         File path = new File( SeventyEight.getInstance().getPath(), strpath );
@@ -139,19 +156,20 @@ public class UploadHandler implements TopLevelExecutor {
         }
         logger.debug( "FILE: " + file.getAbsolutePath() );
 
-        //write( filepart, file );
+        //writeToFile( filepart, file );
 
         FileResource resource = (FileResource) helper.createResource( descriptor, request, response );
         resource.getNode().set( "fileSize", Long.parseLong( request.getParameter( "ax-fileSize" ) ) );
-        resource.getNode().set( "uploadIdentity", request.getParameter( "upload-identity" ) );
+        resource.getNode().set( "uploadIdentity", request.getParameter( "uploadAndCreate-identity" ) );
         resource.getNode().set( "file", relativePath.toString() );
         resource.getNode().set( "ext", FileResource.getExtension( file ) );
+        resource.setOwner( request.getUser() );
         resource.getNode().save();
 
         resource.addUploadIdentityToIndex();
 
-        /* Finally, write to disk */
-        //write( request.getInputStream(), file );
+        /* Finally, writeToFile to disk */
+        //writeToFile( request.getInputStream(), file );
         AsyncContext aCtx = request.startAsync( request, response );
         Executor uploadExecutor = Executors.newCachedThreadPool();
 
@@ -164,7 +182,7 @@ public class UploadHandler implements TopLevelExecutor {
 
     @Override
     public String getUrlName() {
-        return "upload";
+        return "uploadAndCreate";
     }
 
 
@@ -277,7 +295,7 @@ public class UploadHandler implements TopLevelExecutor {
             try {
                 Part filepart = request.getPart( "filename" );
                 Part appendpart = request.getPart( "append" );
-                String filename = getFilename( filepart );
+                String filename = generateFile( filepart );
                 logger.debug( "Filename: " + filename );
 
                 Cookie c = org.seventyeight.web.util.Util.getCookie( request, "session" );
@@ -291,7 +309,7 @@ public class UploadHandler implements TopLevelExecutor {
                     ext = filename.substring( mid + 1, filename.length() );
                     fname = filename.substring( 0, mid );
                 }
-                String strpath = "upload/" + session.getUser().getIdentifier() + "/" + formatYear.format( now ) + "/" + formatMonth.format( now ) + "/" + ext;
+                String strpath = "uploadAndCreate/" + session.getUser().getIdentifier() + "/" + formatYear.format( now ) + "/" + formatMonth.format( now ) + "/" + ext;
 
                 File path = new File( SeventyEight.getInstance().getPath(), strpath );
                 logger.debug( "Trying to create path " + path );
@@ -335,9 +353,9 @@ public class UploadHandler implements TopLevelExecutor {
                 logger.debug( "out: " + out );
                 out.println( "<script language=\"javascript\">top.Utils.startupload(" + id + ", \"" + append + "\");</script>" );
 
-                write( filepart, file );
+                writeToFile( filepart, file );
             } catch( Exception e ) {
-                logger.fatal( "Unable to upload: " + e.getMessage() );
+                logger.fatal( "Unable to uploadAndCreate: " + e.getMessage() );
                 ExceptionUtils.print( e, out, true );
             } finally {
                 out.flush();

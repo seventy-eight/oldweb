@@ -44,7 +44,7 @@ public class AdvancedFileInputDirective extends Directive {
 		writer.write( "<div style=\"float: left;border-style:solid;width:250px;height:25px\">" );
 		writer.write( "<div style=\"background-color:#345676;width:0px;height:25px\" id=\"status\"></div></div>" );
 		writer.write( "<input type=\"text\" id=\"nodeid\" name=\"nodeid\" value=\"\" readonly>" );
-		//writer.write( "<input type=\"text\" name=\"nodeid\" value=\"\">" );
+		//writer.writeToFile( "<input type=\"text\" name=\"nodeid\" value=\"\">" );
 
 		return true;
 	}

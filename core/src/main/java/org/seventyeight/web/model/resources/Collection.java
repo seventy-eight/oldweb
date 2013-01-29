@@ -205,7 +205,7 @@ public class Collection extends AbstractResource {
 			GraphDragon.getInstance().renderObject( writer, resources, "detailed.vm", request.getTheme(), request.getContext() );
 			
 		} catch( TemplateDoesNotExistException e ) {
-			writer.write( "What? " + e.getMessage() );
+			writer.writeToFile( "What? " + e.getMessage() );
 		}
 		*/
 	}

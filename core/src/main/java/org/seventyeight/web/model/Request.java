@@ -87,7 +87,7 @@ public class Request extends HttpServletRequestWrapper implements CoreRequest {
     }
 
     /**
-     * Determine if the current {@link User} can edit/write the item
+     * Determine if the current {@link User} can edit/writeToFile the item
      * @param resource
      * @return
      */
