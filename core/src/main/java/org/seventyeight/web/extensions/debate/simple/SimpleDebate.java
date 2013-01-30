@@ -40,6 +40,7 @@ public class SimpleDebate extends AbstractDebate implements Describable {
         logger.fatal( "[MY JSON IS] " + json );
 
         String snade = request.getValue( "snade" );
+        logger.debug( "[SIMPLE DEBATE] " + request.getParameter( "snade" ) );
         node.set( "SNADE", snade );
 
         node.save();

@@ -20,6 +20,8 @@ public class Request extends HttpServletRequestWrapper implements CoreRequest {
 
     private static Logger logger = Logger.getLogger( Request.class );
 
+    private static final String __MULTIPART = "multipart/form-data";
+
     private Database db;
     private RequestMethod method = RequestMethod.GET;
     private AbstractTheme theme = null;
@@ -176,6 +178,14 @@ public class Request extends HttpServletRequestWrapper implements CoreRequest {
             return (T) this.getParameter( key );
         } else {
             return defaultValue;
+        }
+    }
+
+    public static boolean isMultipart( HttpServletRequest request) {
+        if( request.getContentType() != null ) {
+            return request.getContentType().startsWith( __MULTIPART );
+        } else {
+            return false;
         }
     }
 }

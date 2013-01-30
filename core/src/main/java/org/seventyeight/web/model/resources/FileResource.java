@@ -1,10 +1,9 @@
 package org.seventyeight.web.model.resources;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.text.SimpleDateFormat;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 
@@ -15,6 +14,10 @@ import org.seventyeight.utils.Date;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
+import org.seventyeight.web.util.ServletUtils;
+
+import javax.servlet.AsyncContext;
+import javax.servlet.http.HttpServletResponse;
 
 
 public class FileResource extends AbstractResource {
@@ -38,7 +41,7 @@ public class FileResource extends AbstractResource {
     public Save getSaver( CoreRequest request, JsonObject jsonData ) {
 		return new FileSaveImpl( this, request, jsonData );
 	}
-	
+
 	public class FileSaveImpl extends ResourceSaveImpl {
 
 		public FileSaveImpl( AbstractResource resource, CoreRequest request, JsonObject jsonData ) {
@@ -49,15 +52,42 @@ public class FileResource extends AbstractResource {
 			super.save();
 			logger.debug( "Saving file" );
 
-            String title = request.getValue( "ax-file-name", null );
-            if( title != null ) {
-                logger.debug( "Short-cut titling to " + title );
-                node.set( "title", title );
-            }
 
 		}
 	}
 
+    @Override
+    public void doConfigurationSubmit( Request request, HttpServletResponse response, JsonObject jsonData ) throws ErrorWhileSavingException, ParameterDoesNotExistException, IncorrectTypeException, ResourceDoesNotExistException, InconsistentParameterException, TemplateDoesNotExistException, IOException {
+
+        logger.debug( "FILELELELELELELELELELE" );
+        logger.debug( request.getParameterMap() );
+
+        /* Try upload */
+        String filename = request.getValue( "filename", null );
+        //filename = "wolle.jpg";
+        if( filename != null ) {
+            logger.debug( "FILENAME IS SET: " + filename );
+
+            Tuple<File, File> files = generateFile( filename, request.getUser() );
+            node.set( "file", files.getFirst().toString() );
+
+            AsyncContext aCtx = request.startAsync( request, response );
+            Executor uploadExecutor = Executors.newCachedThreadPool();
+
+            logger.debug( "SERVLET THREAD: " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName() );
+            uploadExecutor.execute( new ServletUtils.MultiPartCopier( aCtx, files.getSecond() ) );
+        } else {
+            logger.debug( "FILENAME WAS NOT SET!!!!" );
+        }
+
+        super.doConfigurationSubmit( request, response, jsonData );
+    }
+
+    /**
+     * @param filename
+     * @param user
+     * @return First is a {@link File} relative to the context path, and the second is an absolute file.
+     */
     public static Tuple<File, File> generateFile( String filename, User user ) {
         Date now = new Date();
         int mid = filename.lastIndexOf( "." );
@@ -194,6 +224,11 @@ public class FileResource extends AbstractResource {
 		public String getType() {
 			return "file";
 		}
+
+        @Override
+        public String getEnctype() {
+            return "multipart/form-data";
+        }
 
         @Override
         public void configureIndex( Database db ) {

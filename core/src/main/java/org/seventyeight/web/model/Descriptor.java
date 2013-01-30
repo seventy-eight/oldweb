@@ -124,4 +124,8 @@ public abstract class Descriptor<T extends Describable> {
         return false;
     }
 
+    public String getEnctype() {
+        return "application/x-www-form-urlencoded";
+    }
+
 }

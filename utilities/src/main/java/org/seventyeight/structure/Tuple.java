@@ -26,4 +26,8 @@ public class Tuple<T1, T2> {
     public String toString() {
         return first + ", " + second;
     }
+
+    public static <ST1, ST2> Tuple<ST1, ST2> tuple( ST1 first, ST2 second ) {
+        return new Tuple<ST1, ST2>( first, second );
+    }
 }

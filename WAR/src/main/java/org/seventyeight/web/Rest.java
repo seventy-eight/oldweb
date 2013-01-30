@@ -19,7 +19,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Arrays;
 
@@ -28,7 +31,7 @@ import java.util.Arrays;
  * Date: 15-11-12
  * Time: 22:22
  */
-@MultipartConfig
+//@MultipartConfig
 @WebServlet( asyncSupported = true )
 public class Rest extends HttpServlet {
 
@@ -50,12 +53,25 @@ public class Rest extends HttpServlet {
         StopWatch sw = new StopWatch();
         sw.reset();
 
-        logger.debug( "[Parameters] " + request.getParameterMap() );
-
         sw.start( "preparing" );
 
+        logger.debug( "Query  : " + request.getQueryString() );
+        logger.debug( "URI    : " + request.getRequestURI() );
+        logger.debug( "METHOD : " + request.getMethod() );
+        logger.debug( "CONTENT: " + request.getContentType() );
+        logger.debug( "LENGTH : " + request.getContentLength() );
+
         /* Instantiating request */
-        Request r = new Request( request );
+        Request r = null;
+        if( Request.isMultipart( request ) ) {
+            logger.debug( "WAS MULTI PART" );
+           r = new MultiPartRequest( request );
+        } else {
+            logger.debug( "WAS NOT MULTI PART" );
+            r = new Request( request );
+        }
+
+        logger.debug( "[Parameters] " + request.getParameterMap() );
 
         /* Instantiating context */
         VelocityContext vc = new VelocityContext();
@@ -65,9 +81,6 @@ public class Rest extends HttpServlet {
         r.getContext().put( "request", r );
         r.setRequestParts( request.getRequestURI().split( "/" ) );
         logger.debug( "------ " + Arrays.asList( r.getRequestParts() ) + " ------" );
-        logger.debug( "Query : " + request.getQueryString() );
-        logger.debug( "URI   : " + request.getRequestURI() );
-        logger.debug( "METHOD: " + request.getMethod() );
 
         TopLevelGizmo action = null;
         try {
