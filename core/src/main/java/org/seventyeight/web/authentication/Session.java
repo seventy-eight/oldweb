@@ -60,14 +60,14 @@ public class Session extends AbstractItem {
 	*/
 	
 	public User getUser() {
-        List<Edge> edges = node.getEdges( SessionEdge.session, Direction.INBOUND );
-        for( Edge e : edges ) {
-            return new User( e.getSourceNode() );
-        }
+        SessionsHub hub = getParent();
 
-		logger.debug( "Session has no user bindings." );
-		
-		return null;
+        if( hub == null ) {
+            logger.debug( "No user attached to session" );
+            return null;
+        } else {
+            return hub.getParent();
+        }
 	}
 	
 	public String getHash() {

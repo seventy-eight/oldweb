@@ -255,7 +255,7 @@ public class User extends AbstractResource {
 	}
 
     public SessionsHub getSessionsHub() throws PersistenceException {
-        return getHub( SeventyEight.getInstance().getDescriptor( SessionsHub.class) );
+        return getHub( (Descriptor<? extends AbstractHub>)SeventyEight.getInstance().getDescriptor( SessionsHub.class) );
     }
 	
 }

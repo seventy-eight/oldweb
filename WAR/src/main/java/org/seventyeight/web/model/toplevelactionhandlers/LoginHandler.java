@@ -37,7 +37,7 @@ public class LoginHandler implements TopLevelAction {
         return "login";
     }
 
-    public void doLogin( Request request, HttpServletResponse response, JsonObject json ) throws PasswordDoesNotMatchException, UnableToCreateSessionException, PersistenceException {
+    public void doIndex( Request request, HttpServletResponse response, JsonObject json ) throws PasswordDoesNotMatchException, UnableToCreateSessionException, PersistenceException {
         String username = request.getValue( "username", "" );
         String password = request.getValue( "password", "" );
 
