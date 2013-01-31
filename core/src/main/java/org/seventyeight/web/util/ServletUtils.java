@@ -105,7 +105,7 @@ public class ServletUtils {
                         e.printStackTrace();
                     }
 
-                    f.getNode().set( "file", files.getFirst().getName() );
+                    f.getNode().set( "file", files.getFirst().toString() );
                 }
             }
 

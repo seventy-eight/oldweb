@@ -1,6 +1,6 @@
 <tr>
-    <td>
-        <iframe src="uploadForm" style="height: 50px; width: 500px" scrolling="no">
+    <td colspan="2">
+        <iframe src="uploadForm" style="height: 50px; width: 100%" scrolling="no">
         </iframe>
     </td>
 </tr>

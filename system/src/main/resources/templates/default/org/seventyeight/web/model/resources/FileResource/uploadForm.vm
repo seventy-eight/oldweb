@@ -4,17 +4,34 @@
     <script language="javascript" type="text/javascript" src="/static/javascript/utils.js"></script>
 </head>
 
+#set( $exists = ( $item.getFile() ) )
+
 <body>
-    <div style="display: none; width:0%; background-color: #000000" id="progress">
-        h
-    </div>
-    <div id="outer">
-        <form action="upload" method="post" enctype="multipart/form-data" target="uploadTarget" onsubmit="Utils.getProgress( $item.getIdentifier(), 'outer', 'progress' )">
-            <input type="file" name="filename">
-            <input type="submit" value="Upload">
-        </form>
+#if( "$exists" == "" )
+    <div id="uploadNewFile" style="display: none">
+#else
+    <div id="uploadNewFile" style="">
+#end
+        $exists.getName()<br> <a href="#" onclick="$('#uploadNewFile').hide();$('#theForm').show()">Upload another file</a>
     </div>
 
-    <iframe id="uploadTarget" name="uploadTarget" src="#" style="width:0;height:0;border-style: none;"></iframe>
+#if( "$exists" == "" )
+    <div id="theForm" style="">
+#else
+    <div id="theForm" style="display: none">
+#end
+        <div style="display: none; width:0%; height: 20px; background-color: #000000" id="progress">
+
+        </div>
+        <div id="outer">
+            <form action="upload" method="post" enctype="multipart/form-data" target="uploadTarget" onsubmit="Utils.getProgress( $item.getIdentifier(), 'outer', 'progress' )">
+                <input type="file" name="filename">
+                <input type="submit" value="Upload">
+            </form>
+        </div>
+
+        <iframe id="uploadTarget" name="uploadTarget" src="#" style="width:0;height:0;border-style: none;"></iframe>
+    </div>
+
 </body>
 </html>

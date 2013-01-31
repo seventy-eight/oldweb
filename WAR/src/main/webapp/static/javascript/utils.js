@@ -31,6 +31,9 @@ Utils.updateProgress = function( resourceId, element ) {
                 setTimeout( function() {
                     Utils.updateProgress( resourceId, element );
                 }, 500)
+            } else if( data == 1.0 ) {
+                $('#' + element).html( "Upload done" );
+                $('#' + element).css( 'background-color', '#ffffff' );
             }
         }
     )

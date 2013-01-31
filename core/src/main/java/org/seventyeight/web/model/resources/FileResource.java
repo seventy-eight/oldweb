@@ -85,8 +85,6 @@ public class FileResource extends AbstractResource {
             return;
         }
 
-        logger.info( "[PROGRESS] " + listener.getPercent() );
-
         out.println(listener.getPercent());
     }
 
