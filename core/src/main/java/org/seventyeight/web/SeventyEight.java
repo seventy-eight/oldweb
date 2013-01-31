@@ -13,6 +13,7 @@ import org.seventyeight.database.*;
 import org.seventyeight.loader.Loader;
 import org.seventyeight.utils.FileUtilities;
 import org.seventyeight.web.authentication.SessionManager;
+import org.seventyeight.web.authentication.SessionsHub;
 import org.seventyeight.web.debate.treelike.ReplyTreeHub;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.extensions.Copyright.Copyright;
@@ -202,6 +203,7 @@ public class SeventyEight {
 
         addDescriptor( db, new AuthoritativeHub.AuthoritativeHubDescriptor() );
         addDescriptor( db, new OwnershipsHub.OwnershipsHubDescriptor() );
+        addDescriptor( db, new SessionsHub.SessionsHubDescriptor() );
 
         defaultLocale = new Locale( "english" );
 

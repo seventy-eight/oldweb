@@ -10,6 +10,7 @@ import org.seventyeight.database.IndexValueType;
 import org.seventyeight.database.Node;
 import org.seventyeight.utils.Utils;
 import org.seventyeight.web.SeventyEight;
+import org.seventyeight.web.authentication.SessionsHub;
 import org.seventyeight.web.authentication.exceptions.NoSuchUserException;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
@@ -252,5 +253,9 @@ public class User extends AbstractResource {
 		
 		return "No portrait";
 	}
+
+    public SessionsHub getSessionsHub() throws PersistenceException {
+        return getHub( SeventyEight.getInstance().getDescriptor( SessionsHub.class) );
+    }
 	
 }

@@ -22,6 +22,7 @@ public class Session extends AbstractItem {
 	public static final String __END_DATE = "end";
 	
 	public enum SessionEdge implements EdgeType {
+        sessions,
         session
 	}
 	
@@ -39,6 +40,7 @@ public class Session extends AbstractItem {
         return SessionEdge.session;
     }
 
+    /*
     public void bindToUser( User user ) {
 		removeBindings();
 		logger.debug( "Binding session to " + user );
@@ -55,6 +57,7 @@ public class Session extends AbstractItem {
             e.remove();
         }
 	}
+	*/
 	
 	public User getUser() {
         List<Edge> edges = node.getEdges( SessionEdge.session, Direction.INBOUND );
@@ -74,6 +77,10 @@ public class Session extends AbstractItem {
 	public Date getEndingAsDate() {
 		return new Date( (Long)node.get( __END_DATE ) );
 	}
+
+    public String getIdentity() {
+        return node.get( "identity", null );
+    }
 	
 	public Node getNode() {
 		return node;
