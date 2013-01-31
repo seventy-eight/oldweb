@@ -149,6 +149,8 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
         } else {
             db.getMetadata().getIndexManager().getIndex( name ).put( keys[0], node.getDocument() );
         }
+        db.getMetadata().getIndexManager().getIndex( name ).lazySave();
+        db.getMetadata().getIndexManager().getIndex( name ).lazySave();
     }
 
     public List<OrientNode> getFromIndex( String name, Object ... keys ) {

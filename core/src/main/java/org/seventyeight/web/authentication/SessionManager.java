@@ -80,13 +80,13 @@ public class SessionManager {
 
         List<Node> nodes = db.getFromIndex( INDEX_SESSIONS, hash );
 
-        String identity = NetworkUtils.getNetworkIdentity();
-
         Session actual = null;
         for( Node node : nodes ) {
             Session session = new Session( node );
-            logger.debug( "Comparing " + session.getEndingAsDate().getTime() + " with " + new Date().getTime() + ", ident: " + session.getIdentity() );
-            if( session.getEndingAsDate().after( new Date() ) && ( identity == null || identity.equals( session.getIdentity() )) ) {
+            //logger.debug( "Comparing " + session.getEndingAsDate().getTime() + " with " + new Date().getTime() + ", ident: " + session.getIdentity() );
+            logger.debug( "Comparing " + session.getEndingAsDate().getTime() + " with " + new Date().getTime() );
+            //if( session.getEndingAsDate().after( new Date() ) && ( identity == null || identity.equals( session.getIdentity() )) ) {
+            if( session.getEndingAsDate().after( new Date() ) ) {
                 logger.debug( "A valid session found" );
                 actual = session;
             } else {
