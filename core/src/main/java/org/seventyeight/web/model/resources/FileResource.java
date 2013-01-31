@@ -14,10 +14,12 @@ import org.seventyeight.utils.Date;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
+import org.seventyeight.web.util.FileUploadListener;
 import org.seventyeight.web.util.ServletUtils;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 
 public class FileResource extends AbstractResource {
@@ -56,39 +58,49 @@ public class FileResource extends AbstractResource {
 		}
 	}
 
-    @Override
-    public void doConfigurationSubmit( Request request, HttpServletResponse response, JsonObject jsonData ) throws ErrorWhileSavingException, ParameterDoesNotExistException, IncorrectTypeException, ResourceDoesNotExistException, InconsistentParameterException, TemplateDoesNotExistException, IOException {
+    public void doUpload( Request request, HttpServletResponse response, JsonObject json ) throws IOException {
+        AsyncContext aCtx = request.startAsync( request, response );
+        Executor uploadExecutor = Executors.newCachedThreadPool();
 
-        logger.debug( "FILELELELELELELELELELE" );
-        logger.debug( request.getParameterMap() );
+        logger.debug( "SERVLET THREAD: " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName() );
+        uploadExecutor.execute( new ServletUtils.FileUploader( aCtx, request.getUser().getIdentifier().toString(), getIdentifier() ) );
 
-        /* Try upload */
-        String filename = request.getValue( "filename", null );
-        //filename = "wolle.jpg";
-        if( filename != null ) {
-            logger.debug( "FILENAME IS SET: " + filename );
+        response.getWriter().println( "done" );
+    }
 
-            Tuple<File, File> files = generateFile( filename, request.getUser() );
-            node.set( "file", files.getFirst().toString() );
+    public void doProgress( Request request, HttpServletResponse response ) throws IOException {
+        HttpSession session = request.getSession( true );
 
-            AsyncContext aCtx = request.startAsync( request, response );
-            Executor uploadExecutor = Executors.newCachedThreadPool();
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
 
-            logger.debug( "SERVLET THREAD: " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName() );
-            uploadExecutor.execute( new ServletUtils.MultiPartCopier( aCtx, files.getSecond() ) );
-        } else {
-            logger.debug( "FILENAME WAS NOT SET!!!!" );
+        if (session == null) {
+            out.println("Sorry, session is null"); // just to be safe
+            return;
         }
 
-        super.doConfigurationSubmit( request, response, jsonData );
+        FileUploadListener listener = (FileUploadListener) session.getAttribute( "listener" );
+        if (listener == null) {
+            out.println("Progress listener is null");
+            return;
+        }
+
+        logger.info( "[PROGRESS] " + listener.getPercent() );
+
+        out.println(listener.getPercent());
+    }
+
+    public void doUploadForm( Request request, HttpServletResponse response ) throws TemplateDoesNotExistException, IOException {
+        response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( this, "uploadForm.vm" ) );
+
     }
 
     /**
      * @param filename
-     * @param user
+     * @param pathPrefix
      * @return First is a {@link File} relative to the context path, and the second is an absolute file.
      */
-    public static Tuple<File, File> generateFile( String filename, User user ) {
+    public static Tuple<File, File> generateFile( String filename, String pathPrefix ) {
         Date now = new Date();
         int mid = filename.lastIndexOf( "." );
         String fname = filename;
@@ -98,7 +110,7 @@ public class FileResource extends AbstractResource {
             fname = filename.substring( 0, mid );
         }
 
-        String strpath = "upload/" + user.getIdentifier() + "/" + formatYear.format( now ) + "/" + formatMonth.format( now ) + "/" + ext;
+        String strpath = "upload/" + pathPrefix + "/" + formatYear.format( now ) + "/" + formatMonth.format( now ) + "/" + ext;
 
         File path = new File( SeventyEight.getInstance().getPath(), strpath );
         File relativePath = new File( strpath, filename );
@@ -112,6 +124,7 @@ public class FileResource extends AbstractResource {
         }
 
         logger.debug( "FILE: " + file.getAbsolutePath() );
+        logger.debug( "FILE: " + relativePath );
 
         return new Tuple<File, File>( relativePath, file );
 

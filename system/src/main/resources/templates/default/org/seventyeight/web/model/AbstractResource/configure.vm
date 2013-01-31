@@ -6,7 +6,7 @@
     <tr>
         <td>
 
-            <form action="configurationSubmit" method="post" id="configure" name="configure" enctype="$descriptor.getEnctype()" accept-charset="UTF-8" onsubmit="Utils.addJsonElement( this );">
+            <form action="configurationSubmit" method="post" id="configure" name="configure" enctype="application/x-www-form-urlencoded" accept-charset="UTF-8" onsubmit="Utils.addJsonElement( this );">
 
                 <table>
 

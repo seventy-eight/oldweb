@@ -282,7 +282,7 @@ public class MultipartMap extends HashMap<String, Object> {
         logger.debug( "NAME::::: " + name );
 
 		// Write uploaded file.
-        Tuple<File, File> files = FileResource.generateFile( filename, request.getUser() );
+        Tuple<File, File> files = FileResource.generateFile( filename, "" );
 		File file = files.getSecond();
         logger.debug( "TEMP FILE: " + file );
 		InputStream input = null;

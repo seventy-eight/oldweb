@@ -17,6 +17,27 @@ Utils.startupload = function( nodeid, append ) {
 	});
 }
 
+Utils.getProgress = function( resourceId, element, p ) {
+    $('#' + element).hide();
+    $('#' + p).show();
+    Utils.updateProgress( resourceId, p );
+}
+
+Utils.updateProgress = function( resourceId, element ) {
+    $.get( '/resource/' + resourceId + '/progress', function( data ) {
+            $('#' + element).width( ( data * 100 ) + '%' );
+
+            if( data < 1.0 ) {
+                setTimeout( function() {
+                    Utils.updateProgress( resourceId, element );
+                }, 500)
+            }
+        }
+    )
+
+
+}
+
 Utils.popupselect = function( myurl, height ) {
 		var w1 = screen.width * 0.9;
 		var w2 = screen.width * 0.05;

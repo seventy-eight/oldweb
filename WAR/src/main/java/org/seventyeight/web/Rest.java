@@ -62,14 +62,7 @@ public class Rest extends HttpServlet {
         logger.debug( "LENGTH : " + request.getContentLength() );
 
         /* Instantiating request */
-        Request r = null;
-        if( Request.isMultipart( request ) ) {
-            logger.debug( "WAS MULTI PART" );
-           r = new MultiPartRequest( request );
-        } else {
-            logger.debug( "WAS NOT MULTI PART" );
-            r = new Request( request );
-        }
+        Request r = new Request( request );
 
         logger.debug( "[Parameters] " + request.getParameterMap() );
 

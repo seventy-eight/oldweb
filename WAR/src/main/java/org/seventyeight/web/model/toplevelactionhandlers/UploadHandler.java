@@ -1,8 +1,15 @@
 package org.seventyeight.web.model.toplevelactionhandlers;
 
+import com.google.gson.JsonObject;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Node;
+import org.seventyeight.structure.Tuple;
 import org.seventyeight.utils.Date;
+import org.seventyeight.utils.FileUtilities;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
@@ -26,7 +33,7 @@ import java.util.concurrent.Executors;
  *         Date: 08-12-12
  *         Time: 23:01
  */
-public class UploadHandler implements TopLevelExecutor {
+public class UploadHandler implements TopLevelAction {
 
     private static Logger logger = Logger.getLogger( UploadHandler.class );
 
@@ -41,6 +48,11 @@ public class UploadHandler implements TopLevelExecutor {
     private ResourceHelper helper = new ResourceHelper();
     private ResourceDescriptor descriptor = (ResourceDescriptor) SeventyEight.getInstance().getDescriptor( FileResource.class );
 
+    @Override
+    public String getDisplayName() {
+        return "upload";
+    }
+
     /*
 
     (0) / (1) uploadAndCreate handler / (2) type
@@ -53,7 +65,7 @@ public class UploadHandler implements TopLevelExecutor {
 
      */
 
-    @Override
+    //@Override
     public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
 
         System.out.println( request.getParameterMap() );
@@ -96,6 +108,45 @@ public class UploadHandler implements TopLevelExecutor {
                     response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
                 } catch( Exception e ) {
                     throw new ActionHandlerException( e );
+                }
+            }
+        }
+    }
+
+    /**
+     * The actual single POST upload method, multipart
+     * @param request
+     * @param response
+     * @param json
+     */
+    public void doFile( Request request, HttpServletResponse response, JsonObject json ) {
+
+    }
+
+
+    public static class Copier implements Runnable {
+        AsyncContext ctx;
+        String pathPrefix;
+
+        public Copier( AsyncContext ctx, String pathPrefix ) {
+            this.ctx = ctx;
+            this.pathPrefix = pathPrefix;
+        }
+
+        public void run() {
+            HttpServletRequest request = (HttpServletRequest) ctx.getRequest();
+            logger.debug( "REQUEST IS " + request );
+
+            List<FileItem> items = null;
+            try {
+                items = new ServletFileUpload( new DiskFileItemFactory() ).parseRequest( request );
+            } catch( FileUploadException e ) {
+                e.printStackTrace();
+            }
+            for( FileItem item : items ) {
+                if( !item.isFormField() ) {
+                    Tuple<File, File> files = FileResource.generateFile( item.getName(), pathPrefix );
+                    //item.write();
                 }
             }
         }
@@ -174,7 +225,7 @@ public class UploadHandler implements TopLevelExecutor {
         Executor uploadExecutor = Executors.newCachedThreadPool();
 
         logger.debug( "SERVLET THREAD: " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName() );
-        uploadExecutor.execute( new Copier( aCtx, file ) );
+        uploadExecutor.execute( new Copier( aCtx, "" ) );
 
         //response.setStatus( 200 );
         response.getWriter().print( resource.getIdentifier() );
@@ -255,6 +306,7 @@ public class UploadHandler implements TopLevelExecutor {
     }
 
 
+    /*
     private class Copier implements Runnable {
         AsyncContext ctx;
         File file;
@@ -274,6 +326,7 @@ public class UploadHandler implements TopLevelExecutor {
             }
         }
     }
+    */
 
 /*
     private class Upload implements Runnable {
