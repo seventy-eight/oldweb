@@ -39,11 +39,6 @@ public class Session extends AbstractItem {
         return SessionEdge.session;
     }
 
-    @Override
-    public final void save( CoreRequest request, JsonObject json ) throws ParameterDoesNotExistException, ResourceDoesNotExistException, IncorrectTypeException, InconsistentParameterException, ErrorWhileSavingException {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
     public void bindToUser( User user ) {
 		removeBindings();
 		logger.debug( "Binding session to " + user );

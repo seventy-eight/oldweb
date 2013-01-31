@@ -44,19 +44,21 @@ public class TopLevelGizmoHandler {
     }
 
     private void handleTopLevelAction( TopLevelAction action, Request request, HttpServletResponse response ) throws ActionHandlerException {
+        actions( (Item) action, 2, request, response );
+        /*
         if( request.getRequestParts().length > 2 ) {
             if( action instanceof Actionable ) {
                 actions( (Item) action, 2, request, response );
             } else {
                 if( request.getRequestParts().length > 3 ) {
-                    throw new ActionHandlerException( "No such action, " + request.getRequestURI() );
+                    throw new ActionHandlerException( "No such actioexecuteThing( request, response, (Item) action, request.getRequestParts()[2] );n, " + request.getRequestURI() );
                 } else {
-                    executeThing( request, response, (Item) action, request.getRequestParts()[2] );
+
                 }
             }
         } else {
-            /* TODO, what? */
         }
+        */
     }
 
     private void handleItemType( ItemType type, Request request, HttpServletResponse response ) throws ActionHandlerException {

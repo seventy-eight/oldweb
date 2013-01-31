@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Database;
+import org.seventyeight.database.IndexType;
+import org.seventyeight.database.IndexValueType;
 import org.seventyeight.database.Node;
 import org.seventyeight.utils.Utils;
 import org.seventyeight.web.SeventyEight;
@@ -40,7 +42,20 @@ public class User extends AbstractResource {
 			super( resource, request, jsonData );
 		}
 
-		public void save() throws InconsistentParameterException, ErrorWhileSavingException {
+        @Override
+        public void updateIndexes() {
+            super.updateIndexes();
+
+            logger.debug( "Storing username in index: " + ((User)resource).getUsername() );
+
+            try {
+                node.getDB().putToIndex( INDEX_USERNAMES, node, ((User)resource).getUsername() );
+            } catch( Exception e ) {
+                logger.warn( e );
+            }
+        }
+
+        public void save() throws InconsistentParameterException, ErrorWhileSavingException {
 			super.save();
 			
 			logger.debug( "Saving user" );
@@ -209,6 +224,12 @@ public class User extends AbstractResource {
 		public String getType() {
 			return "user";
 		}
+
+        @Override
+        public void configureIndex( Database db ) {
+            logger.debug( "Configuring " + INDEX_USERNAMES );
+            db.createIndex( INDEX_USERNAMES, IndexType.UNIQUE, IndexValueType.STRING );
+        }
 	}
 
 	public String getPortrait() {

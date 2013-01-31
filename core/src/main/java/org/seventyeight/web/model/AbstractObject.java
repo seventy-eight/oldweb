@@ -208,6 +208,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 		/* Removing all owners */
 		removeAllOwners();
         owner.getNode().update();
+        logger.debug( "--------------------> " + this.getNode() );
 		/* Adding new ownerships */
         //createRelation( ownerships, ResourceEdgeType.ownerships );
         try {
@@ -223,6 +224,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
 		logger.debug( "Removing all owners for " + this );
 		try {
             node.removeEdges( ResourceEdgeType.owner, Direction.OUTBOUND );
+            logger.debug( "--------------------> " + this.getNode() );
         } catch( Exception e ) {
             logger.warn( e );
         }

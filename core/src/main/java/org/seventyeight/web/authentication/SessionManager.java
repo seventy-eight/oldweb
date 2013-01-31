@@ -22,12 +22,9 @@ public class SessionManager {
 	
 	private static Logger logger = Logger.getLogger( SessionManager.class );
 	
-	//private Index<Node> sessionsIndexes;
     public static final String INDEX_SESSIONS = "sessions";
 	
 	public SessionManager( Database db ) {
-		//IndexManager indexer = GraphDragon.getInstance().getGraphDB().index();
-		//this.sessionsIndexes = indexer.forNodes( "sessions" );
         db.createIndex( INDEX_SESSIONS, IndexType.UNIQUE, IndexValueType.STRING );
 		logger.debug( "Initializing session index" );
 	}

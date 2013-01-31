@@ -45,11 +45,13 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
 
 		save.before();
 		save.save();
+        node.save();
+
 		save.after();
-		save.updateIndexes();
-		
+
 		node.save();
 
+        save.updateIndexes();
 
         if( jsonData != null ) {
             logger.debug( "Removing actions" );

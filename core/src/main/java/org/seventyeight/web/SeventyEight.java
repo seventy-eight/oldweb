@@ -632,9 +632,9 @@ public class SeventyEight {
         return sessionManager;
     }
 
-    public void addTopLevelGizmo( String name, TopLevelGizmo handler ) {
-        logger.debug( "Adding " + name + " to action handlers" );
-        topLevelGizmos.put( name, handler );
+    public void addTopLevelGizmo( TopLevelGizmo handler ) {
+        logger.debug( "Adding " + handler.getUrlName() + " to action handlers" );
+        topLevelGizmos.put( handler.getUrlName(), handler );
     }
 
     public TopLevelGizmo getTopLevelGizmo( String name ) throws GizmoHandlerDoesNotExistException {
