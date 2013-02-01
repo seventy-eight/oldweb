@@ -37,36 +37,17 @@ public class LoginHandler implements TopLevelAction {
         return "login";
     }
 
-    public void doIndex( Request request, HttpServletResponse response, JsonObject json ) throws PasswordDoesNotMatchException, UnableToCreateSessionException, PersistenceException {
+    public void doIndex( Request request, HttpServletResponse response, JsonObject json ) throws NoSuchUserException, UnableToCreateSessionException, PasswordDoesNotMatchException, PersistenceException {
         String username = request.getValue( "username", "" );
         String password = request.getValue( "password", "" );
 
         logger.debug( "Trying to login " + username );
 
-        if( !username.isEmpty() ) {
-            User user = null;
-            try {
-                user = User.getUserByUsername( request.getDB(), username );
-            } catch( NoSuchUserException e ) {
-                logger.warn( e );
-                return;
-            }
+        Session session = SeventyEight.getInstance().getAuthentication().login( request.getDB(), username, password );
 
-            if( user.getPassword() != null && !password.equals( user.getPassword() ) ) {
-                logger.debug( "Wrong password" );
-                throw new PasswordDoesNotMatchException( "Passwords does not match" );
-            }
-
-            request.setAuthenticated( true );
-            request.setUser( user );
-            //request.initializeTransaction();
-            Session session = SeventyEight.getInstance().getSessionManager().createSession( request.getDB(), user, new Date(), 10 );
-            Cookie cookie = new Cookie( SimpleAuthentication.__SESSION_ID, session.getHash() );
-            cookie.setMaxAge( 10 * SimpleAuthentication.__HOUR );
-            response.addCookie( cookie );
-            logger.debug( "LOGGED IN, YAY!" );
-            //request.succeedTransaction();
-            /* Store some stuff */
-        }
+        Cookie cookie = new Cookie( SimpleAuthentication.__SESSION_ID, session.getHash() );
+        cookie.setMaxAge( 10 * SimpleAuthentication.__HOUR );
+        response.addCookie( cookie );
+        logger.debug( "LOGGED IN, YAY!" );
     }
 }

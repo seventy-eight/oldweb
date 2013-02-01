@@ -12,8 +12,10 @@ import org.apache.log4j.Logger;
 import org.seventyeight.database.*;
 import org.seventyeight.loader.Loader;
 import org.seventyeight.utils.FileUtilities;
+import org.seventyeight.web.authentication.Authentication;
 import org.seventyeight.web.authentication.SessionManager;
 import org.seventyeight.web.authentication.SessionsHub;
+import org.seventyeight.web.authentication.SimpleAuthentication;
 import org.seventyeight.web.debate.treelike.ReplyTreeHub;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.extensions.Copyright.Copyright;
@@ -154,6 +156,8 @@ public class SeventyEight {
     private ConcurrentMap<Class, DatabaseInquirer> dbinq = new ConcurrentHashMap<Class, DatabaseInquirer>();
 
     private ConcurrentMap<String, AbstractTheme> themes = new ConcurrentHashMap<String, AbstractTheme>();
+
+    private Authentication authentication = new SimpleAuthentication();
 
     /**
      * A {@link Map} of top level actions, given by its name
@@ -419,6 +423,10 @@ public class SeventyEight {
         s.set( "next-resource-id", ( next + 1 ) );
         s.save();
         return next;
+    }
+
+    public Authentication getAuthentication() {
+        return authentication;
     }
 
     /**

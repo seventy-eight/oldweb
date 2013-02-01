@@ -6,10 +6,12 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.seventyeight.database.Database;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.authentication.exceptions.NoSuchUserException;
 import org.seventyeight.web.authentication.exceptions.PasswordDoesNotMatchException;
 import org.seventyeight.web.authentication.exceptions.UnableToCreateSessionException;
+import org.seventyeight.web.exceptions.PersistenceException;
 import org.seventyeight.web.model.Request;
 import org.seventyeight.web.model.resources.User;
 
@@ -51,8 +53,24 @@ public class SimpleAuthentication implements Authentication {
 					logger.debug( "NOT VALiD USER" );
 				}
 			}
-
 		}
 	}
+
+    public Session login( Database db, String username, String password ) throws PasswordDoesNotMatchException, UnableToCreateSessionException, PersistenceException, NoSuchUserException {
+        if( !username.isEmpty() ) {
+            User user = User.getUserByUsername( db, username );
+
+            if( user.getPassword() != null && !password.equals( user.getPassword() ) ) {
+                logger.debug( "Wrong password" );
+                throw new PasswordDoesNotMatchException( "Passwords does not match" );
+            }
+
+            //request.initializeTransaction();
+            Session session = SeventyEight.getInstance().getSessionManager().createSession( db, user, new Date(), 10 );
+            return session;
+        } else {
+            throw new NoSuchUserException( "" );
+        }
+    }
 
 }
