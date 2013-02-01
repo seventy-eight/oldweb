@@ -110,6 +110,10 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
         }
     }
 
+    public void removeFromIndex( String index, OrientNode node ) {
+        db.getMetadata().getIndexManager().getIndex( index ).remove( node.getDocument() );
+    }
+
     private OType[] getOrientValuesTypes( IndexValueType[] types ) {
         OType[] otypes = new OType[types.length];
         for( int i = 0 ; i < types.length ; i++ ) {
@@ -209,9 +213,12 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
     }
     */
 
+    @Override
     public void removeNodeFromIndex( String indexName, OrientNode node ) {
         db.getMetadata().getIndexManager().getIndex( indexName ).remove( node.getDocument() );
     }
+
+
 
     @Override
     public OrientNode getByIndex( String idx ) {

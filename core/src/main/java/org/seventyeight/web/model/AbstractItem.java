@@ -500,4 +500,31 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         return Authorization.NONE;
     }
 
+
+    public void remove() {
+        logger.info( "Removing the Item " + this );
+
+        /* First remove the parent edge */
+        if( getEdgeType() != null ) {
+            List<Edge> edges = node.getEdges( getEdgeType(), Direction.INBOUND );
+
+            if( edges.size() == 1 ) {
+                edges.get( 0 ).remove();
+            }
+        }
+
+        /* Recursively remove child nodes? */
+
+        /* Then the node itself */
+        node.remove();
+
+        /* Then indexes associated */
+        if( this instanceof Indexed ) {
+            Indexed i = (Indexed) this;
+            for( String idxName : i.getIndexNames() ) {
+                getDB().removeFromIndex( idxName, this.node );
+            }
+        }
+    }
+
 }

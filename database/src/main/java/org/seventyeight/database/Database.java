@@ -51,6 +51,7 @@ public interface Database<IDB, NT extends Node> {
      */
     public void putToIndex( String indexName, NT node, Object ... keys );
 
+    public void removeFromIndex( String index, NT node );
 
     public List<NT> getFromIndex( String name, Object ... keys );
 

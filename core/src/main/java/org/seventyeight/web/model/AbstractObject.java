@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Direction;
 import org.seventyeight.database.Edge;
+import org.seventyeight.database.Indexed;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.SeventyEight.GroupEdgeType;
@@ -23,7 +24,7 @@ import org.seventyeight.web.model.resources.User;
 import com.google.gson.JsonObject;
 
 
-public abstract class AbstractObject extends AbstractItem implements Ownable, Describable, Authorizable {
+public abstract class AbstractObject extends AbstractItem implements Ownable, Describable, Authorizable, Indexed {
 
 	private static Logger logger = Logger.getLogger( AbstractObject.class );
 
@@ -379,4 +380,7 @@ public abstract class AbstractObject extends AbstractItem implements Ownable, De
     public Authorizer getAuthorizer() {
         return this;
     }
+
+
+
 }

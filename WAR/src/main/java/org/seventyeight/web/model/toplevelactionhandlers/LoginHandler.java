@@ -3,6 +3,7 @@ package org.seventyeight.web.model.toplevelactionhandlers;
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
 import org.seventyeight.web.SeventyEight;
+import org.seventyeight.web.authentication.Authentication;
 import org.seventyeight.web.authentication.Session;
 import org.seventyeight.web.authentication.SessionManager;
 import org.seventyeight.web.authentication.SimpleAuthentication;
@@ -46,7 +47,7 @@ public class LoginHandler implements TopLevelAction {
         Session session = SeventyEight.getInstance().getAuthentication().login( request.getDB(), username, password );
 
         Cookie cookie = new Cookie( SimpleAuthentication.__SESSION_ID, session.getHash() );
-        cookie.setMaxAge( 10 * SimpleAuthentication.__HOUR );
+        cookie.setMaxAge( 10 * Authentication.__HOUR );
         response.addCookie( cookie );
         logger.debug( "LOGGED IN, YAY!" );
     }

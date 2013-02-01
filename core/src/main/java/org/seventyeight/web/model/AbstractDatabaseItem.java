@@ -106,4 +106,9 @@ public abstract class AbstractDatabaseItem implements DatabaseItem {
         return item.getNode().getId( false ).equals( this.getNode().getId( false ) );
 
     }
+
+    @Override
+    public boolean deletable() {
+        return true;
+    }
 }

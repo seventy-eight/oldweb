@@ -20,4 +20,6 @@ public interface DatabaseItem extends Item {
      * Remove this {@link Item} from the persistence layer
      */
     public void remove();
+
+    public boolean deletable();
 }

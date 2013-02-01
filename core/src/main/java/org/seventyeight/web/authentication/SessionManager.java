@@ -14,6 +14,7 @@ import org.seventyeight.utils.NetworkUtils;
 import org.seventyeight.utils.Utils;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.authentication.exceptions.UnableToCreateSessionException;
+import org.seventyeight.web.exceptions.CouldNotLoadObjectException;
 import org.seventyeight.web.exceptions.PersistenceException;
 import org.seventyeight.web.model.resources.User;
 
@@ -39,7 +40,7 @@ public class SessionManager {
 		node.set( "created", new Date().getTime() );
 		node.set( Session.__END_DATE, endDate.getTime() );
 
-        node.set( "identity", NetworkUtils.getNetworkIdentity() );
+        //node.set( "identity", NetworkUtils.getNetworkIdentity() );
 
         node.save();
 		
@@ -101,9 +102,16 @@ public class SessionManager {
 	public void removeSession( Database db, String hash ) {
         logger.debug( "[Removing sessions] " + hash );
         List<Node> nodes = db.getFromIndex( INDEX_SESSIONS, hash );
-		
+
 		for( Node node : nodes ) {
-			node.remove();
+            try {
+                Session s = SeventyEight.getInstance().getDatabaseItem( node );
+                s.remove();
+            } catch( CouldNotLoadObjectException e ) {
+                e.printStackTrace();
+            }
 		}
+
+
 	}
 }

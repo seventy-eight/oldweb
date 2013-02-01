@@ -233,7 +233,15 @@ public class User extends AbstractResource {
         }
 	}
 
-	public String getPortrait() {
+    @Override
+    public List<String> getIndexNames() {
+        List<String> names = super.getIndexNames();
+        names.add( INDEX_USERNAMES );
+
+        return names;
+    }
+
+    public String getPortrait() {
 		List<AbstractExtension> list = SeventyEight.getInstance().getExtensions( this, UserAvatar.class );
 		
 		logger.debug( "I found " + list );

@@ -236,7 +236,19 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 		return list;
 	}
 
-	public void updateIndexes() {
+    @Override
+    public List<String> getIndexNames() {
+        List<String> idxes = new ArrayList<String>( 2 );
+
+        idxes.add( SeventyEight.INDEX_RESOURCES );
+        idxes.add( SeventyEight.INDEX_RESOURCE_TYPES);
+
+        return idxes;
+    }
+
+
+    @Override
+    public void updateIndexes() {
 		super.updateIndexes();
 		
 		logger.debug( "Saving resource indexes" );

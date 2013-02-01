@@ -96,10 +96,9 @@ public class Rest extends HttpServlet {
         r.setUser( SeventyEight.getInstance().getAnonymousUser() );
         r.setTheme( SeventyEight.getInstance().getDefaultTheme() );
 
-        Authentication auth = new SimpleAuthentication();
         try {
             logger.debug( "AUTHENTICATING" );
-            auth.authenticate( r, response );
+            SeventyEight.getInstance().getAuthentication().authenticate( r, response );
         } catch( PasswordDoesNotMatchException e ) {
             logger.debug( "Passwords does not match!" );
         } catch( NoSuchUserException e ) {
