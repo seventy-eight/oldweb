@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.*;
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -33,10 +34,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import org.seventyeight.web.model.resources.Article;
-import org.seventyeight.web.model.resources.FileResource;
-import org.seventyeight.web.model.resources.Group;
-import org.seventyeight.web.model.resources.User;
+import org.seventyeight.web.model.resources.*;
 import org.seventyeight.web.model.themes.Default;
 import org.seventyeight.utils.Date;
 import org.seventyeight.web.util.Installer;
@@ -195,6 +193,7 @@ public class SeventyEight {
         addDescriptor( db, new Group.GroupDescriptor() );
         addDescriptor( db, new Article.ArticleDescriptor() );
         addDescriptor( db, new FileResource.FileDescriptor() );
+        addDescriptor( db, new Image.ImageDescriptor() );
 
         //addDescriptor( db, new ReplyTreeHub.ReplyTreeExtensionDescriptor() );
         //addDescriptor( db, new TreeReply.ReplyDescriptor() );

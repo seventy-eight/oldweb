@@ -31,6 +31,9 @@ public abstract class ResourceDescriptor<T extends AbstractResource> extends Des
         SeventyEight.getInstance().setIdentifier( instance );
 		instance.setCreated( new Date() );
         instance.getNode().set( "type", getType() );
+
+        SeventyEight.getInstance().setIdentifier( instance );
+
         instance.getNode().save();
 
         /* Update index */

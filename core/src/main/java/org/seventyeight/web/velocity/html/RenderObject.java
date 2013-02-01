@@ -36,7 +36,7 @@ public class RenderObject extends Directive {
         logger.debug( "Rendering descriptor" );
 		Object obj = null;
         String template = null;
-        String container = null;
+        int superClass = 0;
 
 		try {
 			if( node.jjtGetChild( 0 ) != null ) {
@@ -52,7 +52,7 @@ public class RenderObject extends Directive {
             }
 
             if( node.jjtGetChild( 2 ) != null ) {
-                container = (String) node.jjtGetChild( 2 ).value( context );
+                superClass = (Integer) node.jjtGetChild( 2 ).value( context );
             } else {
                 throw new IOException( "Third argument is not a string" );
             }
@@ -66,7 +66,7 @@ public class RenderObject extends Directive {
         if( template == null ) {
             return false;
         } else {
-            if( container == null ) {
+            if( superClass == 0 ) {
                 try {
                     writer.write( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( obj, template + ".vm", false ) );
                 } catch( TemplateDoesNotExistException e ) {
@@ -74,8 +74,16 @@ public class RenderObject extends Directive {
                 }
             } else {
                 try {
-                    request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( obj, template + ".vm", false ) );
-                    writer.write( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( container + ".vm" ) );
+                    Class<?> clazz = obj.getClass();
+                    int c = 0;
+                    logger.debug("BASE IS " + clazz);
+                    while( clazz != null && clazz != Object.class && c < superClass ) {
+                        clazz = clazz.getSuperclass();
+                        logger.debug("SUPER IS " + clazz);
+                        c++;
+                    }
+                    logger.debug("USING " + clazz);
+                    writer.write( (SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderClass( obj, clazz, template + ".vm", false ) ) );
                 } catch( TemplateDoesNotExistException e ) {
                     e.printStackTrace();
                 }

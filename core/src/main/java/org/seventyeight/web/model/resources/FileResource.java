@@ -17,7 +17,10 @@ import org.seventyeight.web.model.*;
 import org.seventyeight.web.util.FileUploadListener;
 import org.seventyeight.web.util.ServletUtils;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.AsyncContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -183,14 +186,58 @@ public class FileResource extends AbstractResource {
 	
 	public File getFile() {
 		String rfilename = getRelativeFile();
-		int l = SeventyEight.getInstance().getPath().toString().length();
-		int l2 = rfilename.length();
-		
-		logger.debug( "PATH: " + l + ", " + l2 );
-		
-		//return new File( rfilename.substring( l, l2 ) );
-        return new File( SeventyEight.getInstance().getPath(), rfilename );
+        if( rfilename != null && !rfilename.isEmpty() ) {
+            int l = SeventyEight.getInstance().getPath().toString().length();
+            int l2 = rfilename.length();
+
+            logger.debug( "PATH: " + l + ", " + l2 );
+
+            //return new File( rfilename.substring( l, l2 ) );
+            return new File( SeventyEight.getInstance().getPath(), rfilename );
+        } else {
+            return null;
+        }
 	}
+
+    public void doFile( Request request, HttpServletResponse response ) throws ServletException, IOException {
+
+        File file = getFile();
+
+        if( file != null ) {
+
+            BufferedInputStream buffer = null;
+            ServletOutputStream stream = null;
+
+            try {
+                stream = response.getOutputStream();
+
+                //set response headers
+                response.setContentType( new MimetypesFileTypeMap().getContentType( file.getName() ) );
+                response.addHeader( "Content-Disposition", "attachment; filename=" + file.getName() );
+
+                response.setContentLength((int) file.getTotalSpace() );
+
+                int readBytes = 0;
+
+                //read from the file; write to the ServletOutputStream
+                buffer = new BufferedInputStream( new FileInputStream( file ) );
+                while( ( readBytes = buffer.read() ) != -1 ) {
+                    stream.write(readBytes);
+                }
+            } catch (IOException ioe) {
+                throw new ServletException( ioe.getMessage() );
+            } finally {
+                if( buffer != null ) {
+                    buffer.close();
+                }
+                if( stream != null ) {
+                    stream.close();
+                }
+            }
+        } else {
+            response.sendError( 404, "Could not find file" );
+        }
+    }
 	
 	public String getExtension() {
 		return (String) getProperty( "ext" );

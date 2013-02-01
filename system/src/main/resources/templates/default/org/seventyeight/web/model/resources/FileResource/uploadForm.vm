@@ -7,7 +7,7 @@
 #set( $exists = ( $item.getFile() ) )
 
 <body>
-#if( "$exists" == "" )
+#if( !$exists )
     <div id="uploadNewFile" style="display: none">
 #else
     <div id="uploadNewFile" style="">
@@ -15,7 +15,7 @@
         $exists.getName()<br> <a href="#" onclick="$('#uploadNewFile').hide();$('#theForm').show()">Upload another file</a>
     </div>
 
-#if( "$exists" == "" )
+#if( !$exists )
     <div id="theForm" style="">
 #else
     <div id="theForm" style="display: none">

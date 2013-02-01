@@ -12,6 +12,7 @@ import org.seventyeight.web.util.ClassUtils;
 import org.seventyeight.web.util.JsonUtils;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -157,6 +158,7 @@ public class TopLevelGizmoHandler {
             executeMethod( item, request, response, urlName );
             return;
         } catch( Exception e ) {
+            e.printStackTrace();
             logger.debug( item + " does not not have " + urlName + ", " + e.getMessage() );
         }
 
@@ -178,6 +180,7 @@ public class TopLevelGizmoHandler {
         logger.debug( "METHOD: " + item + ", " + actionMethod );
 
         Method method = getRequestMethod( item, actionMethod, request.isRequestPost() );
+        logger.debug( "FOUND METHOD: " + method );
 
         if( request.isRequestPost() ) {
             JsonObject json = null;
@@ -188,6 +191,12 @@ public class TopLevelGizmoHandler {
             }
             method.invoke( item, request, response, json );
         } else {
+            logger.debug( "RESPONSE: " + response );
+            try {
+                logger.debug( "RESPONSE: " + response.getOutputStream() );
+            } catch( IOException e ) {
+                e.printStackTrace();
+            }
             method.invoke( item, request, response );
         }
     }

@@ -36,18 +36,16 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 			
 			this.resource = resource;
 		}
-		
+
+        /*
 		@Override
 		public void before() {
-			/* Remove resource from newly created */
-			//GraphDragon.getInstance().acceptResource( (AbstractResource)item );
-
-            /* Check id */
             if( node.get( "identifier" ) == null ) {
                 logger.debug( "Setting identifier for " + resource );
                 SeventyEight.getInstance().setIdentifier( resource );
             }
 		}
+		*/
 		
 		@Override
 		public void save() throws InconsistentParameterException, ErrorWhileSavingException {

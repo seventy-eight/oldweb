@@ -21,7 +21,7 @@ public class Collection extends AbstractResource {
 	private static Logger logger = Logger.getLogger( Collection.class );
 
     public enum CollectionEdgeType implements EdgeType {
-        in_collection
+        inCollection
     }
 	
 	private Set<Long> cached;
@@ -51,7 +51,7 @@ public class Collection extends AbstractResource {
 
 		/* We should remove first?! */
 		removeResource( resource );
-        Edge edge = resource.getNode().createEdge( this.getNode(), CollectionEdgeType.in_collection );
+        Edge edge = resource.getNode().createEdge( this.getNode(), CollectionEdgeType.inCollection );
         edge.set( "order", position );
         edge.save();
 	}
@@ -107,7 +107,7 @@ public class Collection extends AbstractResource {
 		logger.debug( "Removing " + resource + " from " + this );
 		logger.debug( "Removing " + resource.getNode() + " to " + node );
 
-        List<Edge> edges = this.getNode().getEdges( resource.getNode(), CollectionEdgeType.in_collection, Direction.INBOUND );
+        List<Edge> edges = this.getNode().getEdges( resource.getNode(), CollectionEdgeType.inCollection, Direction.INBOUND );
 
         /**
          * Delete all
@@ -121,7 +121,7 @@ public class Collection extends AbstractResource {
 		logger.debug( "Building cache" );
 		cached = new HashSet<Long>();
 
-        List<Edge> edges = node.getEdges( CollectionEdgeType.in_collection, Direction.INBOUND );
+        List<Edge> edges = node.getEdges( CollectionEdgeType.inCollection, Direction.INBOUND );
 
 		for( Edge e : edges ) {
 			logger.debug( "End node is " + e.getSourceNode() );
@@ -134,7 +134,7 @@ public class Collection extends AbstractResource {
 	public void print() {
 		logger.debug( "Printing edges" );
 
-        List<Edge> edges = node.getEdges( CollectionEdgeType.in_collection, Direction.INBOUND );
+        List<Edge> edges = node.getEdges( CollectionEdgeType.inCollection, Direction.INBOUND );
 
         for( Edge e : edges ) {
 			long id = (Long) e.getSourceNode().get( "identifier", 0l );
@@ -229,7 +229,8 @@ public class Collection extends AbstractResource {
 			}
 		}
 	}
-	
+
+    public static final String INDEX_COLLECTIONS = "collections";
 
 	public static class CollectionDescriptor extends ResourceDescriptor<Collection> {
 
@@ -242,6 +243,12 @@ public class Collection extends AbstractResource {
 		public String getType() {
 			return "collection";
 		}
+
+        @Override
+        public void configureIndex( Database db ) {
+            logger.debug( "Configuring " + INDEX_COLLECTIONS );
+            db.createIndex( INDEX_COLLECTIONS, IndexType.REGULAR, IndexValueType.LONG, IndexValueType.STRING );
+        }
 	}
 
 }

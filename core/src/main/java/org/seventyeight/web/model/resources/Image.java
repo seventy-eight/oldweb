@@ -190,7 +190,10 @@ public class Image extends FileResource {
 		
 		saveImage( image, Image.extensionToType( getExtension( imageSource ) ), imageDestination, quality );
 	}
-	
+
+    public FileResource getAsFile() {
+        return this;
+    }
 	
 	public static class ImageDescriptor extends ResourceDescriptor<Image> {
 

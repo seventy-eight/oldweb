@@ -48,7 +48,7 @@ public class Rest extends HttpServlet {
     }
 
     public void doRequest( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
-        PrintWriter out = response.getWriter();
+        //PrintWriter out = response.getWriter();
 
         StopWatch sw = new StopWatch();
         sw.reset();
@@ -79,7 +79,7 @@ public class Rest extends HttpServlet {
         try {
             action = SeventyEight.getInstance().getTopLevelGizmo( r.getRequestParts()[1] );
         } catch( GizmoHandlerDoesNotExistException e ) {
-            generateException( r, out, e, e.getMessage() );
+            generateException( r, response.getWriter(), e, e.getMessage() );
             return;
         }
         sw.stop();
@@ -112,7 +112,7 @@ public class Rest extends HttpServlet {
             parseRequest( action, r, response );
         } catch( Exception e ) {
             e.printStackTrace();
-            generateException( r, out, e, e.getMessage() );
+            generateException( r, response.getWriter(), e, e.getMessage() );
         }
 
         /* Close db connection */

@@ -276,12 +276,27 @@ public class TemplateManager {
         }
 
 
+
+
         public String renderClass( Class clazz, String method ) throws TemplateDoesNotExistException {
             return renderClass( clazz, method, true );
         }
 
         public String renderClass( Class clazz, String method, boolean trySuper ) throws TemplateDoesNotExistException {
             Template template = getTemplateFile( theme, clazz, method, trySuper );
+            return render( template );
+        }
+
+
+        public String renderClass( Object object, Class clazz, String method ) throws TemplateDoesNotExistException {
+            Template template = getTemplateFile( theme, clazz, method, true );
+            context.put( "item", object );
+            return render( template );
+        }
+
+        public String renderClass( Object object, Class clazz, String method, boolean trySuper ) throws TemplateDoesNotExistException {
+            Template template = getTemplateFile( theme, clazz, method, trySuper );
+            context.put( "item", object );
             return render( template );
         }
 
@@ -297,7 +312,7 @@ public class TemplateManager {
 	public Template getTemplate( AbstractTheme theme, Object object, String method, boolean trySuper ) throws TemplateDoesNotExistException {
 		/* Resolve template */
 		Class<?> clazz = object.getClass();
-		while( clazz != Object.class && clazz != null ) {
+		while( clazz != null && clazz != Object.class ) {
             try {
                 return getTemplate( theme, getUrlFromClass( clazz.getCanonicalName(), method ) );
             } catch( TemplateDoesNotExistException e ) {
@@ -324,7 +339,7 @@ public class TemplateManager {
 	public Template getTemplateFile( AbstractTheme theme, Class<?> clazz, String method, boolean trySuper ) throws TemplateDoesNotExistException {
 		/* Resolve template */
 		int cnt = 0;
-		while( clazz != Object.class && clazz != null ) {
+		while( clazz != null && clazz != Object.class ) {
             try {
                 return getTemplate( theme, getUrlFromClass( clazz.getCanonicalName(), method ) );
             } catch( TemplateDoesNotExistException e ) {
