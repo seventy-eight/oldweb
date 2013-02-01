@@ -4,10 +4,7 @@ import com.orientechnologies.common.collection.OCompositeKey;
 import com.orientechnologies.orient.core.db.graph.OGraphDatabase;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.id.ORecordId;
-import com.orientechnologies.orient.core.index.OCompositeIndexDefinition;
-import com.orientechnologies.orient.core.index.OIndex;
-import com.orientechnologies.orient.core.index.OIndexDefinition;
-import com.orientechnologies.orient.core.index.OSimpleKeyIndexDefinition;
+import com.orientechnologies.orient.core.index.*;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
@@ -101,13 +98,16 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
     }
 
     public void createIndex( String index, IndexType type, IndexValueType ... valueTypes ) {
-        //OIndexDefinition def = OIndexDefinitionFactory.createIndexDefinition( null, Collections.singletonList( "letter" ), Collections.singletonList( OType.FLOAT ) );
-        OSimpleKeyIndexDefinition def2 = new OSimpleKeyIndexDefinition( getOrientValuesTypes( valueTypes ) );
-        OIndex idx = db.getMetadata().getIndexManager().createIndex( index, type.toString(), def2, null, null );
-        //db.getMetadata().getIndexManager().create();
+        OIndex<?> idx1 = db.getMetadata().getIndexManager().getIndex( index );
+        if( idx1 == null ) {
+            OSimpleKeyIndexDefinition definition = new OSimpleKeyIndexDefinition( getOrientValuesTypes( valueTypes ) );
+            OIndex idx = db.getMetadata().getIndexManager().createIndex( index, type.toString(), definition, null, null );
 
-        System.out.println( db.getMetadata().getIndexManager().getIndex( index ).getSize() );
-        System.out.println( Arrays.asList( db.getMetadata().getIndexManager().getIndex( index ).getKeyTypes() ) );
+            System.out.println( db.getMetadata().getIndexManager().getIndex( index ).getSize() );
+            System.out.println( Arrays.asList( db.getMetadata().getIndexManager().getIndex( index ).getKeyTypes() ) );
+        } else {
+            System.out.println( index  + " already exists" );
+        }
     }
 
     private OType[] getOrientValuesTypes( IndexValueType[] types ) {
@@ -149,8 +149,6 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
         } else {
             db.getMetadata().getIndexManager().getIndex( name ).put( keys[0], node.getDocument() );
         }
-        db.getMetadata().getIndexManager().getIndex( name ).lazySave();
-        db.getMetadata().getIndexManager().getIndex( name ).lazySave();
     }
 
     public List<OrientNode> getFromIndex( String name, Object ... keys ) {
@@ -175,6 +173,11 @@ public class OrientDatabase implements Database<OGraphDatabase, OrientNode> {
         }
 
         return nodes;
+    }
+
+    @Override
+    public OrientIndex getIndex( String name ) {
+        return new OrientIndex( db.getMetadata().getIndexManager().getIndex( name ) );
     }
 
     public List<OrientNode> getFromIndexAbove( String name, int limit, Object ... keys ) {

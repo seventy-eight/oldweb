@@ -64,4 +64,11 @@ public interface Database<IDB, NT extends Node> {
     public void removeNodeFromIndex( String indexName, NT node );
 
     public NT getByIndex( String idx );
+
+
+
+
+
+
+    public <T extends Index> T getIndex( String name );
 }
