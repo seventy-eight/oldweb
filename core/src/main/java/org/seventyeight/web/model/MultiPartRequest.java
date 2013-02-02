@@ -5,22 +5,12 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
-import org.seventyeight.structure.Tuple;
-import org.seventyeight.web.SeventyEight;
-import org.seventyeight.web.model.resources.FileResource;
-import org.seventyeight.web.model.util.MultipartMap;
-import org.seventyeight.web.util.ServletUtils;
+import org.seventyeight.web.servlet.Request;
 
-import javax.servlet.AsyncContext;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 /**
  * @author cwolfgang

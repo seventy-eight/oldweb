@@ -3,7 +3,6 @@ package org.seventyeight.web.handler;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,11 +15,10 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.seventyeight.database.Database;
 import org.seventyeight.web.SeventyEight;
-import org.seventyeight.web.exceptions.DictionaryDoesNotExistException;
 import org.seventyeight.web.exceptions.TemplateDoesNotExistException;
 import org.seventyeight.web.model.AbstractTheme;
 import org.seventyeight.web.model.Locale;
-import org.seventyeight.web.model.Request;
+import org.seventyeight.web.servlet.Request;
 
 
 public class TemplateManager {

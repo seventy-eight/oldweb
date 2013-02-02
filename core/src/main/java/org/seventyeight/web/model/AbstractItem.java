@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import org.seventyeight.web.hubs.AuthoritativeHub;
 import org.seventyeight.web.hubs.ScoresHub;
 import org.seventyeight.web.model.resources.User;
+import org.seventyeight.web.servlet.Request;
 
 import javax.servlet.http.HttpServletResponse;
 

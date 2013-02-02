@@ -4,25 +4,20 @@ import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
 import org.seventyeight.database.orientdb.impl.orientdb.OrientDBManager;
 import org.seventyeight.utils.StopWatch;
-import org.seventyeight.web.authentication.Authentication;
-import org.seventyeight.web.authentication.SimpleAuthentication;
 import org.seventyeight.web.authentication.exceptions.NoSuchUserException;
 import org.seventyeight.web.authentication.exceptions.PasswordDoesNotMatchException;
 import org.seventyeight.web.authentication.exceptions.UnableToCreateSessionException;
 import org.seventyeight.web.exceptions.GizmoHandlerDoesNotExistException;
 import org.seventyeight.web.exceptions.ActionHandlerException;
 import org.seventyeight.web.model.*;
+import org.seventyeight.web.servlet.Request;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Arrays;
 

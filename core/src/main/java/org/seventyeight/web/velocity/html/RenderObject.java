@@ -9,13 +9,10 @@ import org.apache.velocity.runtime.directive.Directive;
 import org.apache.velocity.runtime.parser.node.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.TemplateDoesNotExistException;
-import org.seventyeight.web.model.AbstractItem;
-import org.seventyeight.web.model.Descriptor;
-import org.seventyeight.web.model.Request;
+import org.seventyeight.web.servlet.Request;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.List;
 
 public class RenderObject extends Directive {
 

@@ -1,9 +1,9 @@
 package org.seventyeight.web.model.toplevelactionhandlers;
 
 import org.seventyeight.web.SeventyEight;
-import org.seventyeight.web.debate.ReplyHub;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
+import org.seventyeight.web.servlet.Request;
 
 import javax.servlet.http.HttpServletResponse;
 

@@ -1,8 +1,6 @@
 package org.seventyeight.web.model;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,6 +12,7 @@ import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.TemplateDoesNotExistException;
 import org.seventyeight.web.exceptions.UnableToInstantiateObjectException;
+import org.seventyeight.web.servlet.Request;
 
 public abstract class Descriptor<T extends Describable> {
 	

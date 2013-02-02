@@ -19,11 +19,10 @@ package org.seventyeight.web.model.util;
 
 import org.apache.log4j.Logger;
 import org.seventyeight.structure.Tuple;
-import org.seventyeight.web.model.Request;
+import org.seventyeight.web.servlet.Request;
 import org.seventyeight.web.model.resources.FileResource;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 import java.io.*;
 import java.util.*;

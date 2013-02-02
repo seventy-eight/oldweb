@@ -1,6 +1,5 @@
 package org.seventyeight.web.model.toplevelactionhandlers;
 
-import com.orientechnologies.orient.core.index.OIndex;
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Direction;
 import org.seventyeight.database.Index;
@@ -8,7 +7,7 @@ import org.seventyeight.database.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.AbstractResource;
-import org.seventyeight.web.model.Request;
+import org.seventyeight.web.servlet.Request;
 import org.seventyeight.web.model.TopLevelExecutor;
 import org.seventyeight.web.util.ResourceHelper;
 

@@ -8,6 +8,7 @@ import org.seventyeight.web.exceptions.CouldNotLoadItemException;
 import org.seventyeight.web.exceptions.NoSuchJsonElementException;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.model.resources.User;
+import org.seventyeight.web.servlet.Request;
 import org.seventyeight.web.util.ClassUtils;
 import org.seventyeight.web.util.JsonUtils;
 

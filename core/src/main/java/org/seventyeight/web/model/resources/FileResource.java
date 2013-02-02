@@ -14,6 +14,7 @@ import org.seventyeight.utils.Date;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
+import org.seventyeight.web.servlet.Request;
 import org.seventyeight.web.util.FileUploadListener;
 import org.seventyeight.web.util.ServletUtils;
 

@@ -11,6 +11,7 @@ import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.CouldNotLoadObjectException;
 import org.seventyeight.web.exceptions.TemplateDoesNotExistException;
 import org.seventyeight.web.model.*;
+import org.seventyeight.web.servlet.Request;
 
 import java.io.IOException;
 import java.io.Writer;

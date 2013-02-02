@@ -3,6 +3,7 @@ package org.seventyeight.web.model.extensions;
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.model.*;
+import org.seventyeight.web.servlet.Request;
 
 //@ExtensionType
 public class UserDecal extends AbstractExtension implements Portrait, Describable, UserAvatarExtension {

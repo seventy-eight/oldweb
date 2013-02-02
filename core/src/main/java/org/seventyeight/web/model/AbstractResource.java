@@ -13,6 +13,7 @@ import org.seventyeight.web.model.extensions.ResourceExtension;
 import org.seventyeight.web.model.resources.User;
 
 import com.google.gson.JsonObject;
+import org.seventyeight.web.servlet.Request;
 
 import javax.servlet.http.HttpServletResponse;
 

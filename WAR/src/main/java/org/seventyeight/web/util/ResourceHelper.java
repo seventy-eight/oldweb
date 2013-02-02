@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
+import org.seventyeight.web.servlet.Request;
 
 public class ResourceHelper {
 	

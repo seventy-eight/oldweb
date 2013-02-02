@@ -5,7 +5,7 @@ import org.seventyeight.database.Database;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.AbstractResource;
-import org.seventyeight.web.model.Request;
+import org.seventyeight.web.servlet.Request;
 import org.seventyeight.web.model.ResourceDescriptor;
 
 import javax.servlet.http.HttpServletResponse;

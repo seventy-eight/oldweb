@@ -9,11 +9,11 @@ import org.apache.log4j.Logger;
 import org.seventyeight.database.Node;
 import org.seventyeight.structure.Tuple;
 import org.seventyeight.utils.Date;
-import org.seventyeight.utils.FileUtilities;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.model.resources.FileResource;
+import org.seventyeight.web.servlet.Request;
 import org.seventyeight.web.util.ResourceHelper;
 
 import javax.servlet.AsyncContext;

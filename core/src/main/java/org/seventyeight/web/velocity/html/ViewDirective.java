@@ -1,7 +1,6 @@
 package org.seventyeight.web.velocity.html;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Writer;
 
 import org.apache.log4j.Logger;
@@ -13,9 +12,7 @@ import org.apache.velocity.runtime.directive.Directive;
 import org.apache.velocity.runtime.parser.node.Node;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.UnknownResourceIdentifierException;
-import org.seventyeight.web.model.AbstractItem;
-import org.seventyeight.web.model.AbstractResource;
-import org.seventyeight.web.model.Request;
+import org.seventyeight.web.servlet.Request;
 
 public class ViewDirective extends Directive {
 

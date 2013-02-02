@@ -14,8 +14,7 @@ import org.seventyeight.database.Database;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.UnknownResourceIdentifierException;
 import org.seventyeight.web.model.AbstractResource;
-import org.seventyeight.web.model.AbstractTheme;
-import org.seventyeight.web.model.Request;
+import org.seventyeight.web.servlet.Request;
 
 public class ResourcePreviewDirective extends Directive {
 

@@ -6,7 +6,7 @@ import org.seventyeight.web.exceptions.ActionHandlerException;
 import org.seventyeight.web.exceptions.MissingDescriptorException;
 import org.seventyeight.web.exceptions.UnableToInstantiateObjectException;
 import org.seventyeight.web.model.AbstractResource;
-import org.seventyeight.web.model.Request;
+import org.seventyeight.web.servlet.Request;
 import org.seventyeight.web.model.ResourceDescriptor;
 import org.seventyeight.web.util.ResourceHelper;
 

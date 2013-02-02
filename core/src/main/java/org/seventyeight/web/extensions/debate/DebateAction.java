@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.model.AbstractAction;
-import org.seventyeight.web.model.Request;
+import org.seventyeight.web.servlet.Request;
 
 import javax.servlet.http.HttpServletResponse;
 

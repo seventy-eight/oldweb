@@ -5,19 +5,16 @@ import org.apache.log4j.Logger;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.authentication.Authentication;
 import org.seventyeight.web.authentication.Session;
-import org.seventyeight.web.authentication.SessionManager;
 import org.seventyeight.web.authentication.SimpleAuthentication;
 import org.seventyeight.web.authentication.exceptions.NoSuchUserException;
 import org.seventyeight.web.authentication.exceptions.PasswordDoesNotMatchException;
 import org.seventyeight.web.authentication.exceptions.UnableToCreateSessionException;
 import org.seventyeight.web.exceptions.PersistenceException;
-import org.seventyeight.web.model.Request;
+import org.seventyeight.web.servlet.Request;
 import org.seventyeight.web.model.TopLevelAction;
-import org.seventyeight.web.model.resources.User;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
 
 /**
  * @author cwolfgang

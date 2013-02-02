@@ -1,9 +1,13 @@
-package org.seventyeight.web.model;
+package org.seventyeight.web.servlet;
 
 import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
 import org.seventyeight.database.Database;
 import org.seventyeight.web.SeventyEight;
+import org.seventyeight.web.model.AbstractItem;
+import org.seventyeight.web.model.AbstractResource;
+import org.seventyeight.web.model.AbstractTheme;
+import org.seventyeight.web.model.CoreRequest;
 import org.seventyeight.web.model.resources.Group;
 import org.seventyeight.web.model.resources.User;
 

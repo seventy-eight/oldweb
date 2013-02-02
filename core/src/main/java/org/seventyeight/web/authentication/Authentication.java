@@ -5,7 +5,7 @@ import org.seventyeight.web.authentication.exceptions.NoSuchUserException;
 import org.seventyeight.web.authentication.exceptions.PasswordDoesNotMatchException;
 import org.seventyeight.web.authentication.exceptions.UnableToCreateSessionException;
 import org.seventyeight.web.exceptions.PersistenceException;
-import org.seventyeight.web.model.Request;
+import org.seventyeight.web.servlet.Request;
 
 import javax.servlet.http.HttpServletResponse;
 

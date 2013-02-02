@@ -15,6 +15,7 @@ import org.seventyeight.utils.ExceptionUtils;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
+import org.seventyeight.web.servlet.Request;
 
 public class Collection extends AbstractResource {
 
