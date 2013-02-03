@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 
 import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.*;
@@ -33,7 +32,7 @@ public class Response extends HttpServletResponseWrapper {
     }
 
 
-    public void deliverFile( HttpServletRequest request, HttpServletResponse response, File file /*, String contentType */, boolean content ) throws IOException {
+    public void deliverFile( Request request, File file /*, String contentType */, boolean content ) throws IOException {
 
         logger.debug( "FILE IS " + file );
 
@@ -50,8 +49,8 @@ public class Response extends HttpServletResponseWrapper {
         // 304.
         String ifNoneMatch = request.getHeader( "If-None-Match" );
         if( ifNoneMatch != null && matches( ifNoneMatch, eTag ) ) {
-            response.setHeader( "ETag", eTag ); // Required in 304.
-            response.sendError( HttpServletResponse.SC_NOT_MODIFIED );
+            setHeader( "ETag", eTag ); // Required in 304.
+            sendError( HttpServletResponse.SC_NOT_MODIFIED );
             return;
         }
 
@@ -60,8 +59,8 @@ public class Response extends HttpServletResponseWrapper {
         // This header is ignored if any If-None-Match header is specified.
         long ifModifiedSince = request.getDateHeader( "If-Modified-Since" );
         if( ifNoneMatch == null && ifModifiedSince != -1 && ifModifiedSince + 1000 > lastModified ) {
-            response.setHeader( "ETag", eTag ); // Required in 304.
-            response.sendError( HttpServletResponse.SC_NOT_MODIFIED );
+            setHeader( "ETag", eTag ); // Required in 304.
+            sendError( HttpServletResponse.SC_NOT_MODIFIED );
             return;
         }
 
@@ -71,7 +70,7 @@ public class Response extends HttpServletResponseWrapper {
         // If-Match header should contain "*" or ETag. If not, then return 412.
         String ifMatch = request.getHeader( "If-Match" );
         if( ifMatch != null && !matches( ifMatch, eTag ) ) {
-            response.sendError( HttpServletResponse.SC_PRECONDITION_FAILED );
+            sendError( HttpServletResponse.SC_PRECONDITION_FAILED );
             return;
         }
 
@@ -79,7 +78,7 @@ public class Response extends HttpServletResponseWrapper {
         // not, then return 412.
         long ifUnmodifiedSince = request.getDateHeader( "If-Unmodified-Since" );
         if( ifUnmodifiedSince != -1 && ifUnmodifiedSince + 1000 <= lastModified ) {
-            response.sendError( HttpServletResponse.SC_PRECONDITION_FAILED );
+            sendError( HttpServletResponse.SC_PRECONDITION_FAILED );
             return;
         }
 
@@ -97,10 +96,10 @@ public class Response extends HttpServletResponseWrapper {
             // Range header should match format "bytes=n-n,n-n,n-n...". If not,
             // then return 416.
             if( !range.matches( "^bytes=\\d*-\\d*(,\\d*-\\d*)*$" ) ) {
-                response.setHeader( "Content-Range", "bytes */" + length ); // Required
+                setHeader( "Content-Range", "bytes */" + length ); // Required
                 // in
                 // 416.
-                response.sendError( HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE );
+                sendError( HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE );
                 return;
             }
 
@@ -143,10 +142,10 @@ public class Response extends HttpServletResponseWrapper {
                     // Check if Range is syntactically valid. If not, then
                     // return 416.
                     if( start > end ) {
-                        response.setHeader( "Content-Range", "bytes */" + length ); // Required
+                        setHeader( "Content-Range", "bytes */" + length ); // Required
                         // in
                         // 416.
-                        response.sendError( HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE );
+                        sendError( HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE );
                         return;
                     }
 
@@ -193,13 +192,13 @@ public class Response extends HttpServletResponseWrapper {
         }
 
         // Initialize response.
-        response.reset();
-        response.setBufferSize( DEFAULT_BUFFER_SIZE );
-        response.setHeader( "Content-Disposition", disposition + ";filename=\"" + fileName + "\"" );
-        response.setHeader( "Accept-Ranges", "bytes" );
-        response.setHeader( "ETag", eTag );
-        response.setDateHeader( "Last-Modified", lastModified );
-        response.setDateHeader( "Expires", System.currentTimeMillis() + DEFAULT_EXPIRE_TIME );
+        reset();
+        setBufferSize( DEFAULT_BUFFER_SIZE );
+        setHeader( "Content-Disposition", disposition + ";filename=\"" + fileName + "\"" );
+        setHeader( "Accept-Ranges", "bytes" );
+        setHeader( "ETag", eTag );
+        setDateHeader( "Last-Modified", lastModified );
+        setDateHeader( "Expires", System.currentTimeMillis() + DEFAULT_EXPIRE_TIME );
 
         // Send requested file (part(s)) to client
         // ------------------------------------------------
@@ -211,26 +210,26 @@ public class Response extends HttpServletResponseWrapper {
         try {
             // Open streams.
             input = new RandomAccessFile( file, "r" );
-            output = response.getOutputStream();
+            output = getOutputStream();
 
             if( ranges.isEmpty() || ranges.get( 0 ) == full ) {
 
                 // Return full file.
                 Range r = full;
-                response.setContentType( contentType );
-                response.setHeader( "Content-Range", "bytes " + r.start + "-" + r.end + "/" + r.total );
+                setContentType( contentType );
+                setHeader( "Content-Range", "bytes " + r.start + "-" + r.end + "/" + r.total );
 
                 if( content ) {
                     if( acceptsGzip ) {
                         // The browser accepts GZIP, so GZIP the content.
-                        response.setHeader( "Content-Encoding", "gzip" );
+                        setHeader( "Content-Encoding", "gzip" );
                         output = new GZIPOutputStream( output, DEFAULT_BUFFER_SIZE );
                     } else {
                         // Content length is not directly predictable in case of
                         // GZIP.
                         // So only add it if there is no means of GZIP, else
                         // browser will hang.
-                        response.setHeader( "Content-Length", String.valueOf( r.length ) );
+                        setHeader( "Content-Length", String.valueOf( r.length ) );
                     }
 
                     // Copy full range.
@@ -241,10 +240,10 @@ public class Response extends HttpServletResponseWrapper {
 
                 // Return single part of file.
                 Range r = ranges.get( 0 );
-                response.setContentType( contentType );
-                response.setHeader( "Content-Range", "bytes " + r.start + "-" + r.end + "/" + r.total );
-                response.setHeader( "Content-Length", String.valueOf( r.length ) );
-                response.setStatus( HttpServletResponse.SC_PARTIAL_CONTENT ); // 206.
+                setContentType( contentType );
+                setHeader( "Content-Range", "bytes " + r.start + "-" + r.end + "/" + r.total );
+                setHeader( "Content-Length", String.valueOf( r.length ) );
+                setStatus( HttpServletResponse.SC_PARTIAL_CONTENT ); // 206.
 
                 if( content ) {
                     // Copy single part range.
@@ -254,8 +253,8 @@ public class Response extends HttpServletResponseWrapper {
             } else {
 
                 // Return multiple parts of file.
-                response.setContentType( "multipart/byteranges; boundary=" + MULTIPART_BOUNDARY );
-                response.setStatus( HttpServletResponse.SC_PARTIAL_CONTENT ); // 206.
+                setContentType( "multipart/byteranges; boundary=" + MULTIPART_BOUNDARY );
+                setStatus( HttpServletResponse.SC_PARTIAL_CONTENT ); // 206.
 
                 if( content ) {
                     // Cast back to ServletOutputStream to get the easy println

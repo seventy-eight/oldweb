@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.seventyeight.web.servlet.Response;
 import org.seventyeight.web.util.GetFile;
 
 
@@ -72,7 +73,7 @@ public class FileHelper {
 	 * @throws java.io.IOException
 	 *             If something fails at I/O level.
 	 */
-	public void getFile( HttpServletRequest request, HttpServletResponse response, GetFile getfile/*, String contentType*/, boolean content ) throws IOException {
+	public void getFile( HttpServletRequest request, Response response, GetFile getfile/*, String contentType*/, boolean content ) throws IOException {
 		// Validate the requested file
 		// ------------------------------------------------------------
 
