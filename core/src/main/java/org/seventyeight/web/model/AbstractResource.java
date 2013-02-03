@@ -263,7 +263,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
 
     @Override
     public String getUrl() {
-        return "/resource/" + getIdentifier();
+        return "/resource/" + getIdentifier() + "/";
     }
 
     @Override

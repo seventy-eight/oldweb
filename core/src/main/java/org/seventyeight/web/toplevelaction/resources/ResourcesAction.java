@@ -62,7 +62,7 @@ public class ResourcesAction implements TopLevelAction {
         r.setOwner( request.getUser() );
         r.getNode().save();
 
-        response.sendRedirect( r.getUrl() + "/configure" );
+        response.sendRedirect( r.getUrl() + "configure" );
         //ResourceUtils.getConfigureResourceView( request, response, r, descriptor );
     }
 
