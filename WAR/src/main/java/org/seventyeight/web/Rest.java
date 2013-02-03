@@ -11,6 +11,7 @@ import org.seventyeight.web.exceptions.GizmoHandlerDoesNotExistException;
 import org.seventyeight.web.exceptions.ActionHandlerException;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.servlet.Request;
+import org.seventyeight.web.servlet.Response;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -42,7 +43,7 @@ public class Rest extends HttpServlet {
         doRequest( request, response );
     }
 
-    public void doRequest( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
+    public void doRequest( HttpServletRequest rqs, HttpServletResponse rsp ) throws ServletException, IOException {
         //PrintWriter out = response.getWriter();
 
         StopWatch sw = new StopWatch();
@@ -50,31 +51,32 @@ public class Rest extends HttpServlet {
 
         sw.start( "preparing" );
 
-        logger.debug( "Query  : " + request.getQueryString() );
-        logger.debug( "URI    : " + request.getRequestURI() );
-        logger.debug( "METHOD : " + request.getMethod() );
-        logger.debug( "CONTENT: " + request.getContentType() );
-        logger.debug( "LENGTH : " + request.getContentLength() );
+        logger.debug( "Query  : " + rqs.getQueryString() );
+        logger.debug( "URI    : " + rqs.getRequestURI() );
+        logger.debug( "METHOD : " + rqs.getMethod() );
+        logger.debug( "CONTENT: " + rqs.getContentType() );
+        logger.debug( "LENGTH : " + rqs.getContentLength() );
 
         /* Instantiating request */
-        Request r = new Request( request );
+        Request request = new Request( rqs );
+        Response response = new Response( rsp );
 
-        logger.debug( "[Parameters] " + request.getParameterMap() );
+        logger.debug( "[Parameters] " + rqs.getParameterMap() );
 
         /* Instantiating context */
         VelocityContext vc = new VelocityContext();
         vc.put( "title", "" );
 
-        r.setContext( vc );
-        r.getContext().put( "request", r );
-        r.setRequestParts( request.getRequestURI().split( "/" ) );
-        logger.debug( "------ " + Arrays.asList( r.getRequestParts() ) + " ------" );
+        request.setContext( vc );
+        request.getContext().put( "request", request );
+        request.setRequestParts( rqs.getRequestURI().split( "/" ) );
+        logger.debug( "------ " + Arrays.asList( request.getRequestParts() ) + " ------" );
 
         TopLevelGizmo action = null;
         try {
-            action = SeventyEight.getInstance().getTopLevelGizmo( r.getRequestParts()[1] );
+            action = SeventyEight.getInstance().getTopLevelGizmo( request.getRequestParts()[1] );
         } catch( GizmoHandlerDoesNotExistException e ) {
-            generateException( r, response.getWriter(), e, e.getMessage() );
+            generateException( request, rsp.getWriter(), e, e.getMessage() );
             return;
         }
         sw.stop();
@@ -83,17 +85,17 @@ public class Rest extends HttpServlet {
 
 
         /**/
-        r.setDB( OrientDBManager.getInstance().getDatabase() );
-        vc.put( "database", r.getDB() );
+        request.setDB( OrientDBManager.getInstance().getDatabase() );
+        vc.put( "database", request.getDB() );
 
-        vc.put( "currentUrl", request.getRequestURI() );
+        vc.put( "currentUrl", rqs.getRequestURI() );
 
-        r.setUser( SeventyEight.getInstance().getAnonymousUser() );
-        r.setTheme( SeventyEight.getInstance().getDefaultTheme() );
+        request.setUser( SeventyEight.getInstance().getAnonymousUser() );
+        request.setTheme( SeventyEight.getInstance().getDefaultTheme() );
 
         try {
             logger.debug( "AUTHENTICATING" );
-            SeventyEight.getInstance().getAuthentication().authenticate( r, response );
+            SeventyEight.getInstance().getAuthentication().authenticate( request, response );
         } catch( PasswordDoesNotMatchException e ) {
             logger.debug( "Passwords does not match!" );
         } catch( NoSuchUserException e ) {
@@ -104,20 +106,20 @@ public class Rest extends HttpServlet {
 
 
         try {
-            parseRequest( action, r, response );
+            parseRequest( action, request, response );
         } catch( Exception e ) {
             e.printStackTrace();
-            generateException( r, response.getWriter(), e, e.getMessage() );
+            generateException( request, rsp.getWriter(), e, e.getMessage() );
         }
 
         /* Close db connection */
-        r.getDB().close();
+        request.getDB().close();
 
         sw.stop();
         logger.info( sw.print( 1000 ) );
     }
 
-    public void parseRequest( TopLevelGizmo gizmo, Request request, HttpServletResponse response ) throws GizmoHandlerDoesNotExistException, ActionHandlerException {
+    public void parseRequest( TopLevelGizmo gizmo, Request request, Response response ) throws GizmoHandlerDoesNotExistException, ActionHandlerException {
         logger.debug( "Parsing request" );
         SeventyEight.getInstance().getTopLevelActionHandler().execute( gizmo, request, response );
     }

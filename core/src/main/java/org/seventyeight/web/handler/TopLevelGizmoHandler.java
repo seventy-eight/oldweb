@@ -193,12 +193,6 @@ public class TopLevelGizmoHandler {
             }
             method.invoke( item, request, response, json );
         } else {
-            logger.debug( "RESPONSE: " + response );
-            try {
-                logger.debug( "RESPONSE: " + response.getOutputStream() );
-            } catch( IOException e ) {
-                e.printStackTrace();
-            }
             method.invoke( item, request, response );
         }
     }

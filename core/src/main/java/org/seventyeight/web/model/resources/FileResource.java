@@ -206,36 +206,7 @@ public class FileResource extends AbstractResource {
         File file = getFile();
 
         if( file != null ) {
-
-            BufferedInputStream buffer = null;
-            ServletOutputStream stream = null;
-
-            try {
-                stream = response.getOutputStream();
-
-                //set response headers
-                response.setContentType( new MimetypesFileTypeMap().getContentType( file.getName() ) );
-                response.addHeader( "Content-Disposition", "attachment; filename=" + file.getName() );
-
-                response.setContentLength((int) file.getTotalSpace() );
-
-                int readBytes = 0;
-
-                //read from the file; write to the ServletOutputStream
-                buffer = new BufferedInputStream( new FileInputStream( file ) );
-                while( ( readBytes = buffer.read() ) != -1 ) {
-                    stream.write(readBytes);
-                }
-            } catch (IOException ioe) {
-                throw new ServletException( ioe.getMessage() );
-            } finally {
-                if( buffer != null ) {
-                    buffer.close();
-                }
-                if( stream != null ) {
-                    stream.close();
-                }
-            }
+            response.deliverFile( request, file, true );
         } else {
             response.sendError( 404, "Could not find file" );
         }

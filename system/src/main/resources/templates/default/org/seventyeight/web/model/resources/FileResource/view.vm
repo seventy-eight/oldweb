@@ -1,1 +1,1 @@
-<div>$item.getDisplayName() - <a href="$item.getIdentifier()/file">$url Download</a></div>
+<div>$item.getDisplayName() - <a href="file">$url Download</a></div>
