@@ -9,6 +9,7 @@ import org.seventyeight.web.exceptions.NoSuchJsonElementException;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.model.resources.User;
 import org.seventyeight.web.servlet.Request;
+import org.seventyeight.web.servlet.Response;
 import org.seventyeight.web.util.ClassUtils;
 import org.seventyeight.web.util.JsonUtils;
 
@@ -29,7 +30,7 @@ public class TopLevelGizmoHandler {
     // (0)/(1)handler/(2)first((3)second/(n)last
     // n is either an actions index or an action method
 
-    public void execute( TopLevelGizmo gizmo, Request request, HttpServletResponse response ) throws ActionHandlerException {
+    public void execute( TopLevelGizmo gizmo, Request request, Response response ) throws ActionHandlerException {
         if( gizmo instanceof ItemType ) {
             handleItemType( (ItemType) gizmo, request, response );
         } else if( gizmo instanceof TopLevelAction ) {
@@ -41,15 +42,15 @@ public class TopLevelGizmoHandler {
         }
     }
 
-    private void handleExecutor( TopLevelExecutor executor, Request request, HttpServletResponse response ) throws ActionHandlerException {
+    private void handleExecutor( TopLevelExecutor executor, Request request, Response response ) throws ActionHandlerException {
         executor.execute( request, response );
     }
 
-    private void handleTopLevelAction( TopLevelAction action, Request request, HttpServletResponse response ) throws ActionHandlerException {
+    private void handleTopLevelAction( TopLevelAction action, Request request, Response response ) throws ActionHandlerException {
         actions( (Item) action, 2, request, response );
     }
 
-    private void handleItemType( ItemType type, Request request, HttpServletResponse response ) throws ActionHandlerException {
+    private void handleItemType( ItemType type, Request request, Response response ) throws ActionHandlerException {
         if( request.getRequestParts().length > 2 ) {
             String name = request.getRequestParts()[2];
             AbstractItem item = null;
@@ -93,7 +94,7 @@ public class TopLevelGizmoHandler {
         }
     }
 
-    public void actions( Item item, int uriStart, Request request, HttpServletResponse response ) throws ActionHandlerException {
+    public void actions( Item item, int uriStart, Request request, Response response ) throws ActionHandlerException {
 
         int i = uriStart;
         int l = request.getRequestParts().length;
@@ -149,7 +150,7 @@ public class TopLevelGizmoHandler {
 
     }
 
-    private void executeThing( Request request, HttpServletResponse response, Item item, String urlName ) throws ActionHandlerException {
+    private void executeThing( Request request, Response response, Item item, String urlName ) throws ActionHandlerException {
         logger.debug( "EXECUTE: " + item + ", " + urlName );
 
 
@@ -177,7 +178,7 @@ public class TopLevelGizmoHandler {
         }
     }
 
-    private void executeMethod( Item item, Request request, HttpServletResponse response, String actionMethod ) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchJsonElementException {
+    private void executeMethod( Item item, Request request, Response response, String actionMethod ) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchJsonElementException {
         logger.debug( "METHOD: " + item + ", " + actionMethod );
 
         Method method = getRequestMethod( item, actionMethod, request.isRequestPost() );
@@ -207,10 +208,10 @@ public class TopLevelGizmoHandler {
         logger.debug( "Method(P:" + post + "): " + method + " = " + m );
         if( post ) {
             //return resource.getClass().getDeclaredMethod( m, ParameterRequest.class, JsonObject.class );
-            return ClassUtils.getEnheritedMethod( item.getClass(), m, Request.class, HttpServletResponse.class, JsonObject.class );
+            return ClassUtils.getEnheritedMethod( item.getClass(), m, Request.class, Response.class, JsonObject.class );
         } else {
             //return action.getClass().getDeclaredMethod( m, Request.class, HttpServletResponse.class );
-            return ClassUtils.getEnheritedMethod( item.getClass(), m, Request.class, HttpServletResponse.class );
+            return ClassUtils.getEnheritedMethod( item.getClass(), m, Request.class, Response.class );
         }
     }
 }

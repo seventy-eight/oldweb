@@ -14,13 +14,14 @@ import org.seventyeight.web.authentication.exceptions.UnableToCreateSessionExcep
 import org.seventyeight.web.exceptions.PersistenceException;
 import org.seventyeight.web.servlet.Request;
 import org.seventyeight.web.model.resources.User;
+import org.seventyeight.web.servlet.Response;
 
 
 public class SimpleAuthentication implements Authentication {
 
 	private static Logger logger = Logger.getLogger( SimpleAuthentication.class );
 	
-	public void authenticate( Request request, HttpServletResponse response ) throws PasswordDoesNotMatchException, NoSuchUserException, UnableToCreateSessionException {
+	public void authenticate( Request request, Response response ) throws PasswordDoesNotMatchException, NoSuchUserException, UnableToCreateSessionException {
 
 		String hash = null;
 		

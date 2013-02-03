@@ -8,6 +8,7 @@ import org.seventyeight.web.exceptions.TemplateDoesNotExistException;
 import org.seventyeight.web.exceptions.UnableToInstantiateObjectException;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.servlet.Request;
+import org.seventyeight.web.servlet.Response;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -26,7 +27,7 @@ public class ResourcesAction implements TopLevelAction {
         return "Resources";
     }
 
-    public void doCreate( Request request, HttpServletResponse response, JsonObject jsonData ) throws IOException, TemplateDoesNotExistException {
+    public void doCreate( Request request, Response response, JsonObject jsonData ) throws IOException, TemplateDoesNotExistException {
         String className = request.getValue( "className" );
 
         if( className == null ) {

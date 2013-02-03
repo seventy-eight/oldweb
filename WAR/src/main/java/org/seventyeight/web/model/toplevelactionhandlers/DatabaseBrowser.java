@@ -9,6 +9,7 @@ import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.AbstractResource;
 import org.seventyeight.web.servlet.Request;
 import org.seventyeight.web.model.TopLevelExecutor;
+import org.seventyeight.web.servlet.Response;
 import org.seventyeight.web.util.ResourceHelper;
 
 import javax.servlet.http.HttpServletResponse;
@@ -27,7 +28,7 @@ public class DatabaseBrowser implements TopLevelExecutor {
     private ResourceHelper helper = new ResourceHelper();
 
     @Override
-    public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
+    public void execute( Request request, Response response ) throws ActionHandlerException {
         request.getContext().put( "outbound", Direction.OUTBOUND );
         request.getContext().put( "inbound", Direction.INBOUND );
 

@@ -4,6 +4,7 @@ import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.servlet.Request;
+import org.seventyeight.web.servlet.Response;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,7 +21,7 @@ public class DebateHandler  {
     }
 
 
-    public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
+    public void execute( Request request, Response response ) throws ActionHandlerException {
         long rid = Long.parseLong( (String) request.getValue( "identifier" ) );
 
         AbstractResource resource = null;

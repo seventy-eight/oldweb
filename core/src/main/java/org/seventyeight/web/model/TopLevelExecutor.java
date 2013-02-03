@@ -2,6 +2,7 @@ package org.seventyeight.web.model;
 
 import org.seventyeight.web.exceptions.ActionHandlerException;
 import org.seventyeight.web.servlet.Request;
+import org.seventyeight.web.servlet.Response;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,5 +13,5 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface TopLevelExecutor extends TopLevelGizmo {
 
-    public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException;
+    public void execute( Request request, Response response ) throws ActionHandlerException;
 }

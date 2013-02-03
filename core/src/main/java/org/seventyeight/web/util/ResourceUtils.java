@@ -7,6 +7,7 @@ import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.AbstractResource;
 import org.seventyeight.web.servlet.Request;
 import org.seventyeight.web.model.ResourceDescriptor;
+import org.seventyeight.web.servlet.Response;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -26,7 +27,7 @@ public class ResourceUtils {
 
     }
 
-    public static void getConfigureResourceView( Request request, HttpServletResponse response, AbstractResource resource, ResourceDescriptor descriptor ) throws TemplateDoesNotExistException, IOException {
+    public static void getConfigureResourceView( Request request, Response response, AbstractResource resource, ResourceDescriptor descriptor ) throws TemplateDoesNotExistException, IOException {
         logger.debug( "Configuring " + resource );
 
         //ResourceDescriptor descriptor = (ResourceDescriptor) resource.getDescriptor();

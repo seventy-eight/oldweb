@@ -6,8 +6,7 @@ import org.seventyeight.web.authentication.exceptions.PasswordDoesNotMatchExcept
 import org.seventyeight.web.authentication.exceptions.UnableToCreateSessionException;
 import org.seventyeight.web.exceptions.PersistenceException;
 import org.seventyeight.web.servlet.Request;
-
-import javax.servlet.http.HttpServletResponse;
+import org.seventyeight.web.servlet.Response;
 
 /**
  * @author cwolfgang
@@ -21,6 +20,6 @@ public interface Authentication {
     public static final String __FORM_KEY = "login-form";
     public static final int __HOUR = 60 * 60;
 
-    void authenticate( Request request, HttpServletResponse response ) throws PasswordDoesNotMatchException, UnableToCreateSessionException, NoSuchUserException;
+    void authenticate( Request request, Response response ) throws PasswordDoesNotMatchException, UnableToCreateSessionException, NoSuchUserException;
     public Session login( Database db, String username, String password ) throws PasswordDoesNotMatchException, UnableToCreateSessionException, PersistenceException, NoSuchUserException;
 }

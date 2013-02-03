@@ -14,6 +14,7 @@ import org.seventyeight.web.model.resources.User;
 
 import com.google.gson.JsonObject;
 import org.seventyeight.web.servlet.Request;
+import org.seventyeight.web.servlet.Response;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -318,7 +319,7 @@ public abstract class AbstractResource extends AbstractObject implements Portrai
         return actions;
     }
 
-    public void doIndex( Request request, HttpServletResponse response ) {
+    public void doIndex( Request request, Response response ) {
         logger.debug( "[VIEWING] " + this );
         try {
             request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( this, "index.vm" ) );

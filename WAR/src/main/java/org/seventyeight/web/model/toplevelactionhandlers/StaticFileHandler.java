@@ -12,6 +12,7 @@ import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.ActionHandlerException;
 import org.seventyeight.web.servlet.Request;
 import org.seventyeight.web.model.TopLevelExecutor;
+import org.seventyeight.web.servlet.Response;
 import org.seventyeight.web.util.FileHelper;
 import org.seventyeight.web.util.GetFile;
 
@@ -22,7 +23,7 @@ public class StaticFileHandler implements TopLevelExecutor {
 	private static Logger logger = Logger.getLogger( StaticFileHandler.class );
 
     @Override
-    public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
+    public void execute( Request request, Response response ) throws ActionHandlerException {
         FileHelper fh = new FileHelper();
         try {
             fh.getFile( request, response, new S(), true );
@@ -38,7 +39,7 @@ public class StaticFileHandler implements TopLevelExecutor {
 
     private class S implements GetFile {
 
-         public File getFile( HttpServletRequest request, HttpServletResponse response ) throws IOException {
+         public File getFile( HttpServletRequest request, Response response ) throws IOException {
              // Get requested file by path info.
              String requestedFile = request.getPathInfo();
 
@@ -51,7 +52,7 @@ public class StaticFileHandler implements TopLevelExecutor {
                  // Do your thing if the file is not supplied to the request URL.
                  // Throw an exception, or send 404, or show default/warning page, or
                  // just ignore it.
-                 response.sendError( HttpServletResponse.SC_NOT_FOUND );
+                 response.sendError( Response.SC_NOT_FOUND );
                  return null;
              }
 

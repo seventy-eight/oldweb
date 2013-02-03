@@ -14,6 +14,7 @@ import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.model.resources.FileResource;
 import org.seventyeight.web.servlet.Request;
+import org.seventyeight.web.servlet.Response;
 import org.seventyeight.web.util.ResourceHelper;
 
 import javax.servlet.AsyncContext;
@@ -66,7 +67,7 @@ public class UploadHandler implements TopLevelAction {
      */
 
     //@Override
-    public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
+    public void execute( Request request, Response response ) throws ActionHandlerException {
 
         System.out.println( request.getParameterMap() );
 
@@ -119,7 +120,7 @@ public class UploadHandler implements TopLevelAction {
      * @param response
      * @param json
      */
-    public void doFile( Request request, HttpServletResponse response, JsonObject json ) {
+    public void doFile( Request request, Response response, JsonObject json ) {
 
     }
 
@@ -152,7 +153,7 @@ public class UploadHandler implements TopLevelAction {
         }
     }
 
-    private void upload( Request request, HttpServletResponse response ) throws CouldNotLoadItemException {
+    private void upload( Request request, Response response ) throws CouldNotLoadItemException {
         String filename = request.getValue( "filename", null );
         logger.debug( "Filename: " + filename );
 
@@ -169,7 +170,7 @@ public class UploadHandler implements TopLevelAction {
         }
     }
 
-    private void uploadAndCreate( Request request, HttpServletResponse response ) throws IOException, ServletException, ResourceNotCreatedException {
+    private void uploadAndCreate( Request request, Response response ) throws IOException, ServletException, ResourceNotCreatedException {
 
         String filename = request.getValue( "filename", null );
         if( filename == null ) {

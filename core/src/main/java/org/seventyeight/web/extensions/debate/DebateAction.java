@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.seventyeight.database.Node;
 import org.seventyeight.web.model.AbstractAction;
 import org.seventyeight.web.servlet.Request;
+import org.seventyeight.web.servlet.Response;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -31,7 +32,7 @@ public class DebateAction extends AbstractAction {
         return "Debate!";
     }
 
-    public void doIndex( Request request, HttpServletResponse response, JsonObject jsonObject ) {
+    public void doIndex( Request request, Response response, JsonObject jsonObject ) {
         logger.debug( "I AM HERE!!!!!!!!!!!!!!!!" );
     }
 }

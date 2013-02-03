@@ -8,6 +8,7 @@ import org.seventyeight.web.exceptions.UnableToInstantiateObjectException;
 import org.seventyeight.web.model.AbstractResource;
 import org.seventyeight.web.servlet.Request;
 import org.seventyeight.web.model.ResourceDescriptor;
+import org.seventyeight.web.servlet.Response;
 import org.seventyeight.web.util.ResourceHelper;
 
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +29,7 @@ public class ResourcesHandler {
     }
 
     //@Override
-    public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
+    public void execute( Request request, Response response ) throws ActionHandlerException {
         String[] parts = request.getRequestParts();
         String requestMethod = parts[2];
 

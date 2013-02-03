@@ -15,6 +15,7 @@ import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
 import org.seventyeight.web.servlet.Request;
+import org.seventyeight.web.servlet.Response;
 import org.seventyeight.web.util.FileUploadListener;
 import org.seventyeight.web.util.ServletUtils;
 
@@ -62,7 +63,7 @@ public class FileResource extends AbstractResource {
 		}
 	}
 
-    public void doUpload( Request request, HttpServletResponse response, JsonObject json ) throws IOException {
+    public void doUpload( Request request, Response response, JsonObject json ) throws IOException {
         AsyncContext aCtx = request.startAsync( request, response );
         Executor uploadExecutor = Executors.newCachedThreadPool();
 
@@ -72,7 +73,7 @@ public class FileResource extends AbstractResource {
         response.getWriter().println( "done" );
     }
 
-    public void doProgress( Request request, HttpServletResponse response ) throws IOException {
+    public void doProgress( Request request, Response response ) throws IOException {
         HttpSession session = request.getSession( true );
 
         response.setContentType("text/html");
@@ -92,7 +93,7 @@ public class FileResource extends AbstractResource {
         out.println(listener.getPercent());
     }
 
-    public void doUploadForm( Request request, HttpServletResponse response ) throws TemplateDoesNotExistException, IOException {
+    public void doUploadForm( Request request, Response response ) throws TemplateDoesNotExistException, IOException {
         response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( this, "uploadForm.vm" ) );
 
     }
@@ -200,7 +201,7 @@ public class FileResource extends AbstractResource {
         }
 	}
 
-    public void doFile( Request request, HttpServletResponse response ) throws ServletException, IOException {
+    public void doFile( Request request, Response response ) throws ServletException, IOException {
 
         File file = getFile();
 

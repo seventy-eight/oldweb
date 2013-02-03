@@ -13,6 +13,7 @@ import org.seventyeight.web.model.*;
 
 import com.google.gson.JsonObject;
 import org.seventyeight.web.servlet.Request;
+import org.seventyeight.web.servlet.Response;
 import org.seventyeight.web.util.ClassUtils;
 import org.seventyeight.web.util.ResourceHelper;
 
@@ -51,7 +52,7 @@ public class ResourceHandler {
     }
 
     //@Override
-    public void execute( Request request, HttpServletResponse response ) throws ActionHandlerException {
+    public void execute( Request request, Response response ) throws ActionHandlerException {
         String[] parts = request.getRequestParts();
 
         Method method = null;
@@ -139,7 +140,7 @@ public class ResourceHandler {
         }
     }
 
-    private void viewResource( AbstractResource resource, Request request, HttpServletResponse response ) throws IOException, TemplateDoesNotExistException {
+    private void viewResource( AbstractResource resource, Request request, Response response ) throws IOException, TemplateDoesNotExistException {
         request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( resource, "view.vm" ) );
         response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
     }
@@ -151,7 +152,7 @@ public class ResourceHandler {
             //return resource.getClass().getDeclaredMethod( m, ParameterRequest.class, JsonObject.class );
             return ClassUtils.getEnheritedMethod( resource.getClass(), m, ParameterRequest.class, JsonObject.class );
         } else {
-            return resource.getClass().getDeclaredMethod( m, Request.class, HttpServletResponse.class );
+            return resource.getClass().getDeclaredMethod( m, Request.class, Response.class );
         }
     }
 

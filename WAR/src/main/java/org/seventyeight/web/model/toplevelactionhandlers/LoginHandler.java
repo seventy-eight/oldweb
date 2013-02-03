@@ -12,6 +12,7 @@ import org.seventyeight.web.authentication.exceptions.UnableToCreateSessionExcep
 import org.seventyeight.web.exceptions.PersistenceException;
 import org.seventyeight.web.servlet.Request;
 import org.seventyeight.web.model.TopLevelAction;
+import org.seventyeight.web.servlet.Response;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -35,7 +36,7 @@ public class LoginHandler implements TopLevelAction {
         return "login";
     }
 
-    public void doIndex( Request request, HttpServletResponse response, JsonObject json ) throws NoSuchUserException, UnableToCreateSessionException, PasswordDoesNotMatchException, PersistenceException {
+    public void doIndex( Request request, Response response, JsonObject json ) throws NoSuchUserException, UnableToCreateSessionException, PasswordDoesNotMatchException, PersistenceException {
         String username = request.getValue( "username", "" );
         String password = request.getValue( "password", "" );
 

@@ -15,6 +15,7 @@ import org.seventyeight.web.hubs.AuthoritativeHub;
 import org.seventyeight.web.hubs.ScoresHub;
 import org.seventyeight.web.model.resources.User;
 import org.seventyeight.web.servlet.Request;
+import org.seventyeight.web.servlet.Response;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -312,7 +313,7 @@ public abstract class AbstractItem extends AbstractDatabaseItem implements Item,
         return "";
     }
 
-    public void doConfigurationSubmit( Request request, HttpServletResponse response, JsonObject jsonData ) throws ErrorWhileSavingException, ParameterDoesNotExistException, IncorrectTypeException, ResourceDoesNotExistException, InconsistentParameterException, TemplateDoesNotExistException, IOException {
+    public void doConfigurationSubmit( Request request, Response response, JsonObject jsonData ) throws ErrorWhileSavingException, ParameterDoesNotExistException, IncorrectTypeException, ResourceDoesNotExistException, InconsistentParameterException, TemplateDoesNotExistException, IOException {
         save( request, jsonData );
         //response.sendRedirect( getUrl() );
         //request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( this, "index.vm" ) );
