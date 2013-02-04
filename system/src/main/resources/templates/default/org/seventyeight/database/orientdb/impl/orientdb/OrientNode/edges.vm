@@ -8,7 +8,7 @@
     </tr>
     </thead>
 
-    #foreach ($l in $list )
+    #foreach ($l in $set )
         <tbody class="listing">
         <tr>
             <td class="listing"></td>

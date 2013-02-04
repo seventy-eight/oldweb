@@ -1,0 +1,18 @@
+
+<table class="listing" style="width: 95%">
+    <caption class="listing">Resources</caption>
+    <thead class="listing">
+        <th class="listing" style="width: 25px">Id</th>
+        <th class="listing">Name</th>
+    </thead>
+    #foreach( $r in $set )
+        <tr class="listing">
+            <td class="listing" align="center">
+                $r.getIdentifier()
+            </td>
+            <td class="listing">
+                <a href="/resource/$r.getIdentifier()/" style="display: block">$r.getDisplayName()</a>
+            </td>
+        </tr>
+    #end
+</table>

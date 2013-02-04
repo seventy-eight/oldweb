@@ -1,6 +1,6 @@
 package org.seventyeight.web.util.filters;
 
-import org.seventyeight.web.util.ResourceList;
+import org.seventyeight.web.util.ResourceSet;
 import org.seventyeight.web.util.ResourceListFilter;
 
 /**
@@ -11,7 +11,7 @@ import org.seventyeight.web.util.ResourceListFilter;
 public class AuthenticatedFilter implements ResourceListFilter {
 
     @Override
-    public void filter( ResourceList list ) {
+    public void filter( ResourceSet set ) {
     }
 
     @Override

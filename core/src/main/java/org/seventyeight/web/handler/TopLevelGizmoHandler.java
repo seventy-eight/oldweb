@@ -153,7 +153,6 @@ public class TopLevelGizmoHandler {
     private void executeThing( Request request, Response response, Item item, String urlName ) throws ActionHandlerException {
         logger.debug( "EXECUTE: " + item + ", " + urlName );
 
-
         /* First try to find a view, if not a POST */
         try {
             logger.debug( "Item: " + item + " -> " + urlName );

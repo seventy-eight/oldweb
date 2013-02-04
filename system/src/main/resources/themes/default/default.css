@@ -30,6 +30,10 @@ td.listing {
     padding-right: 5px;
 }
 
+tr.listing:hover {
+    background-color: #c1d3e5;
+}
+
 .input {
     width: 500px
 }
@@ -37,4 +41,8 @@ td.listing {
 .header {
     font-size: 20px;
     font-weight: bold;
+}
+
+a:link {
+    color: #94a2b2;
 }

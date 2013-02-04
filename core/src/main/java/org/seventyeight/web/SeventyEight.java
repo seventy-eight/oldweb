@@ -39,6 +39,7 @@ import org.seventyeight.web.model.themes.Default;
 import org.seventyeight.utils.Date;
 import org.seventyeight.web.util.Installer;
 import org.seventyeight.web.util.ResourceDescriptorList;
+import org.seventyeight.web.util.ResourceSet;
 
 public class SeventyEight {
 	private static Logger logger = Logger.getLogger( SeventyEight.class );
@@ -399,6 +400,28 @@ public class SeventyEight {
             }
         }
 	}
+
+    /**
+     * Get a {@link List} of a certain resource type.
+     * @param db
+     * @param type
+     * @return
+     */
+    public ResourceSet getResourcesByType( Database db, String type ) {
+        List<Node> nodes = db.getFromIndex( INDEX_RESOURCE_TYPES, type );
+
+        ResourceSet list = new ResourceSet();
+
+        for( Node node : nodes ) {
+            try {
+                list.add( (AbstractResource) getDatabaseItem( node ) );
+            } catch( CouldNotLoadObjectException e ) {
+                logger.warn( e.getMessage() );
+            }
+        }
+
+        return list;
+    }
 
     public AbstractResource setIdentifier( AbstractResource resource ) {
         logger.debug( "Setting identifier for resource" );

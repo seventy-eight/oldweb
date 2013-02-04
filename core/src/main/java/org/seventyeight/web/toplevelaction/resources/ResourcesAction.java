@@ -10,15 +10,17 @@ import org.seventyeight.web.model.*;
 import org.seventyeight.web.servlet.Request;
 import org.seventyeight.web.servlet.Response;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author cwolfgang
  *         Date: 17-01-13
  *         Time: 14:08
  */
-public class ResourcesAction implements TopLevelAction {
+public class ResourcesAction implements TopLevelAction, Actionable {
 
     private Logger logger = Logger.getLogger( ResourcesAction.class );
 
@@ -64,6 +66,17 @@ public class ResourcesAction implements TopLevelAction {
 
         response.sendRedirect( r.getUrl() + "configure" );
         //ResourceUtils.getConfigureResourceView( request, response, r, descriptor );
+    }
+
+    public void doType( Request request, Response response ) {
+
+    }
+
+    @Override
+    public List<Action> getActions() {
+        List<Action> actions = new ArrayList<Action>(1);
+        actions.add( new ListAction() );
+        return actions;
     }
 
     @Override

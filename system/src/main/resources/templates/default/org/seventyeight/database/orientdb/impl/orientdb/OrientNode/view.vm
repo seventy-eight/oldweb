@@ -17,7 +17,7 @@ $item
 
 
 #set( $doTargetNode = true )
-#set( $list = $item.getEdges( null, $outbound ) )
+#set( $set = $item.getEdges( null, $outbound ) )
 #set( $caption = "Out bound relations" )
 #macro( getNode )
     $l.getTargetNode()
@@ -25,6 +25,6 @@ $item
 #parse( "edges.vm" )
 
 #set( $doTargetNode = false )
-#set( $list = $item.getEdges( null, $inbound ) )
+#set( $set = $item.getEdges( null, $inbound ) )
 #set( $caption = "In bound relations" )
 #parse( "edges.vm" )

@@ -54,8 +54,6 @@ public class Rest extends HttpServlet {
         logger.debug( "Query  : " + rqs.getQueryString() );
         logger.debug( "URI    : " + rqs.getRequestURI() );
         logger.debug( "METHOD : " + rqs.getMethod() );
-        logger.debug( "CONTENT: " + rqs.getContentType() );
-        logger.debug( "LENGTH : " + rqs.getContentLength() );
 
         /* Instantiating request */
         Request request = new Request( rqs );

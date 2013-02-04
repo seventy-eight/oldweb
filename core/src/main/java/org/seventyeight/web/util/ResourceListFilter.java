@@ -6,6 +6,6 @@ package org.seventyeight.web.util;
  *         Time: 23:32
  */
 public interface ResourceListFilter {
-    public void filter( ResourceList list );
+    public void filter( ResourceSet set );
     public String getName();
 }
