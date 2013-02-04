@@ -1,3 +1,3 @@
-#foreach( $r in $set )
+#foreach( $r in $item )
 <div>$r.getDisplayName()</div>
 #end

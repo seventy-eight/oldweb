@@ -1,5 +1,6 @@
 package org.seventyeight.web.model.resources;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -8,6 +9,8 @@ import org.seventyeight.database.*;
 import org.seventyeight.web.SeventyEight;
 import org.seventyeight.web.exceptions.*;
 import org.seventyeight.web.model.*;
+import org.seventyeight.web.servlet.Request;
+import org.seventyeight.web.servlet.Response;
 import org.seventyeight.web.util.ResourceSet;
 
 public class Collection extends AbstractResource {
@@ -103,6 +106,14 @@ public class Collection extends AbstractResource {
 
 		return cache.contains( resource.getIdentifier() );
 	}
+
+    public void doSelect( Request request, Response response ) throws TemplateDoesNotExistException, IOException {
+        if( cache == null ) {
+            buildCache();
+        }
+
+        response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( cache, "select.vm" ) );
+    }
 
     public static final String INDEX_COLLECTIONS = "collections";
 

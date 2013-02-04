@@ -5,7 +5,7 @@
         <th class="listing" style="width: 25px">Id</th>
         <th class="listing">Name</th>
     </thead>
-    #foreach( $r in $set )
+    #foreach( $r in $item )
         <tr class="listing">
             <td class="listing" align="center">
                 $r.getIdentifier()

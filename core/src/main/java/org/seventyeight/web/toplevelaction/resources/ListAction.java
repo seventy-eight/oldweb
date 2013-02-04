@@ -34,7 +34,6 @@ public class ListAction implements Action {
 
         ResourceSet set = SeventyEight.getInstance().getResourcesByType( request.getDB(), type );
 
-        request.getContext().put( "set", set );
         request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( set, "list.vm" ) );
         response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
     }
@@ -44,8 +43,6 @@ public class ListAction implements Action {
 
         ResourceSet set = SeventyEight.getInstance().getResourcesByType( request.getDB(), type );
 
-        request.getContext().put( "set", set );
-        request.getContext().put( "content", SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( set, "select.vm" ) );
-        response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).render( request.getTemplate() ) );
+        response.getWriter().print( SeventyEight.getInstance().getTemplateManager().getRenderer( request ).renderObject( set, "select.vm" ) );
     }
 }
