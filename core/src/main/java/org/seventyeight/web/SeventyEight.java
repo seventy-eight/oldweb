@@ -195,6 +195,7 @@ public class SeventyEight {
         addDescriptor( db, new Article.ArticleDescriptor() );
         addDescriptor( db, new FileResource.FileDescriptor() );
         addDescriptor( db, new Image.ImageDescriptor() );
+        addDescriptor( db, new org.seventyeight.web.model.resources.Collection.CollectionDescriptor() );
 
         //addDescriptor( db, new ReplyTreeHub.ReplyTreeExtensionDescriptor() );
         //addDescriptor( db, new TreeReply.ReplyDescriptor() );
